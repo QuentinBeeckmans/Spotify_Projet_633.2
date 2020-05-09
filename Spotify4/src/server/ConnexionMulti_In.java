@@ -83,12 +83,16 @@ public class ConnexionMulti_In {
 		shareGlobalList();
 	}
 	
+	public List receiveList() {
+		return globalList;
+	}
+	
 	public static void shareGlobalList() {
 		
 		OutputStream os;
 		ObjectOutputStream oos;
 		
-		globalList.add("ceci est un test d'écriture");
+		globalList.add("ceci est un test d'Ã©criture");
 		
 		try {
 			os = clientSocket.getOutputStream();
@@ -109,6 +113,8 @@ public class ConnexionMulti_In {
 		for (String item : globalList) {
 			cpt++;
 			System.out.println(cpt + ": " + item);
+			item = cpt + " ; " + item + " ; " + clientSocket.getInetAddress();
+
 		}
 	}
 	

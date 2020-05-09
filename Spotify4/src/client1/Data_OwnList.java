@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.concurrent.Exchanger;
 
 import javax.swing.JFileChooser;
@@ -37,6 +38,14 @@ public class Data_OwnList {
 		//sockEchange.setSoTimeout(30000);
 		
 		ArrayList<String> listFichierAEchange = listFichierAEchange ();
+		int cpt = 0;
+		
+		for (String item : listFichierAEchange) {
+			cpt++;
+//			System.out.println(cpt + ": " + item);
+			item = cpt + " ; " + item + " ; " + sockEchange.getInetAddress();
+
+		}
 		
 		this.listFichierDechange = new ListFileGiven (exchange, listFichierAEchange);
 					
@@ -68,7 +77,7 @@ public class Data_OwnList {
 			}
 			in.close();
 					
-			list = listFileTypeInDir (dataDir,".txt", list) ;
+			list = listFileTypeInDir (dataDir,".mp3", list) ;
 			
 			if (list == null || list.isEmpty()) {
 				
@@ -146,4 +155,25 @@ public class Data_OwnList {
 	    } // pas de fichier choisi	    
 	    
 	}	
+	
+/*	public List <String> listReceived () {
+		
+		InputStreamReader inputReader ;
+		inputReader = new InputStreamReader(sockEchange.getInputStream());
+		
+		BufferedReader BuffInput ;
+		BuffInput = new BufferedReader(inputReader);
+		
+		try {	
+			System.err.println("\t -> Liste vide du c�t� Client");
+			listEchange = (List <String>)exchanger.exchange(listEchange);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}	
+		
+		return listEchange;
+		
+	}
+*/
 }
