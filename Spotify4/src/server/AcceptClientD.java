@@ -1,24 +1,28 @@
 package server;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Exchanger;
 /*
-•	The client will be able to connect to the server through socket connections 
-•	The client should be able to give its list of file to the server 
-•	The client should be able to give its IP address 
-•	The client should be able to get a list of clients with their available audio files 
-•	The client should be able to ask for another client IP address 
-•	The client should be able to connect to another client and ask to stream one file 
-•	The client should be able to accept a network connection from another client and stream the selected file
-•	The client should be able to play the audio stream  
+ï¿½	The client will be able to connect to the server through socket connections 
+ï¿½	The client should be able to give its list of file to the server 
+ï¿½	The client should be able to give its IP address 
+ï¿½	The client should be able to get a list of clients with their available audio files 
+ï¿½	The client should be able to ask for another client IP address 
+ï¿½	The client should be able to connect to another client and ask to stream one file 
+ï¿½	The client should be able to accept a network connection from another client and stream the selected file
+ï¿½	The client should be able to play the audio stream  
 
  */
 public class AcceptClientD implements Runnable {
@@ -29,7 +33,9 @@ public class AcceptClientD implements Runnable {
 	private ListFileExchanger listExchange ;
 	private PrintWriter writer = null;
 	private BufferedInputStream reader = null;
+//	private BufferedReader bufRead = null;
 	private String response = null;
+	List<String> listEchang ;
 
 	//Constructor
 	public AcceptClientD (Socket clientSocketOnServer, int clientNo)
@@ -42,6 +48,8 @@ public class AcceptClientD implements Runnable {
 	//overwrite the thread run()
 	public void run() {
 
+		System.out.println("IP CLIENT connectÃ©" +clientSocketOnServer.getInetAddress());
+		
 		System.out.println("Client Nr "+clientNumber+ " is connected");
 		System.out.println("Socket is available for connection"+ clientSocketOnServer);
 		
@@ -55,11 +63,12 @@ public class AcceptClientD implements Runnable {
 	             reader = new BufferedInputStream(clientSocketOnServer.getInputStream());        	 
 	             
 	        	 listExchange = new ListFileExchanger(exchange);
-	            
+ //                listEchang = listExchange.listReceived();
+
 	            //On attend la demande du client            
 	            response = read();
 	        	 	
-	            System.out.println("Réponse reçue du Serveur : " + response);
+	            System.out.println("Rï¿½ponse reï¿½ue du Serveur : " + response);
 	        	 	            
 	            //On affiche quelques infos, pour le dÃ©buggage
 /*	            String debug = "";
@@ -76,20 +85,37 @@ public class AcceptClientD implements Runnable {
 	            
 	            switch( response){
 	               case "1" :
-	                  toSend = "path music";
-	                  response=null;
-	                  listExchange = new ListFileExchanger(exchange);
+	                  toSend = "1" /* "path music" */;
+	                  response= "1";
+//	                  listEchang = listExchange.listReceived();
+	  	             writer.write(toSend);
+	  	             
+/*	  	           OutputStream os = clientSocketOnServer.getOutputStream();
+	  				ObjectOutputStream oos = new ObjectOutputStream(os);
+	  		
+	  				oos.writeObject(listEchang);
+	  		
+	  				oos.flush();
+
+	                  for (String item : listEchang) {
+	                  System.out.println(item);
+	                  } 												*/       
 	                  break;
+	                  
 	               case "2" :
-	                  toSend = "get list";
-	                  response=null;
+	                  toSend = "2" /* "get list" */;
+	                  response="2";
+	  	            writer.write(toSend);
 	                  listExchange = new ListFileExchanger(exchange);
 	                  break;
+	                  
 	               case "3" :
 	                  toSend = "change password";
-	                  response=null;
+	                  response="3";
 	                  listExchange = new ListFileExchanger(exchange);
+	  	             writer.write(toSend);
 	                  break;
+	                  
 	               case "4" : // "CLOSE" 
 	                  toSend = "CLOSE"; 
 	                  System.out.println("La connexion va Ãªtre arrÃªtÃ©");
@@ -105,7 +131,7 @@ public class AcceptClientD implements Runnable {
 //	            System.out.println(toSend);
 	            
 	            //On envoie la rÃ©ponse au client
-	            writer.write(toSend);
+/*	            writer.write(toSend);							*/
 	            //Il FAUT IMPERATIVEMENT UTILISER flush()
 	            //Sinon les donnÃ©es ne seront pas transmises au client
 	            //et il attendra indÃ©finiment
@@ -113,8 +139,13 @@ public class AcceptClientD implements Runnable {
 	            
 	            if(closeConnexion){
 	               System.err.println("COMMANDE CLOSE DETECTEE ! ");
+	                  closeConnexion = true;
+
 //	               writer = null;
 //	               reader = null;
+	               
+	               Thread.sleep(5000);
+
 	               clientSocketOnServer.close();
 	               break;
 	            }
@@ -125,7 +156,13 @@ public class AcceptClientD implements Runnable {
 	            System.err.println("LA CONNEXION A ETE INTERROMPUE ! ");
 	            break;
 	         }        
-*/	      }
+	         */
+ catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	  
+			
+			    }
 		
 	}
 	
@@ -143,7 +180,7 @@ public class AcceptClientD implements Runnable {
 	      stream = reader.read(b);
 	      response = new String(b, 0, stream); 
 	      
-	      // remise à zéro du buffer (sécurité peut-être pas obligatoire)
+	      // remise ï¿½ zï¿½ro du buffer (sï¿½curitï¿½ peut-ï¿½tre pas obligatoire)
 	      b = new byte [8] ;
 	      
 	      return response;

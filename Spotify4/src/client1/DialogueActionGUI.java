@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Timer;
 
 import server.ListFileExchanger;
 
@@ -19,9 +20,9 @@ public class DialogueActionGUI {
 	
 	public DialogueActionGUI (Socket clientSocketOnServer) {
 		this.clientSocketOnServer = clientSocketOnServer;
-		String response = "TRUE" ;
+		String response = null ;
 		
-		while(!clientSocketOnServer.isClosed() || response != "CLOSE"){
+		while(!clientSocketOnServer.isClosed() /* || response != "CLOSE" */){
 
 	        try {
 	                       
@@ -49,11 +50,51 @@ public class DialogueActionGUI {
 	
 	           writer.flush();
 	           
-	           System.out.println("Commade saisie : " + choice +"\t Envoy�e au serveur");
+	           System.out.println("Commade saisie : " + choice +"\t Envoy�e au serveur");
 	           
 	           response = read();
+	           System.out.println("Réponse SERVEUR av Switch : " + response);
+
 	           
-	           System.out.println("R�ponse re�ue : " + response);
+	           switch (response) {
+			   
+			   case "0":
+				   // lire la chanson
+//		           response = read();
+				   break;
+				   
+			   case "1":
+				   writer.write("musicPath");
+				   System.out.println("J'ai bien choisi path music");
+				   System.out.println();
+				   System.out.println();
+//		           response = read();
+				   break;
+				   
+			   case "2":
+				   System.out.println("J'ai bien choisi get music");
+				   System.out.println();
+				   System.out.println();
+				   //		           response = read();
+				   break;
+			    
+			   case "3":
+				   System.out.println("J'ai bien choisi change pwd");
+				   System.out.println();
+				   System.out.println();
+				   //		           response = read();
+				   break;
+				   
+			   case "CLOSE":
+//				   long startTime = System.currentTimeMillis();
+//				   System.out.println(startTime);
+//				   Thread.w
+				   break;
+	            
+	           default:
+	        	   break;
+	           }
+	           
 	           
 	        }catch (IOException e) {
 		        e.printStackTrace();
@@ -76,7 +117,8 @@ public class DialogueActionGUI {
 */		      
 	      stream = reader.read(b);
 	      response = new String(b, 0, stream); 
-		      
+		  
+	      
 		      // remise à zèro du buffer (sécurité peut-être pas obligatoire)
 		      b = new byte [8] ;
 //	      stream = reader.read(b);
@@ -84,5 +126,35 @@ public class DialogueActionGUI {
 	      
 	      return response;
 
+	   }
+	   
+	   public void serverResponse (int choice){
+		   
+		   while (true) {
+			   switch (choice) {
+			   
+			   case 0:
+				   break;
+				   
+			   case 1:
+				   
+				   break;
+				   
+			   case 2:
+				   
+				   break;
+			    
+			   case 3:
+				   
+				   break;
+				   
+			   case 4:
+				   
+				   break;
+				   
+			   
+			   }
+		   }
+		   
 	   }
 }
