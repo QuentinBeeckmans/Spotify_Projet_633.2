@@ -17,7 +17,7 @@ public class Connexion2ToServer_AcrossThread {
 	public static void main(String[] args) {
 
 		InetAddress serverAddress;
-        String serverName = /*IP Matthieu "10.0.2.15" *//*IP Quentin*/  "192.168.56.1" ;
+        String serverName = /*IP Matthieu */ "10.0.2.15" /*IP Quentin  "192.168.56.1" */;
         
         int port = 4500;
         

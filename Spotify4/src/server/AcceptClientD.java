@@ -35,7 +35,8 @@ public class AcceptClientD implements Runnable {
 	private BufferedInputStream reader = null;
 //	private BufferedReader bufRead = null;
 	private String response = null;
-	List<String> listEchang ;
+	private List<String> listEchang ;
+	private Thread ExchangeListThread;
 
 	//Constructor
 	public AcceptClientD (Socket clientSocketOnServer, int clientNo)
@@ -47,23 +48,35 @@ public class AcceptClientD implements Runnable {
 	}
 	//overwrite the thread run()
 	public void run() {
-
-		System.out.println("IP CLIENT connecté" +clientSocketOnServer.getInetAddress());
 		
+		System.out.println("IP CLIENT connecté" +clientSocketOnServer.getInetAddress());
 		System.out.println("Client Nr "+clientNumber+ " is connected");
 		System.out.println("Socket is available for connection"+ clientSocketOnServer);
 		
-	      boolean closeConnexion = false;
+   	 	listExchange = new ListFileExchanger(exchange, listEchang);
+
+   	 	ExchangeListThread = new Thread (/* listExchange */ new ListFileExchanger(exchange, listEchang) );
+   	 ExchangeListThread.start();
+   	 	listEchang = listExchange.receptList();
+   	 	
+	    boolean closeConnexion = false;
 	      //tant que la connexion est active, on traite les demandes
-	      while(!clientSocketOnServer.isClosed()){
+	    while(!clientSocketOnServer.isClosed()){
 	         
 	         try {
 	            
 	             writer = new PrintWriter(clientSocketOnServer.getOutputStream(),true);
 	             reader = new BufferedInputStream(clientSocketOnServer.getInputStream());        	 
 	             
-	        	 listExchange = new ListFileExchanger(exchange);
- //                listEchang = listExchange.listReceived();
+	        	 listExchange = new ListFileExchanger(exchange, listEchang);
+	        	 int cpt = 0;
+/*	        	 
+	        	 for (String item : listEchang) {
+	        		 cpt++;
+	        		 System.out.println(cpt + " : " + item);
+	        	 }
+*/	        	 
+//                 listEchang = listExchange.listReceived();
 
 	            //On attend la demande du client            
 	            response = read();
@@ -90,29 +103,21 @@ public class AcceptClientD implements Runnable {
 //	                  listEchang = listExchange.listReceived();
 	  	             writer.write(toSend);
 	  	             
-/*	  	           OutputStream os = clientSocketOnServer.getOutputStream();
-	  				ObjectOutputStream oos = new ObjectOutputStream(os);
-	  		
-	  				oos.writeObject(listEchang);
-	  		
-	  				oos.flush();
-
-	                  for (String item : listEchang) {
-	                  System.out.println(item);
-	                  } 												*/       
+	  	             //   TRANSMETTRE AUDIO //
+	  	             
 	                  break;
 	                  
 	               case "2" :
 	                  toSend = "2" /* "get list" */;
 	                  response="2";
 	  	            writer.write(toSend);
-	                  listExchange = new ListFileExchanger(exchange);
+	                  listExchange = new ListFileExchanger(exchange, listEchang);
 	                  break;
 	                  
 	               case "3" :
 	                  toSend = "change password";
 	                  response="3";
-	                  listExchange = new ListFileExchanger(exchange);
+	                  listExchange = new ListFileExchanger(exchange, listEchang);
 	  	             writer.write(toSend);
 	                  break;
 	                  

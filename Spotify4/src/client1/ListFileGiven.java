@@ -16,23 +16,26 @@ public class ListFileGiven implements Runnable {
 		this.exchanger = exchange;
 		nomClientWhoGive = "Client Test 1";
 		
-		for (String item : list) {
+		this.listFileForServer = list;
+/*		for (String item : list) {
 			
 			listFileForServerTemp.add(item + " - chez : " + itemList);			
 		}
-				
+*/				
 	}
 	
 	public void run() {
 				
-		System.out.println(" - Liste côté client -");
+		System.out.println(" - Liste cï¿½tï¿½ client -");
 		
 		while (true) {
 			
-			listFileForServer = listFileForServerTemp;		
+//			listFileForServer = listFileForServerTemp;		
 		
+			System.out.println("ListFileGiven listFileForServer" + listFileForServer);
+			
 			try {
-				System.err.println("\t -> Liste vide du côté Client");
+				System.err.println("\t -> Liste vide du cï¿½tï¿½ Client");
 				listFileForServer = (List<String>) exchanger.exchange(listFileForServer);
 			} catch (InterruptedException e){
 				e.printStackTrace();

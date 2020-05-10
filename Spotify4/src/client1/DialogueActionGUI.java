@@ -64,7 +64,7 @@ public class DialogueActionGUI {
 				   break;
 				   
 			   case "1":
-				   writer.write("musicPath");
+				   writer.write("musicPath"); 
 				   System.out.println("J'ai bien choisi path music");
 				   System.out.println();
 				   System.out.println();

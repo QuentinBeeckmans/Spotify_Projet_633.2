@@ -27,6 +27,7 @@ public class Data_OwnList {
 	private Socket sockEchange;
 	Exchanger exchange = new Exchanger();
 	private ListFileGiven listFichierDechange;
+	private Thread echangeListThread ;
 
 	
 	public Data_OwnList (Socket sockEchange ) {
@@ -37,18 +38,21 @@ public class Data_OwnList {
 					
 		//sockEchange.setSoTimeout(30000);
 		
-		ArrayList<String> listFichierAEchange = listFichierAEchange ();
+		ArrayList<String> listFichierAEchanger = listFichierAEchange ();
 		int cpt = 0;
 		
-		for (String item : listFichierAEchange) {
+		for (String item : listFichierAEchanger) {
 			cpt++;
-//			System.out.println(cpt + ": " + item);
-			item = cpt + " ; " + item + " ; " + sockEchange.getInetAddress();
+			System.out.println("Obj Data_OwnList : " + item);
+//			item = cpt + " ; " + item + " ; " + sockEchange.getInetAddress();
 
 		}
 		
-		this.listFichierDechange = new ListFileGiven (exchange, listFichierAEchange);
-					
+		this.listFichierDechange = new ListFileGiven (exchange, listFichierAEchanger);
+		
+		echangeListThread = new Thread ( /*listFichierDechange */ new ListFileGiven (exchange, listFichierAEchanger) );
+		echangeListThread.start();
+		
 	}
 	
 	public ArrayList <String> listFichierAEchange () {
@@ -96,11 +100,9 @@ public class Data_OwnList {
 	private ArrayList<String> listFileTypeInDir (File file, String fileType, ArrayList<String> list) {
 		
 		 if (file.getAbsolutePath().endsWith(fileType)) {			
-				list.add(file.getAbsolutePath());
+				list.add(file.getAbsolutePath() + " ; " + sockEchange.getInetAddress());
 			}
-			
-			 System.out.println(file.getAbsolutePath());
-			 
+						 
 		        if (file.isDirectory()) {	 
 		            File[] children = file.listFiles();
 		 
