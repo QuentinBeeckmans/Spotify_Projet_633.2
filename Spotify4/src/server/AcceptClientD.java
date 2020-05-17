@@ -104,28 +104,13 @@ public class AcceptClientD implements Runnable {
 	            
 	            switch( response){
 	               case "1" :
-	                  toSend = "1" /* "path music" */;
-	                  response= "1";
-//	                  listEchang = listExchange.listReceived();
-	  	             writer.write(toSend);
-	  	             
-	  	             //   TRANSMETTRE AUDIO //
-	  	             
-	                  break;
-	                  
-	               case "2" :
 	                  toSend = "2" /* "get list" */;
 	                  response="2";
 	  	            writer.write(toSend);
+	  	            	sendList ();
 	                  break;
 	                  
-	               case "3" :
-	                  toSend = "change password";
-	                  response="3";
-	  	             writer.write(toSend);
-	                  break;
-	                  
-	               case "4" : // "CLOSE" 
+	               case "2" : // "CLOSE" 
 	                  toSend = "CLOSE"; 
 	                  System.out.println("La connexion va être arrêté");
 	                  closeConnexion = true;
@@ -238,10 +223,20 @@ public class AcceptClientD implements Runnable {
 	   
 	   private void sendList (){
 		   
+		   ArrayList<String> lisToSend;
+		   
+		   lisToSend = serverList;
+		   
+		   for(String item : lisToSend) {
+			   
+			   if(item.contains((CharSequence) clientSocketOnServer.getInetAddress())) {
+				   lisToSend.remove(item);
+				}			   
+		   }
 		   
 		   try {
 
-			writeObj.writeObject(serverList);
+			writeObj.writeObject(lisToSend);
 
 			writeObj.flush();
 		} catch (IOException e) {

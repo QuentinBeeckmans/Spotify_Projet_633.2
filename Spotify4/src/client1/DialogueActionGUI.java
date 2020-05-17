@@ -16,7 +16,7 @@ import java.util.Timer;
 
 public class DialogueActionGUI {
 
-	private static String [] listChoiceAction = {"path music" , "get list", "change password", "CLOSE"};
+	private static String [] listChoiceAction = {"get list", "CLOSE"};
 	private boolean closeConnexion = false;
 	private Socket clientSocketOnServer;
 	private PrintWriter writer = null;
@@ -73,32 +73,9 @@ public class DialogueActionGUI {
 	           
 	           switch (response) {
 			   
-			   case "0":
-				   // lire la chanson
-//		           response = read();
-				   break;
-				   
 			   case "1":
-				   writer.write("musicPath"); 
-				   System.out.println("J'ai bien choisi path music");
-				   System.out.println();
-				   System.out.println();
-//		           response = read();
-				   break;
-				   
-			   case "2":
 				   readList();
-				   for (String item : serverList) {
-					   System.out.println(item.substring(0,item.indexOf("/")) + item.substring(item.lastIndexOf("/"),item.indexOf(";")));
-				   }
 				   System.out.println("J'ai bien choisi get music");
-				   System.out.println();
-				   System.out.println();
-				   //		           response = read();
-				   break;
-			    
-			   case "3":
-				   System.out.println("J'ai bien choisi change pwd");
 				   System.out.println();
 				   System.out.println();
 				   //		           response = read();
