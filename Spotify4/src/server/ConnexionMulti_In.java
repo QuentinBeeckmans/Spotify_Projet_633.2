@@ -13,7 +13,7 @@ public class ConnexionMulti_In {
 	static Socket clientSocket = null ;
 	static InetAddress localAddress = null;
 	static ServerSocket mySkServer;
-	static String interfaceName = "eth4"; //eth0 Mathieu
+	static String interfaceName = /* "eth4" */ "eth0";
 	
 	public static void main(String[] args) {
 
@@ -45,8 +45,9 @@ public class ConnexionMulti_In {
 				AcceptClientD client ;
 				clientSocket = mySkServer.accept();
 				System.out.println("connection request received");
-				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo));
+				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, globalList));
 				ClientNo++;
+				globalList = client.getGlobalList();
 				
 			//starting the thread
 				t.start();

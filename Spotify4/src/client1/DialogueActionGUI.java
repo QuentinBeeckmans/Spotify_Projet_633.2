@@ -1,14 +1,18 @@
 package client1;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Timer;
-
-import server.ListFileExchanger;
 
 public class DialogueActionGUI {
 
@@ -17,20 +21,31 @@ public class DialogueActionGUI {
 	private Socket clientSocketOnServer;
 	private PrintWriter writer = null;
 	private BufferedInputStream reader = null;
+	private OutputStream os = null;
+	private InputStream is = null;
+	private ObjectOutputStream writeObj = null;
+	private ObjectInputStream readObj = null;
+	private Data_OwnList onwnList;
+	private ArrayList <String> serverList;
 	
 	public DialogueActionGUI (Socket clientSocketOnServer) {
 		this.clientSocketOnServer = clientSocketOnServer;
 		String response = null ;
 		
+		onwnList = new Data_OwnList(clientSocketOnServer);
+		
 		while(!clientSocketOnServer.isClosed() /* || response != "CLOSE" */){
 
 	        try {
-	                       
-	           writer = new PrintWriter(clientSocketOnServer.getOutputStream(),true);
-	           reader = new BufferedInputStream(clientSocketOnServer.getInputStream());        	 
-	       	 	            
+	           os = clientSocketOnServer.getOutputStream(); 
+	           is = clientSocketOnServer.getInputStream();
+	           writer = new PrintWriter(os,true);
+	           reader = new BufferedInputStream(is);
+	                      
 	           Scanner scan = new Scanner(System.in);
-	 	      
+	           
+	          sendList();
+	           
 	 	      System.out.println("QUe voulez-vous faire ?");
 	 	      
 	 	      for (int i = 0; i < listChoiceAction.length; i++) {
@@ -47,7 +62,7 @@ public class DialogueActionGUI {
 	           
 	           //On envoie la réponse au serveur
 	           writer.write(choice);
-	
+	           
 	           writer.flush();
 	           
 	           System.out.println("Commade saisie : " + choice +"\t Envoy�e au serveur");
@@ -72,6 +87,10 @@ public class DialogueActionGUI {
 				   break;
 				   
 			   case "2":
+				   readList();
+				   for (String item : serverList) {
+					   System.out.println(item.substring(0,item.indexOf("/")) + item.substring(item.lastIndexOf("/"),item.indexOf(";")));
+				   }
 				   System.out.println("J'ai bien choisi get music");
 				   System.out.println();
 				   System.out.println();
@@ -88,8 +107,15 @@ public class DialogueActionGUI {
 			   case "CLOSE":
 //				   long startTime = System.currentTimeMillis();
 //				   System.out.println(startTime);
-//				   Thread.w
-				   break;
+	               Thread.sleep(5000);
+	               
+
+		           writer.close();
+		           reader.close();
+		           readObj.close();
+		           writeObj.close();
+		           clientSocketOnServer.isClosed();
+		           break;
 	            
 	           default:
 	        	   break;
@@ -98,7 +124,9 @@ public class DialogueActionGUI {
 	           
 	        }catch (IOException e) {
 		        e.printStackTrace();
-		    }  
+		    } catch (InterruptedException e) {
+				e.printStackTrace();
+			}  
 		}      
 		
 	}
@@ -128,33 +156,30 @@ public class DialogueActionGUI {
 
 	   }
 	   
-	   public void serverResponse (int choice){
+	   public void readList () {
 		   
-		   while (true) {
-			   switch (choice) {
-			   
-			   case 0:
-				   break;
-				   
-			   case 1:
-				   
-				   break;
-				   
-			   case 2:
-				   
-				   break;
-			    
-			   case 3:
-				   
-				   break;
-				   
-			   case 4:
-				   
-				   break;
-				   
-			   
-			   }
-		   }
+			try {
+				readObj = new ObjectInputStream(is);
+				serverList = (ArrayList<String>) readObj.readObject();
+				
+			} catch (ClassNotFoundException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		   
+	   }
+	   
+	   private void sendList (){
+		   
+			try {
+	           writeObj = new ObjectOutputStream (os); 
+				writeObj.writeObject(onwnList.listFichierAEchange());
+				writeObj.flush();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		   	   
 	   }
 }
