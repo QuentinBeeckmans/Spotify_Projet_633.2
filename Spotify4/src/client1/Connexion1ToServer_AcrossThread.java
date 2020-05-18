@@ -31,12 +31,14 @@ public class Connexion1ToServer_AcrossThread {
 			serverAddress = InetAddress.getByName(serverName);
 
 			mySocket = new Socket(serverAddress, port);
-
-			fileList = new Data_OwnList(mySocket) ;
+			
+			
+//			fileList = new Data_OwnList(mySocket) ;
 			
 			System.out.println("IP SERVEUR connecté" + mySocket.getInetAddress());
 		
 			dialogueActionGUI = new DialogueActionGUI (mySocket);
+			
 			
 //			InputStream is = mySocket.getInputStream();
 //			ObjectInputStream ois = new ObjectInputStream(mySocket.getInputStream());

@@ -16,7 +16,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.concurrent.Exchanger;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -24,25 +24,31 @@ import javax.swing.JFrame;
 public class Data_OwnList {
 	
 	private Socket sockEchange;
-	Exchanger exchange = new Exchanger();
-	private ListFileGiven listFichierDechange;
+	private Thread echangeListThread ;
+	private Thread receptListThread;
 	
 	public Data_OwnList (Socket sockEchange ) {
 		
 		this.sockEchange = sockEchange;
-		
-		System.out.println("Client 2");
-							
-		ArrayList<String> listFichierAEchange = listFichierAEchange ();
-		
-		this.listFichierDechange = new ListFileGiven (exchange, listFichierAEchange);
+		System.out.println("Client 1");
 					
+		//sockEchange.setSoTimeout(30000);
+		
+		ArrayList<String> listFichierAEchanger = listFichierAEchange ();
+		int cpt = 0;
+		
+		for (String item : listFichierAEchanger) {
+			cpt++;
+			System.out.println("Obj Data_OwnList : " + item);
+//			item = cpt + " ; " + item + " ; " + sockEchange.getInetAddress();
+
+		}
+				
 	}
 	
 	public ArrayList <String> listFichierAEchange () {
-		
-		
-		String whereDataDirectory = "dataDirectory2.txt";
+				
+		String whereDataDirectory = "dataDirectory1.txt";
 		File file = new File (whereDataDirectory);
 		
 		System.out.println("FICHIER DATA STOCK : " + file.getAbsolutePath());
@@ -66,7 +72,7 @@ public class Data_OwnList {
 			}
 			in.close();
 					
-			list = listFileTypeInDir (dataDir,".txt", list) ;
+			list = listFileTypeInDir (dataDir,".mp3", list) ;
 			
 			if (list == null || list.isEmpty()) {
 				
@@ -85,11 +91,9 @@ public class Data_OwnList {
 	private ArrayList<String> listFileTypeInDir (File file, String fileType, ArrayList<String> list) {
 		
 		 if (file.getAbsolutePath().endsWith(fileType)) {			
-				list.add(file.getAbsolutePath());
+				list.add(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
 			}
-			
-			 System.out.println(file.getAbsolutePath());
-			 
+						 
 		        if (file.isDirectory()) {	 
 		            File[] children = file.listFiles();
 		 
@@ -110,7 +114,7 @@ public class Data_OwnList {
 		 
 	    int retour = choix.showOpenDialog(new JFrame());
 	    String directoryPath ;
-	    String saveDirectoryPath = "dataDirectory2.txt";
+	    String saveDirectoryPath = "dataDirectory1.txt";
 		
 
 	    if(retour == JFileChooser.APPROVE_OPTION) {
@@ -144,4 +148,6 @@ public class Data_OwnList {
 	    } // pas de fichier choisi	    
 	    
 	}	
+	
+
 }

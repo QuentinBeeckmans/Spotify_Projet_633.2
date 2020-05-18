@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Exchanger;
+
 /*
 �	The client will be able to connect to the server through socket connections 
 �	The client should be able to give its list of file to the server 
@@ -29,41 +30,59 @@ public class AcceptClientD implements Runnable {
 	
 	private Socket clientSocketOnServer;
 	private int clientNumber;
-	Exchanger exchange = new Exchanger ();
-	private ListFileExchanger listExchange ;
 	private PrintWriter writer = null;
 	private BufferedInputStream reader = null;
+	private OutputStream os = null;
+	private InputStream is = null;
+	private ObjectOutputStream writeObj = null;
+	private ObjectInputStream readObj = null;
 //	private BufferedReader bufRead = null;
 	private String response = null;
-	List<String> listEchang ;
+	private ArrayList <String> serverList;
+	private ArrayList<String> clientList ;
+	private Thread ExchangeListThread;
 
 	//Constructor
-	public AcceptClientD (Socket clientSocketOnServer, int clientNo)
+	public AcceptClientD (Socket clientSocketOnServer, int clientNo, ArrayList <String> serverList)
 	{
 		this.clientSocketOnServer = clientSocketOnServer;
 		this.clientNumber = clientNo;
+		this.serverList = serverList;
 		
 
 	}
 	//overwrite the thread run()
 	public void run() {
-
-		System.out.println("IP CLIENT connecté" +clientSocketOnServer.getInetAddress());
 		
+		System.out.println("IP CLIENT connecté" +clientSocketOnServer.getInetAddress());
 		System.out.println("Client Nr "+clientNumber+ " is connected");
 		System.out.println("Socket is available for connection"+ clientSocketOnServer);
-		
-	      boolean closeConnexion = false;
+		   	 	
+	    boolean closeConnexion = false;
 	      //tant que la connexion est active, on traite les demandes
-	      while(!clientSocketOnServer.isClosed()){
+	    while(!clientSocketOnServer.isClosed()){
 	         
 	         try {
 	            
-	             writer = new PrintWriter(clientSocketOnServer.getOutputStream(),true);
-	             reader = new BufferedInputStream(clientSocketOnServer.getInputStream());        	 
-	             
-	        	 listExchange = new ListFileExchanger(exchange);
- //                listEchang = listExchange.listReceived();
+		         os = clientSocketOnServer.getOutputStream(); 
+		         is = clientSocketOnServer.getInputStream();
+		         writer = new PrintWriter(os,true);
+		         reader = new BufferedInputStream(is);
+		         readObj = new ObjectInputStream(is);
+		         writeObj = new ObjectOutputStream (os); 
+		           
+	        	 int cpt = 0;
+	        	 
+//	        	 Thread.sleep(20000);
+	        	 
+	        	 readList ();
+/*	        	 
+	        	 for (String item : listEchang) {
+	        		 cpt++;
+	        		 System.out.println(cpt + " : " + item);
+	        	 }
+*/	        	 
+//                 listEchang = listExchange.listReceived();
 
 	            //On attend la demande du client            
 	            response = read();
@@ -85,38 +104,13 @@ public class AcceptClientD implements Runnable {
 	            
 	            switch( response){
 	               case "1" :
-	                  toSend = "1" /* "path music" */;
-	                  response= "1";
-//	                  listEchang = listExchange.listReceived();
-	  	             writer.write(toSend);
-	  	             
-/*	  	           OutputStream os = clientSocketOnServer.getOutputStream();
-	  				ObjectOutputStream oos = new ObjectOutputStream(os);
-	  		
-	  				oos.writeObject(listEchang);
-	  		
-	  				oos.flush();
-
-	                  for (String item : listEchang) {
-	                  System.out.println(item);
-	                  } 												*/       
-	                  break;
-	                  
-	               case "2" :
 	                  toSend = "2" /* "get list" */;
 	                  response="2";
 	  	            writer.write(toSend);
-	                  listExchange = new ListFileExchanger(exchange);
+	  	            	sendList ();
 	                  break;
 	                  
-	               case "3" :
-	                  toSend = "change password";
-	                  response="3";
-	                  listExchange = new ListFileExchanger(exchange);
-	  	             writer.write(toSend);
-	                  break;
-	                  
-	               case "4" : // "CLOSE" 
+	               case "2" : // "CLOSE" 
 	                  toSend = "CLOSE"; 
 	                  System.out.println("La connexion va être arrêté");
 	                  closeConnexion = true;
@@ -140,11 +134,16 @@ public class AcceptClientD implements Runnable {
 	            if(closeConnexion){
 	               System.err.println("COMMANDE CLOSE DETECTEE ! ");
 	                  closeConnexion = true;
+	                  
+	                  removeClientList();
+	                  
+	                  
+	                  Thread.sleep(5000);
 
-//	               writer = null;
-//	               reader = null;
-	               
-	               Thread.sleep(5000);
+	                  writer.close();
+	                  reader.close();
+	                  writeObj.close();
+	                  readObj.close();	               
 
 	               clientSocketOnServer.close();
 	               break;
@@ -191,5 +190,71 @@ public class AcceptClientD implements Runnable {
 
 		return clientSocketOnServer;		
 	}
+	
+	
+	public ArrayList <String> getGlobalList () {
+		
+		return serverList;
+	}
+	
+	   public void readList () {
+		   
+		   try {
+			clientList = (ArrayList<String>) readObj.readObject();
+			
+			serverList.addAll(clientList);
+			
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		   
+		   for(String item : serverList) {
+			   System.out.println(item);
+		   }
+		   
+		   System.out.println();
+		   
+		   for(String item : clientList) {
+			   System.out.println(item);
+		   }
+		   
+	   }
+	   
+	   private void sendList (){
+		   
+		   ArrayList<String> lisToSend;
+		   
+		   lisToSend = serverList;
+		   
+		   for(String item : lisToSend) {
+			   
+			   if(item.contains((CharSequence) clientSocketOnServer.getInetAddress())) {
+				   lisToSend.remove(item);
+				}			   
+		   }
+		   
+		   try {
+
+			writeObj.writeObject(lisToSend);
+
+			writeObj.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		   
+		   
+	   }
+	   
+	   private void removeClientList() {
+		   
+		   for (String item : serverList) {
+				if(item.contains((CharSequence) clientSocketOnServer.getInetAddress())) {
+					serverList.remove(item);
+				}
+			}
+		   
+	   }
 
 }
