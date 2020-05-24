@@ -11,12 +11,14 @@ import java.util.ArrayList;
 
 public class Connexion1ToServer_AcrossThread {
 	
-	static Socket mySocket ;
-	static DialogueActionGUI dialogueActionGUI;
+	private Socket mySocket ;
+	private DialogueActionGUI dialogueActionGUI;
+	private GiveFichier giveFichier;
+	private ReadList readList;
+	
 
-
-	public static void main(String[] args) {
-//	public Connexion1ToServer_AcrossThread () {
+//	public static void main(String[] args) {
+	public Connexion1ToServer_AcrossThread () {
 
 		InetAddress serverAddress;
         String serverName = /*IP Matthieu */ "10.0.2.15" /*IP Quentin "192.168.56.1" */ ;
@@ -25,30 +27,35 @@ public class Connexion1ToServer_AcrossThread {
         
         Data_OwnList fileList = null ;
         
-//        while (true) {
+ //       while (true) {
 
 			try {
 				
 				
-//				while (true) {
-				System.out.println("Client 1");
-				serverAddress = InetAddress.getByName(serverName);
-	
-				mySocket = new Socket(serverAddress, port);
-			
-				dialogueActionGUI = new DialogueActionGUI (mySocket);
+//				while ( /* mySocket.isClosed() */ true) {
+					System.out.println("Client 2111");
+					serverAddress = InetAddress.getByName(serverName);
+		
+					mySocket = new Socket(serverAddress, port);
 				
-				fileList = new Data_OwnList(mySocket) ;
+					while (mySocket.isConnected()) {
+					
+						dialogueActionGUI = new DialogueActionGUI (mySocket);
+					
+//						fileList = new Data_OwnList(mySocket) ;
+						
+						
+						
+						System.out.println("IP SERVEUR connecté" + mySocket.getInetAddress());
 				
-				System.out.println("IP SERVEUR connecté" + mySocket.getInetAddress());
-			
-				
+					}
 				
 	//			InputStream is = mySocket.getInputStream();
 	//			ObjectInputStream ois = new ObjectInputStream(mySocket.getInputStream());
 	 
 	//			ArrayList <String> al = (ArrayList ) ois.readObject() ;
 	
+
 //				}
 				
 			}catch (UnknownHostException e) {
@@ -63,9 +70,10 @@ public class Connexion1ToServer_AcrossThread {
 
 	}
 	
-	public void dialogWithServeur () {
 
-		dialogueActionGUI = new DialogueActionGUI (mySocket);
-		
+	public Socket getSocket () {
+		return mySocket;
 	}
+
+	
 }

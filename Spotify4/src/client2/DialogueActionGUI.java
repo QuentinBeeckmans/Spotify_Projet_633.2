@@ -20,9 +20,11 @@ import server.AcceptClientD;
 
 public class DialogueActionGUI {
 
+	private Connexion1ToServer_AcrossThread connexion;
+
 	private static String [] listChoiceAction = {"get list", "CLOSE"};
 	private boolean closeConnexion = false;
-	private Socket clientSocketOnServer;
+	private Socket socketOnServer;
 	private PrintWriter writer = null;
 	private BufferedInputStream reader = null;
 	private OutputStream os = null;
@@ -33,26 +35,40 @@ public class DialogueActionGUI {
 	private ArrayList <String> serverList;
 	private Socket mySocketTemp;
 	
+	private Connexion_read connexionRead;
+	
 	private File newFile;
 	
 	private GiveFichier sendFile;
 	private ReadList readList;
-	private /* ThreadToTransf */ TransfertList listThread;
+//	private /* ThreadToTransf */ TransfertList listThread;
 	
-	public DialogueActionGUI (Socket clientSocketOnServer) {
-		this.clientSocketOnServer = clientSocketOnServer;
+	public DialogueActionGUI (Socket socket) {
+		
+//		connexion = new Connexion1ToServer_AcrossThread();
+		
+/*		this.socketOnServer = connexion.getSocket();
 		String response = null ;
 		
-		onwnList = new Data_OwnList(clientSocketOnServer);
+		onwnList = new Data_OwnList(socketOnServer);
+*/
 		
-		while(!clientSocketOnServer.isClosed() /* || response != "CLOSE" */){
+		while(true){
 
+			this.socketOnServer = socket;
+			String response = null ;
+			
+			onwnList = new Data_OwnList(socketOnServer);
 			
 	        try {
-				clientSocketOnServer.setKeepAlive(true);
+	        	
+	    		while(!socketOnServer.isClosed() /* || response != "CLOSE" */){
 
-				os = clientSocketOnServer.getOutputStream(); 
-	           is = clientSocketOnServer.getInputStream();
+	        	
+//	        	SocketOnServer.setKeepAlive(true);
+
+				os = socketOnServer.getOutputStream(); 
+	           is = socketOnServer.getInputStream();
 	           writer = new PrintWriter(os,true);
 		       
 	           reader = new BufferedInputStream(is);
@@ -75,11 +91,19 @@ public class DialogueActionGUI {
 //	          sendFile.run();
 //	          sendFile.sendFile();
 //	          listThread.stop();
-	          
-		      Thread t = new Thread (sendFile = new GiveFichier (onwnList.listFichierAEchange(), clientSocketOnServer));
-		      t.start();
+	           
+	           System.out.println(" AVANT nouvelle connexion");
+	           
+/*	         Connexion_Give connexionGive = new Connexion_Give(onwnList.listFichierAEchange());
+		     Thread t = new Thread (sendFile = connexionGive.transmisson());
+*/		     Thread t = new Thread (sendFile = new GiveFichier(onwnList.listFichierAEchange(), socketOnServer));
+		     t.start(); 
 		      sendFile.run();
-//		      t.interrupt();
+
+		      sendFile.sendFile();
+//		      t.join();
+		      
+		      
 		      //serverList = listThread.getList();
 		      
 		      
@@ -118,18 +142,19 @@ public class DialogueActionGUI {
 /*				   listThread = new ThreadToTransf (readList = new ReadList(serverList, clientSocketOnServer));
 				   listThread.start();
 				   readList.run();
-*/
-				   Thread t1 = new Thread (readList = new ReadList ( newFile, clientSocketOnServer));
+*/					connexionRead = new Connexion_read();
+				   Thread t1 = new Thread (readList = connexionRead.reception());
 				      t1.start();
 				      
-				      if (reader.read() <= 0) {
+//				      if (reader.read() <= 0) {
 					      readList.run(); 
 					      serverList = readList.readList();
-				      }
+/*				      }
 				      else {
 				    	  t1.wait();
 //				      		t1.wait();
 				      }
+*/
 /*				   
 	        		 System.out.println("Début de réception !!!!!!!!!");
 
@@ -161,7 +186,7 @@ public class DialogueActionGUI {
 		           reader.close();
 		           readObj.close();
 		           writeObj.close();
-		           clientSocketOnServer.isClosed();
+		           socketOnServer.isClosed();
 		           break;
 	            
 	           default:
@@ -169,15 +194,18 @@ public class DialogueActionGUI {
 	        	   break;
 	           }
 	           
-	           
+	        }
+	        
 	        }catch (IOException e) {
 		        e.printStackTrace();
 		    } catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 	        finally {
+	        	
+	        	System.out.println("LA connexion est coupé suite à un arrêt de la connexion du CLIENT");
 	               try {
-					clientSocketOnServer.close();
+	            	   socketOnServer.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -190,7 +218,7 @@ public class DialogueActionGUI {
 	//La méthode pour lire les réponses
 	   private String read() throws IOException{ 
 		   
-		   InputStream isRead = clientSocketOnServer.getInputStream();
+		   InputStream isRead = socketOnServer.getInputStream();
            reader = new BufferedInputStream(isRead);
 
 	      String response;

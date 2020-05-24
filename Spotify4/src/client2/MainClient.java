@@ -7,7 +7,9 @@ public class MainClient {
 		
 		Connexion1ToServer_AcrossThread client1 = new Connexion1ToServer_AcrossThread();
 		
-		client1.dialogWithServeur();
+//		DialogueActionGUI client2 = new DialogueActionGUI();
+		
+//		client1.dialogWithServeur();
 		
 	}
 

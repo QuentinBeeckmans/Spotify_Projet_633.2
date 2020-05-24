@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 public class GiveFichier implements Runnable{
@@ -21,31 +22,46 @@ public class GiveFichier implements Runnable{
 	private /* ArrayList<String> */ File list = null;
 	private Socket socket;
 	private PrintWriter writer;
+	private Connexion1ToServer_AcrossThread connexion;
 	
 	private ObjetSerialisable objList;
 
 	
-	public GiveFichier( /* ArrayList<String> */ File list, Socket socket) {
+	public GiveFichier( /* File list */ File listFile, Socket socket) {
 
 		this.writer = writer;
-		this.list = list;
+		this.list = listFile;
+		this.socket = socket;
+		
 	}
 	
 	@Override
 	public void run() {
 		
-		System.out.println("ListFile.getAbsPath ; GiveFichier ; run() : " + list.getAbsolutePath());
-		sendFile ();
+//		System.out.println("Debut List transfert !!!!!!!!!!!!!!!!!!!!!!");
+
+//		sendFile ();
 		
-		System.out.println("List transféré !!!!!!!!!!!!!!!!!!!!!!");
+	
+		
 		
 	}
 	
-	public void sendFile (){
+	public synchronized void sendFile (){
 	//	   Thread t = new Thread();
 			try {
+				
+				if(socket.isClosed()) {
+					System.out.println("Activité socket GiveFichier STOP !!!!!!!!!!!!");
+				
+				}
+				
 				os = socket.getOutputStream(); 
 //	           writer = new PrintWriter(os,true);
+
+//		        os.notify();
+
+System.out.println("Debut List transfert !!!!!!!!!!!!!!!!!!!!!!");
 			       
 				
 				byte[] bytes = new byte[2048];
@@ -59,41 +75,22 @@ public class GiveFichier implements Runnable{
 		            os.write(bytes, 0, count);
 		        }
 		        
+		        in.close();
 		        os.flush();
-//		        in.close();
+
+//		      socket.setKeepAlive(true);	        
+//		        os.close();
 		        
-//				t.start();
-//				os  = socket.getOutputStream();
-				
-/*				objList= new ObjetSerialisable(list);
-//				DataOutputStream dos = new  DataOutputStream(os);
-		        
-				ObjectOutputStream writeObj = new ObjectOutputStream ( os); 
-*/
-/*				for (String item : list) {
-					
-					writer.write(item);
-					
-				}
-*/
-//				writeObj.writeObject(list);
-				
-//				dos.flush();
-//				writeObj.flush();
-				
-//				writer.flush();
-				
-				socket.setKeepAlive(true);
-				
-//				writeObj.reset();
-	//			writeObj.close();
-				
-//				Thread.currentThread().interrupt();
+//		        os.nullOutputStream();
+
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
+
+			System.out.println("Fin List transfert !!!!!!!!!!!!!!!!!!!!!!");
+	
 		   	 
 	   }
 

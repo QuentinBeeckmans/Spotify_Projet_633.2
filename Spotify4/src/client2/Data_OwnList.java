@@ -28,7 +28,7 @@ public class Data_OwnList {
 	String dataDirectory = "dataDirectory.txt";
 	private Thread echangeListThread ;
 	private Thread receptListThread;
-	private File newTempFile;
+	private File newTempFile = null;
 	private PrintWriter writer;
 	
 	public Data_OwnList (Socket sockEchange ) {
@@ -36,7 +36,15 @@ public class Data_OwnList {
 		this.sockEchange = sockEchange;
 		System.out.println("Client 1");
 					
-		File listFichierAEchanger = listFichierAEchange ();
+		try {
+			newTempFile = File.createTempFile("MaListTemp", ".txt");
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+//		File listFichierAEchanger = listFichierAEchange ();
 
 	}
 	
@@ -48,13 +56,12 @@ public class Data_OwnList {
 		
 		String dataDirectoryPath ;
 		File dataDir = null ;
-				
+
 		try {
-			newTempFile = File.createTempFile("MaListTemp", ".txt");
 	
 			if ( ! file.exists()) {				
 				chooseRepertory ();			
-		}
+			}
 			
 			BufferedReader in = new BufferedReader(new FileReader(file));
 			
@@ -62,8 +69,10 @@ public class Data_OwnList {
 			{
 				  dataDir = new File (dataDirectoryPath);
 			}
-			in.close();
-					
+//			in.close();
+
+
+			
 			list  = listFileTypeInDir (dataDir,".mp3", newTempFile) ;
 			
 			if (list == null || list.length() == 0) {
@@ -87,8 +96,8 @@ public class Data_OwnList {
 		File newFile = null;
 		
 		try {
-			newFile = File.createTempFile("MaListTemp", ".txt");
-			File tempFile = newFile;
+//			newFile = File.createTempFile("MaListTemp", ".txt");
+//			File tempFile = newFile;
 			FileWriter fileWriter = new FileWriter(newTempFile, true);
 			
 			
@@ -97,11 +106,10 @@ public class Data_OwnList {
 		 if (file.getAbsolutePath().endsWith(fileType)) {			
 //				list.add(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
 				
-			 fileWriter.write(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
+			 fileWriter.write(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550 \n");
 //				newFile.add(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
 			 
 		        fileWriter.flush();
-		        fileWriter.close();
 			}
 						 
 		        if (file.isDirectory()) {	 
@@ -113,9 +121,8 @@ public class Data_OwnList {
 		            }	            
 		        }
 
-		        
-System.out.println("adresse fichier Temp ; Data_OwnList ; listFileTypeInDir() : " +  newTempFile.getAbsolutePath() );
-
+//		        fileWriter.close();
+       
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -125,7 +132,7 @@ System.out.println("adresse fichier Temp ; Data_OwnList ; listFileTypeInDir() : 
 			e.printStackTrace();
 		}
 	        
-		return newFile ;
+		return newTempFile ;
 	}
 		
 	
@@ -156,7 +163,8 @@ System.out.println("adresse fichier Temp ; Data_OwnList ; listFileTypeInDir() : 
 				writer = new PrintWriter(saveDirectoryPath);
 				
 				writer.println(directoryPath);
-				writer.close();
+				writer.flush();
+//				writer.close();
 				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block

@@ -16,10 +16,14 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Exchanger;
 
-import client1.GiveFichier;
-import client1.ReadList;
-import client1.ThreadToTransf;
+import client2.Connexion_Give;
+import client2.Connexion_read;
+import client2.GiveFichier;
+import client2.ReadList;
+/*
+ import client1.ThreadToTransf;
 import client1.TransfertList;
+*/
 
 /*
 �	The client will be able to connect to the server through socket connections 
@@ -45,15 +49,18 @@ public class AcceptClientD implements Runnable {
 //	private BufferedReader bufRead = null;
 	private String response = null;
 	private ArrayList <String> serverList;
-	private ArrayList<String> clientList ;
+	private ArrayList<String> clientList = null;;
 	
-	private TransfertList listThread;
+//	private TransfertList listThread;
 //	private ThreadToTransf listThreadReceptList;
 	private GiveFichier sendFile;
 	private ReadList readList;
 	
-	private File fileTemp;
+	private Connexion_read connexionRead;
+
 	
+	private File fileTemp;
+	private File totalListFile;
 
 	//Constructor
 	public AcceptClientD (Socket clientSocketOnServer, int clientNo, ArrayList <String> serverList)
@@ -77,7 +84,7 @@ public class AcceptClientD implements Runnable {
 	        
 	    	
 	         try {
-	 	    	clientSocketOnServer.setKeepAlive(true);
+//	 	    	clientSocketOnServer.setKeepAlive(true);
 	        	 
 		         os = clientSocketOnServer.getOutputStream(); 
 		         is = clientSocketOnServer.getInputStream();
@@ -100,14 +107,23 @@ public class AcceptClientD implements Runnable {
 	        	 listThreadReceptList.start();
 	        	 readList.run();
 */	        	 
+	        	 
+//				       while (clientList.isEmpty() && clientList == null) 
+ /*				    	   connexionRead = new Connexion_read();
+							 Thread t = new Thread (readList = connexionRead.reception());
+*/				        	 Thread t = new Thread (  readList = new ReadList (clientSocketOnServer)  )  ;
+						      t.start();
+			//			      t.sleep(3000);
+//						      if (reader.read() <= 0) {
+						      readList.run(); 
+						      System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
+				    	   clientList = readList.readList();
+						      System.out.println(" On cherche une liste !!!!!!!!!!!!!!");
+//				       }
+				      System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
 
-	        	 Thread t = new Thread (readList = new ReadList (fileTemp, clientSocketOnServer));
-			      t.start();
-			      t.wait(10000);
-//			      if (reader.read() <= 0) {
-//				      readList.run(); 
 				      fileTemp = readList.getTempListFile();
-				      clientList = readList.readList();
+
 /*			      }
 			      else {
 			    	  t.wait(); 
@@ -122,15 +138,21 @@ public class AcceptClientD implements Runnable {
 
 			      clientList = readList.readList();
 */
-//			      if(clientList.isEmpty() || clientList.contains("Liste vide")) {
-			    	  while (clientList.isEmpty() && clientList.contains("Liste vide")) {
-			    		  t.wait(5000);
+			      if(clientList.isEmpty() || clientList.contains("EMPTY LIST")) {
+			    	  while (clientList.isEmpty() || clientList.contains("EMPTY LIST")) {
+//			    		  t.sleep(10000);
 //					      clientList = listThread.getList();
 					      clientList = readList.readList();
+					      
+System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
 
-			    	  }
+			    	  }			    	  
 			    		  
-//			      }
+			      }
+			      else {
+		    		  
+		    		  System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
+		    	  }
 	        	 
         		 System.out.println("Début de réception !!!!!!!!!");
 
@@ -191,10 +213,14 @@ public class AcceptClientD implements Runnable {
 	    	          sendFile.run();
 */    //	    	          listThreadTransfList.interrupt();
 	    	          
-	                  Thread t1 = new Thread(sendFile = new GiveFichier (fileTemp, clientSocketOnServer));
-			      t1.start();
-			      sendFile.run();
 	                  
+	                  totalListFile = fileTemp;
+	                  Connexion_Give connexionGive = new Connexion_Give(totalListFile);
+	     		     Thread t1 = new Thread (sendFile = connexionGive.transmisson());
+//	                  Thread t1 = new Thread(sendFile = new GiveFichier (totalListFile));
+	                  t1.start();
+	                  sendFile.run();
+	                  sendFile.sendFile();
 	                  break;
 	                  
 	               case "2" : // "CLOSE" 
@@ -247,6 +273,8 @@ public class AcceptClientD implements Runnable {
 				e.printStackTrace();
 			}	
 	         finally {
+		        	System.out.println("LA connexion est coupé suite à un arrêt de la connexion du Serveur");
+
 	               try {
 					clientSocketOnServer.close();
 				} catch (IOException e) {
@@ -267,6 +295,7 @@ public class AcceptClientD implements Runnable {
 	      int stream;
 	      int cpt = 0;
 	      
+         reader = new BufferedInputStream(is);
 
 	      byte[] b = new byte[4096];
 //	      while ( (stream = reader.read(b)) >=0 ) {
@@ -277,7 +306,7 @@ public class AcceptClientD implements Runnable {
 	      response = new String(b, 0, stream); 
 	      
 	      // remise � z�ro du buffer (s�curit� peut-�tre pas obligatoire)
-	      b = new byte [8] ;
+	      b = new byte [0] ;
 	      
 	      return response;
 	   }

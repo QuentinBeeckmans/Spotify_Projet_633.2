@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class GiveFichier implements Runnable{
 
-	private OutputStream os = null;
+	private OutputStream os;
 	private File list = null;
 	private Socket socket;
 	private PrintWriter writer;
@@ -29,10 +29,14 @@ public class GiveFichier implements Runnable{
 
 		this.writer = writer;
 		this.list = list;
+		this.socket = socket;
 	}
 	
 	@Override
 	public void run() {
+		
+		System.out.println("FileTemp path ; GiveFichieir ; run() : " + list.getAbsolutePath());
+		
 		sendFile ();
 		
 		System.out.println("List transféré !!!!!!!!!!!!!!!!!!!!!!");
@@ -54,7 +58,7 @@ public class GiveFichier implements Runnable{
 		        }
 		        
 		        os.flush();
-		        in.close();
+//		        in.close();
 		        
 				
 				socket.setKeepAlive(true);

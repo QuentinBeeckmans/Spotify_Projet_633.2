@@ -45,11 +45,15 @@ public class DialogueActionGUI {
 		
 		onwnList = new Data_OwnList(clientSocketOnServer);
 		
+		
 		while(!clientSocketOnServer.isClosed() /* || response != "CLOSE" */){
 
+System.out.println("DialogueGUI ; adresse socket : " + clientSocketOnServer.getInetAddress());
 			
 	        try {
-				clientSocketOnServer.setKeepAlive(true);
+//				clientSocketOnServer.setKeepAlive(true);
+
+				newFile = onwnList.listFichierAEchange();
 
 				os = clientSocketOnServer.getOutputStream(); 
 	           is = clientSocketOnServer.getInputStream();
@@ -57,14 +61,14 @@ public class DialogueActionGUI {
 		       
 	           reader = new BufferedInputStream(is);
 	           
-				newFile = File.createTempFile("listTempReçue", ".txt");
 
+System.out.println("DialogueGUI ; newFile : " + newFile.getAbsolutePath());
 	           
 	                      
 	           Scanner scan = new Scanner(System.in);
 	           
 	          
-		      Thread t = new Thread (sendFile = new GiveFichier (onwnList.listFichierAEchange(), clientSocketOnServer));
+		      Thread t = new Thread (sendFile = new GiveFichier (newFile, clientSocketOnServer));
 		      t.start();
 		      sendFile.run();
 

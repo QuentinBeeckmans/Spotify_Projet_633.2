@@ -18,9 +18,11 @@ import java.util.ArrayList;
 
 public class ReadList implements Runnable {
 	
+	private Connexion1ToServer_AcrossThread connexion;
+
 	private InputStream is = null;
-	private /* ObjectInputStream */ DataInputStream readObj;
-	private ArrayList<String> arraylist; 
+	private DataInputStream readObj;
+	private ArrayList<String> arraylist = new ArrayList<>(); 
 	private File list = null;
 	private boolean isRunning = false;
 	private Socket socket;
@@ -30,105 +32,41 @@ public class ReadList implements Runnable {
 	
 	private ObjetSerialisable objList;
 	
-	public ReadList( /* BufferedInputStream reader */ File list, Socket socket) {
+	public ReadList(Socket socket) {
 		
-//		this.readObj = readObj;
-//		this.reader = reader;
+//		connexion = new Connexion1ToServer_AcrossThread();
+
 		this.socket = socket;
-		this.list = list;
+//		this.list = list;
+		
+		try {
+	        is = socket.getInputStream().nullInputStream();
+//			is.reset();
+			
+		       
+//	        reader = new BufferedInputStream(is);
+			
+	        newTempFile = File.createTempFile("MaListTemp", ".txt");
+
+			
+			
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
 
 	}
 	
 	@Override
 	public void run() {
 		
-//		readList();
 		isRunning = true;
 		
-		try {
-//			t.start();
-	        is = socket.getInputStream();
-		       
-	        reader = new BufferedInputStream(is);
+/*		while (true) {
 			
-	        newTempFile = File.createTempFile("MaListTemp", ".txt");
+			this.socket = connexion.getSocket();
+		}
+*/		
 
-			
-			System.out.println("Run READLIST -- ");
-			
-//				this.is  = socket.getInputStream();
-
-	//	        this.readObj = new /* ObjectInputStream */ DataInputStream(is);
-		        
-//		        ObjectInputStream objOS = new ObjectInputStream (/* readObj */ is);
-		        
-//		        objList = (ObjetSerialisable)  objOS.readObject();
-			
-			byte[] bytes = new byte[2048];
-			InputStream in = socket.getInputStream();
-			OutputStream out = new FileOutputStream(newTempFile);
-
-	        int count;
-	        while ((count = in.read(bytes)) > 0) {
-	            out.write(bytes, 0, count);
-	        }
-			
-			
-/*		      String response = "";
-		      int stream;
-		      
-		      
-			      while (reader.read() >= 0){
-			    	  
-				      byte[] b = new byte[4096];
-				      while ( (stream = reader.read(b)) >=0 ) {
-					      
-					     response = new String (b, 0, stream);
-					  }
-				      
-					  list.add(response);   
-				      stream = reader.read(b);
-				      response = new String(b, 0, stream); 
-					  
-				      
-				      // remise à zèro du buffer (sécurité peut-être pas obligatoire)
-				      b = new byte [8] ;
-				      
-			      } 
-		      
-			      if(list.isEmpty()) {
-			    	  list.add("Liste vide");
-			      }
-*/			      
-		        socket.setKeepAlive(true);
-		        
-		        
-//				list = /* objList.getList(); */  (ArrayList)  objOS.readObject();
-				
-		        
-//				objOS.close();
-				
-/*				for (String item : list) {
-					System.out.println("list ReadList" + item);
-				}
-*/
-//				is.close();
-				
-//				readObj.close();
-
-//			serverList.addAll(clientList);
-				
-				Thread.currentThread().interrupt();
-			
-			} catch ( /* ClassNotFoundException | */ IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-		   /*catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		  */
 	}
 
 	public boolean isRunning() {
@@ -141,50 +79,139 @@ public class ReadList implements Runnable {
 	}
 	
 	
-	public File getTempListFile () {
+	public synchronized File getTempListFile () {
 		
+		System.out.println("Run READLIST -- ");
+
 		list = newTempFile;
 		
 		return list;
 	}
 	
-	 public ArrayList<String> readList () {
-		   
-//		   Thread t = new Thread();
+	 public synchronized ArrayList<String> readList () {
+		 OutputStream out = null;
+//System.out.println("LIST arrayList ; ReadList ; readList() :  TEST INIT ");
+		
+//		 do {		
+			try {
+								
+			byte[] bytes = new byte[1024];
+	        is=socket.getInputStream();
 
-
-		        InputStream ips;
-				try {
-					ips = new FileInputStream(newTempFile);
+//			InputStream in = socket.getInputStream();
+			out = new OutputStream() {
 				
-			    	InputStreamReader ipsr=new InputStreamReader(ips);
-			    	BufferedReader br=new BufferedReader(ipsr);
-			    	String ligne;
-			    	//parcour du fichier
-			    	while ((ligne=br.readLine())!=null){
-			    		
-						arraylist.add(ligne);
+				@Override
+				public void write(int b) throws IOException {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+//			out = new FileOutputStream(newTempFile);
+			out = new FileOutputStream(newTempFile).nullOutputStream();
+			 System.out.println("out  : " + out.toString()); 			          
+			 System.out.println("is  : " + is.available()); 			          
+
+	        int count = 0;
+	        
+//	        if ((count = in.read(bytes)) > 0){
+//	        out.notify();
+	        
+	        count = is.read(bytes);
+ System.out.println("COUNT reaList()  : " + count); 			          
+	        
+	        while (count > 0) {
+//		        	count += is.read(bytes);
+		        	
+			          out.write(bytes, 0, count);
+			          count = is.read(bytes);
+		            
+			          System.out.println("COUNT boucle1 reaList()  : " + count); 			          
+		          System.out.println("newTempFile getPath : " + newTempFile); 
+
+		          out.flush();
+//		          out.close();		            
+		        }
 	
-	/*		        	    	String[] oldTableau = tableau;
-			        	    	int noligne = oldTableau.length;
-			        	    	tableau = new String[noligne+1]; //afin d'ajouter la ligne on augmente la capacité du tableau
-			        	    	System.arraycopy(oldTableau, 0, tableau,0, noligne);//on recopie le contenu de l'ancien tableau dans le nouveau
-			        	    	tableau[noligne] = ligne; //affectation de la ligne du fichier au dernier élément du tableau
-	*/
-			    	}
-			    	
-			    	br.close();
-			    	
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} 
-		    	
-		    	//br.close();iter.close();
-		   
-		   return arraylist;
+ System.out.println("Sortie de la première boucle readList () ¨¨¨¨¨¨¨¨¨¨");			
+
+		        bytes = new byte[0];
+			
+//		        out.close();
+//		    	socket.setKeepAlive(true);	        
+	        
+		        InputStream ips = null;
+		        
+//			    if (newTempFile.isFile()) {
+						ips = new FileInputStream(newTempFile);
+					
+				    	InputStreamReader ipsr=new InputStreamReader(ips);
+				    	BufferedReader br=new BufferedReader(ipsr);
+				    	String ligne;
+				    	
+				    	if ((ligne=br.readLine())!=null) {
+//						      
+						      //parcour du fichier
+					    	while ((ligne=br.readLine())!=null){
+					    		
+					    		System.out.println("Entrée dans la deuxième boucle readList () ¨¨¨¨¨¨¨¨¨¨");			
+
+					    		arraylist.add(ligne);
+			
+					    	}
+				    	}
+				    	
+				    	br.close();
+				    	ips.close();
+				    	ipsr.close();
+				    	
+
+//	        }
+//		        socket.setKeepAlive(true);
+				
+//				Thread.currentThread().interrupt();
+			
+			} catch ( /* ClassNotFoundException | */ IOException e) {
+				e.printStackTrace();
+			} 
+		   /*catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		  */
+
+			finally {
+				
+				if (arraylist.isEmpty()) {
+					arraylist.add("EMPTY LIST");
+					System.out.println("En attente de réception d'une list non vide");
+				}
+				else {
+					if (arraylist.size()>1) {
+						
+						for (String item : arraylist) {
+							if (item.contentEquals("EMPTY LIST")) {
+								arraylist.remove(item);
+							}
+							System.out.println("LIST arrayList ; ReadList : " + item);
+						}
+					}
+					
+				}
+				
+				
+			}
+//	 } while (arraylist.contains("EMPTY LIST"));
+/*		br.close();
+    	ips.close();
+    	ipsr.close();
+ */
+/*	try {
+	out.close();
+} catch (IOException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+}
+*/
+				return arraylist;
 	  }
 }

@@ -15,8 +15,9 @@ public class ConnexionMulti_In {
 	static ServerSocket mySkServer;
 	static String interfaceName = /* "eth4" */ "eth0";
 	
-	public static void main(String[] args) {
-
+//	public static void main(String[] args) {
+	public ConnexionMulti_In() {
+		
 		int ClientNo = 1;
 	
 		
@@ -41,7 +42,8 @@ public class ConnexionMulti_In {
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
 			
 			//wait for a client connection
-	//		while(true)	{
+			
+//			while(!mySkServer.isClosed())	{
 				
 				AcceptClientD client ;
 				clientSocket = mySkServer.accept();
@@ -59,7 +61,7 @@ public class ConnexionMulti_In {
 				
 //				addList(client.transfertList ());
 								
-	//		}
+//			}
 
 		} catch (IOException e) {
 
