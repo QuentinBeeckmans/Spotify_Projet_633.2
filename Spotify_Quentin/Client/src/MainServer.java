@@ -1,46 +1,49 @@
 
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+
+import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-public class MainServer {
+//NOTRE CLIENT EN TANT QUE CLIENT
+public class MainServer{
+   
+    private Socket clientSocket;
+    private String musiqueChoice;
+    
+    private InetAddress serverAddress;
+    private String serverName = "192.168.56.1";
+    
+    private DialogueActionGUI dialogueActionGUI;
+    
 	private int port;
-	private ServerSocket serverSocket;
-	private int clientId = 0;
-	
-	private ArrayList <String> clientList = new ArrayList<String>();
-	
-	//static ArrayList <String> globalList = new ArrayList<String>();
-	
-	public MainServer(int port) {
-		this.port=port;
-		System.out.println("Serveur ok. En attente de connection...");
-	}
+   
+   public MainServer(int port) {
+	   this.port=port;  
+   }
+   
+   public void exchangeSocket() {
+		new Thread(new Runnable() {
+    		public void run() {
+    			while(true) {
+    				try {
+						serverAddress = InetAddress.getByName(serverName);
 
-	public void listenSocket() {
-		try {
-			serverSocket = new ServerSocket(port);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		while(true) {
-			Socket clientSocket = null;
-			
-			try {
-				clientSocket = serverSocket.accept();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			System.out.println("Connection reçue");
-			Thread t = new Thread(new Client(clientSocket, /*dossier musique*/));
-			t.start();
-		}
-		
-	}
-	
-	
-	
-}
+						clientSocket = new Socket(serverAddress, port);
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+    				dialogueActionGUI = new DialogueActionGUI (clientSocket);
+    			}
+    		}
+    	}).start();
+   }
+   
+   
+   }
+
