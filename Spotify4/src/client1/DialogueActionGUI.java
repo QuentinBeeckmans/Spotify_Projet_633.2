@@ -2,6 +2,7 @@ package client1;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -11,8 +12,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 import java.util.Timer;
+
+import server.AcceptClientD;
 
 public class DialogueActionGUI {
 
@@ -27,6 +31,13 @@ public class DialogueActionGUI {
 	private ObjectInputStream readObj = null;
 	private Data_OwnList onwnList;
 	private ArrayList <String> serverList;
+	private Socket mySocketTemp;
+	
+	private File newFile;
+	
+	private GiveFichier sendFile;
+	private ReadList readList;
+	private /* ThreadToTransf */ TransfertList listThread;
 	
 	public DialogueActionGUI (Socket clientSocketOnServer) {
 		this.clientSocketOnServer = clientSocketOnServer;
@@ -36,21 +47,35 @@ public class DialogueActionGUI {
 		
 		while(!clientSocketOnServer.isClosed() /* || response != "CLOSE" */){
 
+			
 	        try {
-	           os = clientSocketOnServer.getOutputStream(); 
+				clientSocketOnServer.setKeepAlive(true);
+
+				os = clientSocketOnServer.getOutputStream(); 
 	           is = clientSocketOnServer.getInputStream();
 	           writer = new PrintWriter(os,true);
+		       
 	           reader = new BufferedInputStream(is);
+	           
+				newFile = File.createTempFile("listTempReçue", ".txt");
+
+	           
 	                      
 	           Scanner scan = new Scanner(System.in);
 	           
-	          sendList();
+	          
+		      Thread t = new Thread (sendFile = new GiveFichier (onwnList.listFichierAEchange(), clientSocketOnServer));
+		      t.start();
+		      sendFile.run();
+
 	           
 	 	      System.out.println("QUe voulez-vous faire ?");
 	 	      
 	 	      for (int i = 0; i < listChoiceAction.length; i++) {
 				System.out.println((i+1) + " : " + listChoiceAction[i]);
 			}
+	 	      
+	 	      
 	 	      
 	           //On traite la demande du client en fonction de la commande envoyée
 	 //          String command = getCommand();
@@ -65,7 +90,7 @@ public class DialogueActionGUI {
 	           
 	           writer.flush();
 	           
-	           System.out.println("Commade saisie : " + choice +"\t Envoy�e au serveur");
+	           System.out.println("Commade saisie : " + choice +"\t Envoyée au serveur");
 	           
 	           response = read();
 	           System.out.println("Réponse SERVEUR av Switch : " + response);
@@ -74,9 +99,37 @@ public class DialogueActionGUI {
 	           switch (response) {
 			   
 			   case "1":
-				   readList();
 				   System.out.println("J'ai bien choisi get music");
 				   System.out.println();
+
+				   Thread t1 = new Thread (readList = new ReadList ( newFile, clientSocketOnServer));
+				      t1.start();
+				      
+				      if (reader.read() <= 0) {
+					      readList.run(); 
+					      serverList = readList.readList();
+				      }
+				      else {
+				    	  t1.wait();
+//				      		t1.wait();
+				      }
+/*				   
+	        		 System.out.println("Début de réception !!!!!!!!!");
+
+		        	 if (readList.isRunning()) {
+		        		 serverList = readList.readList();
+		        		 System.out.println("Réception !!!!!!!!!");
+
+		        	 }
+		        	 else {
+		        		 System.out.println("Problème de réception !!!!!!!!!");
+		        	 }
+		        	 
+*/		        	 
+		        	 for (String item : serverList) {
+		        		 System.out.println("reçu par serveur " + item);
+		        	 }
+		        	 System.out.println();
 				   System.out.println();
 				   //		           response = read();
 				   break;
@@ -95,6 +148,7 @@ public class DialogueActionGUI {
 		           break;
 	            
 	           default:
+	        	   System.out.println("problème de réception serveur !");
 	        	   break;
 	           }
 	           
@@ -103,15 +157,26 @@ public class DialogueActionGUI {
 		        e.printStackTrace();
 		    } catch (InterruptedException e) {
 				e.printStackTrace();
-			}  
+			}
+	        finally {
+	               try {
+					clientSocketOnServer.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	 	    }
 		}      
 		
 	}
 	
 	//La méthode pour lire les réponses
-	   private String read() throws IOException{      
-	      
-	      String response = "";
+	   private String read() throws IOException{ 
+		   
+		   InputStream isRead = clientSocketOnServer.getInputStream();
+           reader = new BufferedInputStream(isRead);
+
+	      String response;
 	      int stream;
 	      
 	      byte[] b = new byte[4096];
@@ -132,31 +197,58 @@ public class DialogueActionGUI {
 	      return response;
 
 	   }
-	   
-	   public void readList () {
+/*	   
+	   public synchronized void readList () {
+		   ArrayList<String> affichList = new ArrayList<String>();
+		   Thread t = new Thread();
 		   
 			try {
-				readObj = new ObjectInputStream(is);
+				t.start();
+				
 				serverList = (ArrayList<String>) readObj.readObject();
+				
+				readObj.reset();
+//				t.stop();
 				
 			} catch (ClassNotFoundException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		   
+			if (!serverList.isEmpty()) {
+				String itemAffich = "";
+				
+				for (String item : serverList) {
+//					itemAffich = item.substring(item.lastIndexOf("/"), item.indexOf(";"));
+					affichList.add(item.substring(item.lastIndexOf("/"), item.indexOf(";")) );
+				}
+			}
+			Collections.sort(affichList);
+			
+			System.out.println();
+			System.out.println("Liste des musiques en streaming");
+			System.out.println();
+			
+			for (String item : affichList) {
+				System.out.println(item);
+			}
+			
 	   }
 	   
-	   private void sendList (){
-		   
+/*	   private synchronized void sendList (){
+		   Thread t = new Thread();
 			try {
-	           writeObj = new ObjectOutputStream (os); 
+				t.start();
+				
 				writeObj.writeObject(onwnList.listFichierAEchange());
 				writeObj.flush();
+				writeObj.reset();
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		   	   
+		   	 
 	   }
+*/
 }

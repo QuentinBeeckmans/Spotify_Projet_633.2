@@ -18,6 +18,7 @@ public class ConnexionMulti_In {
 	public static void main(String[] args) {
 
 		int ClientNo = 1;
+	
 		
 		try {
 			NetworkInterface ni = NetworkInterface.getByName(interfaceName);
@@ -40,23 +41,25 @@ public class ConnexionMulti_In {
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
 			
 			//wait for a client connection
-			while(true)
-			{
+	//		while(true)	{
+				
 				AcceptClientD client ;
 				clientSocket = mySkServer.accept();
 				System.out.println("connection request received");
+				
 				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, globalList));
 				ClientNo++;
-				globalList = client.getGlobalList();
 				
-			//starting the thread
-				t.start();
-				
+
+	//				globalList = client.getGlobalList();
+					
+				//starting the thread
+					t.start();
 //				t.sleep(3000);
 				
 //				addList(client.transfertList ());
 								
-			}
+	//		}
 
 		} catch (IOException e) {
 
