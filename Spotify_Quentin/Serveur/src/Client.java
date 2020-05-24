@@ -39,7 +39,6 @@ public class Client implements Runnable {
 
 	@Override
 	public void run() {
-		boolean closeConnexion = false;
 		try {
 			System.out.println("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
 			
@@ -55,31 +54,25 @@ public class Client implements Runnable {
 			switch( reponse){
               
 			case "1" : //getlist
- 	          sendList(this);
+				System.out.println("Côté serveur on me demande d'envoyer la liste des musiques");
+ 	          sendList(this); //je n'envoie rien si j'ai le même id
               break;
                  
-            case "2" :
+            case "3" :
                System.out.println("La connexion va être arrêtée");
-                 closeConnexion = true;
-                 break;
+               
+               Thread.sleep(5000);          
+               remove(this);
+               reader.close();
+               send.close();
+               bufferReader.close();
+               clientSocket.close();
+               break;
              
             default : 
             	System.out.println("Commande inconnu !");                     
            }
-			
-			 if(closeConnexion){
-	               System.out.println("COMMANDE CLOSE DETECTEE ! ");
-	                  closeConnexion = true;
-	                  Thread.sleep(5000);          
-	                  remove(this);
-	                  reader.close();
-	                  send.close();
-	                  bufferReader.close();
-	                  clientSocket.close();
-	          }
-			
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

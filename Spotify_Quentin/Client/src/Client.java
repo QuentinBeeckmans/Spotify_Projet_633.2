@@ -34,7 +34,7 @@ public class Client implements Runnable {
 	public void run() {
 		try {
 			streamMusic(musicChoice);
-			clientSocket.close();
+			//clientSocket.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

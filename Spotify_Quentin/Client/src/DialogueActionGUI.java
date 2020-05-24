@@ -25,9 +25,12 @@ public class DialogueActionGUI {
 	private ObjectInputStream readObj = null;
 	private MyList onwnList;
 	private ArrayList <String> serverList;
+	private int portEcoute; //pour savoir le port pour délivrer la musique
 	
-	public DialogueActionGUI (Socket clientSocketOnServer) {
+	public DialogueActionGUI (Socket clientSocketOnServer, int port) {
 		this.clientSocketOnServer = clientSocketOnServer;
+		this.portEcoute=port;
+		
 		String response = null ;
 		
 		onwnList = new MyList(clientSocketOnServer);
@@ -35,51 +38,55 @@ public class DialogueActionGUI {
 		while(true){
 
 	        try {
-	           os = clientSocketOnServer.getOutputStream(); 
-	           is = clientSocketOnServer.getInputStream();
-	           writer = new PrintWriter(os,true);
-	           reader = new BufferedInputStream(is);
+	        	os = clientSocketOnServer.getOutputStream(); 
+	        	is = clientSocketOnServer.getInputStream();
+	        	writer = new PrintWriter(os,true);
+	        	reader = new BufferedInputStream(is);
 	                      
-	           Scanner scan = new Scanner(System.in);
-	 	      System.out.println("Que voulez-vous faire ?");
+	        	Scanner scan = new Scanner(System.in);
+	        	System.out.println("Que voulez-vous faire ?");
 	 	      
-	 	     int choix;
+	 	    int choix;
 			do {
-				System.out.println((1) + " : " + "Ajouter des musiques");
-				System.out.println((2) + " : " + "Ecouter des musiques");
-				System.out.println((3) + " : " + "Se déconnecter");
-				choix = scan.nextInt();
-	 	     }while(choix==3);
+					System.out.println((1) + " : " + "Ajouter des musiques");
+					System.out.println((2) + " : " + "Ecouter des musiques");
+					System.out.println((3) + " : " + "Se déconnecter");
+					choix = scan.nextInt();
+	 	    
 
-	           System.out.println("MON CHOIX" + choix);
+				System.out.println("MON CHOIX" + choix);
 	           
-	         switch(choix) {
-	         
-	         case 1: 
-	        	 System.out.println("J'ajoute des musiques");
-	        	 onwnList.sendFileList();
-	        	 break;
-	        	 
-	         case 2: 
-	        	 System.out.println("J'écoute la musique");
-	        	 writer.write(choix);
-		         writer.flush();
-		         displayMusics(); //J'affiche les musiques et en joue une
-
-	        	 break;
-	         case 3: 
-		         System.out.println("Je sors");
+		         switch(choix) {
 		         
-		         // je dois envoyer la demande de supprimer du hashtable l'id de ce client
-		         Thread.sleep(5000);
-		         writer.close();
-		         reader.close();
-		         readObj.close();
-		         writeObj.close();
-		          
-		        
-	        	 break;
-	         }
+		         case 1: 
+		        	 System.out.println("J'ajoute des musiques");
+		        	 writer.write(choix);
+			         writer.flush();
+		        	 onwnList.sendFileList();
+		        	 break;
+		        	 
+		         case 2: 
+		        	 System.out.println("J'écoute la musique");
+			         displayMusics(); //J'affiche les musiques et en joue une
+	
+		        	 break;
+		         case 3: 
+			         System.out.println("Je sors");
+			         writer.write(choix);
+			         writer.flush();
+			         
+			         // je dois envoyer la demande de supprimer du hashtable l'id de ce client
+			         Thread.sleep(5000);
+			         writer.close();
+			         reader.close();
+			         readObj.close();
+			         writeObj.close();
+			          
+			        
+		        	 break;
+		         }
+		         
+			 }while(choix!=3);
 	           
 	           response = read();
 	           

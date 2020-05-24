@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 //NOTRE CLIENT EN TANT QUE CLIENT
-public class MainServer{
+public class ClientSocket{
    
     private Socket clientSocket;
     private String musiqueChoice;
@@ -18,9 +18,9 @@ public class MainServer{
     
     private DialogueActionGUI dialogueActionGUI;
     
-	private int port;
+	private int port; //c'est le port d'écoute de mon client
    
-   public MainServer(int port) {
+   public ClientSocket(int port) {
 	   this.port=port;  
    }
    
@@ -31,14 +31,14 @@ public class MainServer{
     				try {
 						serverAddress = InetAddress.getByName(serverName);
 
-						clientSocket = new Socket(serverAddress, port);
+						clientSocket = new Socket(serverAddress, 4501); //pour créer mon socketClient je me connecte au port dispo PAS le port d'écoute
 					} catch (UnknownHostException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 
-    				dialogueActionGUI = new DialogueActionGUI (clientSocket);
+    				dialogueActionGUI = new DialogueActionGUI (clientSocket, port);
     			}
     		}
     	}).start();

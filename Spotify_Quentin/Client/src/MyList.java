@@ -41,6 +41,7 @@ public class MyList {
 	}
 	
 	public void sendFileList () {
+		System.out.println("j'envoie bien");
 		try {
 			list=getArrayListMusics();
 			OutputStream os = sockEchange.getOutputStream();
