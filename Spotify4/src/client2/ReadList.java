@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 public class ReadList implements Runnable {
 	
-	private Connexion1ToServer_AcrossThread connexion;
 
 	private InputStream is = null;
 	private DataInputStream readObj;
@@ -34,13 +33,11 @@ public class ReadList implements Runnable {
 	
 	public ReadList(Socket socket) {
 		
-//		connexion = new Connexion1ToServer_AcrossThread();
-
 		this.socket = socket;
 //		this.list = list;
 		
 		try {
-	        is = socket.getInputStream().nullInputStream();
+	        is = socket.getInputStream();
 //			is.reset();
 			
 		       
@@ -95,7 +92,7 @@ public class ReadList implements Runnable {
 //		 do {		
 			try {
 								
-			byte[] bytes = new byte[1024];
+			byte[] bytes = new byte[4096];
 	        is=socket.getInputStream();
 
 //			InputStream in = socket.getInputStream();
@@ -108,7 +105,7 @@ public class ReadList implements Runnable {
 				}
 			};
 //			out = new FileOutputStream(newTempFile);
-			out = new FileOutputStream(newTempFile).nullOutputStream();
+			out = new FileOutputStream(newTempFile);
 			 System.out.println("out  : " + out.toString()); 			          
 			 System.out.println("is  : " + is.available()); 			          
 
@@ -116,28 +113,21 @@ public class ReadList implements Runnable {
 	        
 //	        if ((count = in.read(bytes)) > 0){
 //	        out.notify();
+	        			          
 	        
-	        count = is.read(bytes);
- System.out.println("COUNT reaList()  : " + count); 			          
-	        
-	        while (count > 0) {
-//		        	count += is.read(bytes);
+	        while ((count = is.read(bytes)) > 0) {
 		        	
 			          out.write(bytes, 0, count);
-			          count = is.read(bytes);
 		            
-			          System.out.println("COUNT boucle1 reaList()  : " + count); 			          
-		          System.out.println("newTempFile getPath : " + newTempFile); 
-
-		          out.flush();
-//		          out.close();		            
 		        }
 	
+	          out.flush();
+
  System.out.println("Sortie de la première boucle readList () ¨¨¨¨¨¨¨¨¨¨");			
 
 		        bytes = new byte[0];
-			
-//		        out.close();
+		        is.close();
+		        out.close();
 //		    	socket.setKeepAlive(true);	        
 	        
 		        InputStream ips = null;
@@ -161,24 +151,12 @@ public class ReadList implements Runnable {
 					    	}
 				    	}
 				    	
-				    	br.close();
-				    	ips.close();
-				    	ipsr.close();
 				    	
-
-//	        }
-//		        socket.setKeepAlive(true);
-				
-//				Thread.currentThread().interrupt();
+				    	
 			
 			} catch ( /* ClassNotFoundException | */ IOException e) {
 				e.printStackTrace();
 			} 
-		   /*catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		  */
-
 			finally {
 				
 				if (arraylist.isEmpty()) {
@@ -186,32 +164,25 @@ public class ReadList implements Runnable {
 					System.out.println("En attente de réception d'une list non vide");
 				}
 				else {
-					if (arraylist.size()>1) {
-						
+					if (arraylist.size()>1) {					
 						for (String item : arraylist) {
 							if (item.contentEquals("EMPTY LIST")) {
 								arraylist.remove(item);
 							}
-							System.out.println("LIST arrayList ; ReadList : " + item);
+							System.out.println(item);
 						}
-					}
-					
+					}					
 				}
-				
-				
+					
+				try {
+			        socket.close();
+			        
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			
 			}
-//	 } while (arraylist.contains("EMPTY LIST"));
-/*		br.close();
-    	ips.close();
-    	ipsr.close();
- */
-/*	try {
-	out.close();
-} catch (IOException e) {
-	// TODO Auto-generated catch block
-	e.printStackTrace();
-}
-*/
+
 				return arraylist;
 	  }
 }

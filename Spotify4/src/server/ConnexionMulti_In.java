@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.*;
+import java.rmi.server.SocketSecurityException;
 import java.util.*;
 import java.util.concurrent.Exchanger;
 
@@ -49,7 +50,7 @@ public class ConnexionMulti_In {
 				clientSocket = mySkServer.accept();
 				System.out.println("connection request received");
 				
-				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, globalList));
+				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, localAddress, 4500));
 				ClientNo++;
 				
 
@@ -74,7 +75,12 @@ public class ConnexionMulti_In {
 */		
 	}
 	
-	static public void addList(ArrayList <String> newList) {
+	public ServerSocket getServerSocket () {
+		return mySkServer;
+		
+	}
+	
+	public void addList(ArrayList <String> newList) {
 		
 		int cpt =0;
 		

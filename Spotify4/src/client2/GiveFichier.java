@@ -22,7 +22,6 @@ public class GiveFichier implements Runnable{
 	private /* ArrayList<String> */ File list = null;
 	private Socket socket;
 	private PrintWriter writer;
-	private Connexion1ToServer_AcrossThread connexion;
 	
 	private ObjetSerialisable objList;
 
@@ -52,7 +51,7 @@ public class GiveFichier implements Runnable{
 			try {
 				
 				if(socket.isClosed()) {
-					System.out.println("Activité socket GiveFichier STOP !!!!!!!!!!!!");
+					System.out.println("Activité socket GiveFichier est arrêtée !!!!!!!!!!!!");
 				
 				}
 				
@@ -64,7 +63,7 @@ public class GiveFichier implements Runnable{
 System.out.println("Debut List transfert !!!!!!!!!!!!!!!!!!!!!!");
 			       
 				
-				byte[] bytes = new byte[2048];
+				byte[] bytes = new byte[4096];
 				InputStream in = new FileInputStream(list);
 //				FileOutputStream bufo = new FileOutputStream(list);
 				
@@ -78,17 +77,20 @@ System.out.println("Debut List transfert !!!!!!!!!!!!!!!!!!!!!!");
 		        in.close();
 		        os.flush();
 
-//		      socket.setKeepAlive(true);	        
-//		        os.close();
-		        
-//		        os.nullOutputStream();
-
-				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 
+			finally {
+				try {
+					os.close();
+			        socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			
 			System.out.println("Fin List transfert !!!!!!!!!!!!!!!!!!!!!!");
 	
 		   	 

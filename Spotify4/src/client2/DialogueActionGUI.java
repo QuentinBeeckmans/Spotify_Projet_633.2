@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
@@ -20,9 +22,7 @@ import server.AcceptClientD;
 
 public class DialogueActionGUI {
 
-	private Connexion1ToServer_AcrossThread connexion;
-
-	private static String [] listChoiceAction = {"get list", "CLOSE"};
+	private static String[] listChoiceAction = { "get list", "CLOSE" };
 	private boolean closeConnexion = false;
 	private Socket socketOnServer;
 	private PrintWriter writer = null;
@@ -32,268 +32,213 @@ public class DialogueActionGUI {
 	private ObjectOutputStream writeObj = null;
 	private ObjectInputStream readObj = null;
 	private Data_OwnList onwnList;
-	private ArrayList <String> serverList;
+	private ArrayList<String> serverList;
 	private Socket mySocketTemp;
-	
+	private Socket echangeSocketTemp;
+
+	private InetAddress serverAdress;
+	private int port;
+
 	private Connexion_read connexionRead;
-	
+
 	private File newFile;
-	
+
 	private GiveFichier sendFile;
 	private ReadList readList;
 //	private /* ThreadToTransf */ TransfertList listThread;
-	
-	public DialogueActionGUI (Socket socket) {
-		
+
+	public DialogueActionGUI(Socket socket, InetAddress serverAdress, int port) {
+
 //		connexion = new Connexion1ToServer_AcrossThread();
-		
-/*		this.socketOnServer = connexion.getSocket();
-		String response = null ;
-		
-		onwnList = new Data_OwnList(socketOnServer);
-*/
-		
-		while(true){
+
+		/*
+		 * this.socketOnServer = connexion.getSocket(); String response = null ;
+		 * 
+		 * onwnList = new Data_OwnList(socketOnServer);
+		 */
+
+		this.serverAdress = serverAdress;
+		this.port = port;
+
+		while (true) {
 
 			this.socketOnServer = socket;
-			String response = null ;
-			
-			onwnList = new Data_OwnList(socketOnServer);
-			
-	        try {
-	        	
-	    		while(!socketOnServer.isClosed() /* || response != "CLOSE" */){
+			String response = null;
 
-	        	
+			onwnList = new Data_OwnList(socketOnServer);
+
+			try {
+
+				while (!socketOnServer.isClosed() /* || response != "CLOSE" */) {
+
 //	        	SocketOnServer.setKeepAlive(true);
 
-				os = socketOnServer.getOutputStream(); 
-	           is = socketOnServer.getInputStream();
-	           writer = new PrintWriter(os,true);
-		       
-	           reader = new BufferedInputStream(is);
-	           
-				newFile = File.createTempFile("listTempReçue", ".txt");
-
-	           
-//	           writeObj = new ObjectOutputStream (os); 
-//	           readObj = new ObjectInputStream(is);
-	                      
-	           Scanner scan = new Scanner(System.in);
-	           
-//	          sendList();
-	          
-/*	          listThread = new ThreadToTransf (sendFile = new GiveFichier(onwnList.listFichierAEchange(), clientSocketOnServer));
-	          
-	          listThread.start();
-*/	          
-	          
-//	          sendFile.run();
-//	          sendFile.sendFile();
-//	          listThread.stop();
-	           
-	           System.out.println(" AVANT nouvelle connexion");
-	           
-/*	         Connexion_Give connexionGive = new Connexion_Give(onwnList.listFichierAEchange());
-		     Thread t = new Thread (sendFile = connexionGive.transmisson());
-*/		     Thread t = new Thread (sendFile = new GiveFichier(onwnList.listFichierAEchange(), socketOnServer));
-		     t.start(); 
-		      sendFile.run();
-
-		      sendFile.sendFile();
-//		      t.join();
-		      
-		      
-		      //serverList = listThread.getList();
-		      
-		      
-	           
-	 	      System.out.println("QUe voulez-vous faire ?");
-	 	      
-	 	      for (int i = 0; i < listChoiceAction.length; i++) {
-				System.out.println((i+1) + " : " + listChoiceAction[i]);
-			}
-	 	      
-	           //On traite la demande du client en fonction de la commande envoyée
-	 //          String command = getCommand();
-	 	      int choix = scan.nextInt();
-	
-	           String choice = Integer.toString(choix);
-	          
-	           System.out.println("MON CHOIX" + choice);
-	           
-	           //On envoie la réponse au serveur
-	           writer.write(choice);
-	           
-	           writer.flush();
-	           
-	           System.out.println("Commade saisie : " + choice +"\t Envoyée au serveur");
-	           
-	           response = read();
-	           System.out.println("Réponse SERVEUR av Switch : " + response);
-
-	           
-	           switch (response) {
-			   
-			   case "1":
-//				   readList();
-				   System.out.println("J'ai bien choisi get music");
-				   System.out.println();
-/*				   listThread = new ThreadToTransf (readList = new ReadList(serverList, clientSocketOnServer));
-				   listThread.start();
-				   readList.run();
-*/					connexionRead = new Connexion_read();
-				   Thread t1 = new Thread (readList = connexionRead.reception());
-				      t1.start();
-				      
-//				      if (reader.read() <= 0) {
-					      readList.run(); 
-					      serverList = readList.readList();
-/*				      }
-				      else {
-				    	  t1.wait();
-//				      		t1.wait();
-				      }
+					
+			//		 Socket echangeSwitchWrite = new Socket(serverAdress, 4515);
+/*					  
+					 ServerSocket servSockTemp = new ServerSocket(4501); 
+					 Socket echangeSwitchRead = servSockTemp.accept();
 */
-/*				   
-	        		 System.out.println("Début de réception !!!!!!!!!");
+//					 os = echangeSwitchWrite.getOutputStream(); 
+//					 is = echangeSwitchRead.getInputStream();
+					 
+					os = socketOnServer.getOutputStream();
+//					is = socketOnServer.getInputStream();
 
-		        	 if (readList.isRunning()) {
-		        		 serverList = readList.readList();
-		        		 System.out.println("Réception !!!!!!!!!");
+					writer = new PrintWriter(os, true);
 
-		        	 }
-		        	 else {
-		        		 System.out.println("Problème de réception !!!!!!!!!");
-		        	 }
-		        	 
-*/		        	 
-		        	 for (String item : serverList) {
-		        		 System.out.println("reçu par serveur " + item);
-		        	 }
-		        	 System.out.println();
-				   System.out.println();
-				   //		           response = read();
-				   break;
-				   
-			   case "CLOSE":
-//				   long startTime = System.currentTimeMillis();
-//				   System.out.println(startTime);
-	               Thread.sleep(5000);
-	               
+//					reader = new BufferedInputStream(is);
 
-		           writer.close();
-		           reader.close();
-		           readObj.close();
-		           writeObj.close();
-		           socketOnServer.isClosed();
-		           break;
-	            
-	           default:
-	        	   System.out.println("problème de réception serveur !");
-	        	   break;
-	           }
-	           
-	        }
-	        
-	        }catch (IOException e) {
-		        e.printStackTrace();
-		    } catch (InterruptedException e) {
+					newFile = File.createTempFile("listTempReçue", ".txt");
+
+					Scanner scan = new Scanner(System.in);
+
+					echangeSocketTemp = new Socket(serverAdress, 4505);
+					Thread t = new Thread(
+							sendFile = new GiveFichier(onwnList.listFichierAEchange(), echangeSocketTemp));
+					t.start();
+					sendFile.run();
+
+					sendFile.sendFile();
+
+					System.out.println("QUe voulez-vous faire ?");
+
+					for (int i = 0; i < listChoiceAction.length; i++) {
+						System.out.println((i + 1) + " : " + listChoiceAction[i]);
+					}
+
+					// On traite la demande du client en fonction de la commande envoyée
+					// String command = getCommand();
+					int choix = scan.nextInt();
+
+					String choice = Integer.toString(choix);
+
+					System.out.println("MON CHOIX" + choice);
+
+					// On envoie la réponse au serveur
+					writer.write(choice);
+
+					writer.flush();
+
+					System.out.println("Commade saisie : " + choice + "\t Envoyée au serveur");
+
+					response = read();
+					System.out.println("Réponse SERVEUR av Switch : " + response);
+
+					switch (response) {
+
+					case "1":
+						System.out.println("J'ai bien choisi get music");
+						System.out.println();
+
+						ServerSocket servSock = new ServerSocket(45000);
+						echangeSocketTemp.close();
+	//					Socket socketTemp = servSock.accept();
+						echangeSocketTemp = servSock.accept();
+						
+						Thread t1 = new Thread(readList = new ReadList(echangeSocketTemp));
+						t1.start();
+						readList.run();
+						serverList = readList.readList();
+
+						for (String item : serverList) {
+							System.out.println("reçu par serveur " + item);
+						}
+						System.out.println();
+						System.out.println();
+
+						break;
+
+					case "CLOSE":
+						Thread.sleep(5000);
+
+						writer.close();
+						reader.close();
+						readObj.close();
+						writeObj.close();
+						socketOnServer.isClosed();
+						break;
+
+					default:
+						System.out.println("problème de réception serveur !");
+						break;
+					}
+
+				}
+
+			} catch (IOException e) {
 				e.printStackTrace();
-			}
-	        finally {
-	        	
-	        	System.out.println("LA connexion est coupé suite à un arrêt de la connexion du CLIENT");
-	               try {
-	            	   socketOnServer.close();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+
+				System.out.println("LA connexion est coupé suite à un arrêt de la connexion du CLIENT");
+				try {
+					socketOnServer.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-	 	    }
-		}      
-		
+			}
+		}
+
 	}
-	
-	//La méthode pour lire les réponses
-	   private String read() throws IOException{ 
-		   
-		   InputStream isRead = socketOnServer.getInputStream();
-           reader = new BufferedInputStream(isRead);
 
-	      String response;
-	      int stream;
-	      
-	      byte[] b = new byte[4096];
-/*	      while ( (stream = reader.read(b)) >=0 ) {
-		      
-		      response = new String(b, 0, stream);
-		      }
-*/		      
-	      stream = reader.read(b);
-	      response = new String(b, 0, stream); 
-		  
-	      
-		      // remise à zèro du buffer (sécurité peut-être pas obligatoire)
-		      b = new byte [8] ;
-//	      stream = reader.read(b);
-//	      response = new String(b, 0, stream); 
-	      
-	      return response;
+	// La méthode pour lire les réponses
+	private String read() throws IOException {
 
-	   }
-/*	   
-	   public synchronized void readList () {
-		   ArrayList<String> affichList = new ArrayList<String>();
-		   Thread t = new Thread();
-		   
-			try {
-				t.start();
-				
-				serverList = (ArrayList<String>) readObj.readObject();
-				
-				readObj.reset();
-//				t.stop();
-				
-			} catch (ClassNotFoundException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		   
-			if (!serverList.isEmpty()) {
-				String itemAffich = "";
-				
-				for (String item : serverList) {
-//					itemAffich = item.substring(item.lastIndexOf("/"), item.indexOf(";"));
-					affichList.add(item.substring(item.lastIndexOf("/"), item.indexOf(";")) );
-				}
-			}
-			Collections.sort(affichList);
-			
-			System.out.println();
-			System.out.println("Liste des musiques en streaming");
-			System.out.println();
-			
-			for (String item : affichList) {
-				System.out.println(item);
-			}
-			
-	   }
-	   
-/*	   private synchronized void sendList (){
-		   Thread t = new Thread();
-			try {
-				t.start();
-				
-				writeObj.writeObject(onwnList.listFichierAEchange());
-				writeObj.flush();
-				writeObj.reset();
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		   	 
-	   }
-*/
+		InputStream isRead = socketOnServer.getInputStream();
+		reader = new BufferedInputStream(isRead);
+
+		String response;
+		int stream;
+
+		byte[] b = new byte[4096];
+
+		stream = reader.read(b);
+		response = new String(b, 0, stream);
+
+		// remise à zèro du buffer (sécurité peut-être pas obligatoire)
+		b = new byte[0];
+
+		return response;
+	}
+	/*
+	 * public synchronized void readList () { ArrayList<String> affichList = new
+	 * ArrayList<String>(); Thread t = new Thread();
+	 * 
+	 * try { t.start();
+	 * 
+	 * serverList = (ArrayList<String>) readObj.readObject();
+	 * 
+	 * readObj.reset(); // t.stop();
+	 * 
+	 * } catch (ClassNotFoundException | IOException e) { // TODO Auto-generated
+	 * catch block e.printStackTrace(); }
+	 * 
+	 * if (!serverList.isEmpty()) { String itemAffich = "";
+	 * 
+	 * for (String item : serverList) { // itemAffich =
+	 * item.substring(item.lastIndexOf("/"), item.indexOf(";"));
+	 * affichList.add(item.substring(item.lastIndexOf("/"), item.indexOf(";")) ); }
+	 * } Collections.sort(affichList);
+	 * 
+	 * System.out.println(); System.out.println("Liste des musiques en streaming");
+	 * System.out.println();
+	 * 
+	 * for (String item : affichList) { System.out.println(item); }
+	 * 
+	 * }
+	 * 
+	 * /* private synchronized void sendList (){ Thread t = new Thread(); try {
+	 * t.start();
+	 * 
+	 * writeObj.writeObject(onwnList.listFichierAEchange()); writeObj.flush();
+	 * writeObj.reset();
+	 * 
+	 * } catch (IOException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); }
+	 * 
+	 * }
+	 */
 }

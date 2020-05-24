@@ -40,7 +40,7 @@ public class Connexion1ToServer_AcrossThread {
 				
 					while (mySocket.isConnected()) {
 					
-						dialogueActionGUI = new DialogueActionGUI (mySocket);
+						dialogueActionGUI = new DialogueActionGUI (mySocket, serverAddress, port);
 					
 //						fileList = new Data_OwnList(mySocket) ;
 						

@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -61,13 +63,19 @@ public class AcceptClientD implements Runnable {
 	
 	private File fileTemp;
 	private File totalListFile;
+	
+	private InetAddress serverAdress;
+	private int port;
+	private Socket echangeSocketTemp;
 
 	//Constructor
-	public AcceptClientD (Socket clientSocketOnServer, int clientNo, ArrayList <String> serverList)
+	public AcceptClientD (Socket clientSocketOnServer, int clientNo, InetAddress serverAddress, int port)
 	{
 		this.clientSocketOnServer = clientSocketOnServer;
 		this.clientNumber = clientNo;
 		this.serverList = serverList;
+		this.serverAdress = serverAddress;
+		this.port = port;
 		
 
 	}
@@ -79,18 +87,31 @@ public class AcceptClientD implements Runnable {
 		System.out.println("Socket is available for connection"+ clientSocketOnServer);
 		   	 	
 	    boolean closeConnexion = false;
+	    
+	    boolean serverActivity = true;
+	    
 	      //tant que la connexion est active, on traite les demandes
-	    while(!clientSocketOnServer.isClosed()){
-	        
+	    while(!clientSocketOnServer.isClosed() ){
 	    	
 	         try {
+//	        	 serverActivity = serverAdress.isReachable(5000);
+
 //	 	    	clientSocketOnServer.setKeepAlive(true);
 	        	 
+//	        	 Socket echangeSwitchWrite = new Socket(serverAdress, 4510);
+	 	           
+/*	 	           ServerSocket servSockTemp = new ServerSocket(4502);
+	 	          Socket echangeSwitchRead = servSockTemp.accept();
+*/
+//				os = echangeSwitchWrite.getOutputStream(); 
+//	           is = echangeSwitchRead.getInputStream();
+	        	 
 		         os = clientSocketOnServer.getOutputStream(); 
-		         is = clientSocketOnServer.getInputStream();
+//		         is = clientSocketOnServer.getInputStream()
+		        		 ;
 		         writer = new PrintWriter(os,true);
 
-		         reader = new BufferedInputStream(is);
+//		         reader = new BufferedInputStream(is);
 
 //		         readObj = new ObjectInputStream(is);
 //		         writeObj = new ObjectOutputStream (os);
@@ -98,104 +119,37 @@ public class AcceptClientD implements Runnable {
 		           
 	        	 int cpt = 0;
 	        	 
-//	        	 Thread.sleep(20000);
-	        	 
 
-	        	 //	        	 readList ();
-
-/*	        	 listThreadReceptList = new ThreadToTransf (readList = new ReadList(clientList, clientSocketOnServer));
-	        	 listThreadReceptList.start();
-	        	 readList.run();
-*/	        	 
-	        	 
-//				       while (clientList.isEmpty() && clientList == null) 
- /*				    	   connexionRead = new Connexion_read();
-							 Thread t = new Thread (readList = connexionRead.reception());
-*/				        	 Thread t = new Thread (  readList = new ReadList (clientSocketOnServer)  )  ;
+	        	 ServerSocket servSock = new ServerSocket(4505);
+	           echangeSocketTemp = servSock.accept();
+	        	 Thread t = new Thread (  readList = new ReadList (echangeSocketTemp)  )  ;
 						      t.start();
-			//			      t.sleep(3000);
-//						      if (reader.read() <= 0) {
 						      readList.run(); 
-						      System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
 				    	   clientList = readList.readList();
-						      System.out.println(" On cherche une liste !!!!!!!!!!!!!!");
-//				       }
-				      System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
 
-				      fileTemp = readList.getTempListFile();
-
-/*			      }
-			      else {
-			    	  t.wait(); 
-//			      		t1.wait();
-			      }
-/*	        	 Thread t = new Thread (readList = new ReadList (reader));
-			      t.start();
-//			      t.wait(5000);
-
-			      readList.run();
-//			      t.interrupt();
-
-			      clientList = readList.readList();
-*/
-			      if(clientList.isEmpty() || clientList.contains("EMPTY LIST")) {
 			    	  while (clientList.isEmpty() || clientList.contains("EMPTY LIST")) {
-//			    		  t.sleep(10000);
-//					      clientList = listThread.getList();
 					      clientList = readList.readList();
 					      
-System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
-
 			    	  }			    	  
 			    		  
-			      }
-			      else {
-		    		  
-		    		  System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
-		    	  }
+				      fileTemp = readList.getTempListFile();
 	        	 
         		 System.out.println("Début de réception !!!!!!!!!");
 
-/*	        	 if (readList.isRunning()) {
-	        		 clientList = readList.readList();
-	        		 System.out.println("Réception !!!!!!!!!");
-
-	        	 }
-	        	 else {
-	        		 System.out.println("Problème de réception !!!!!!!!!");
-	        	 }
-	        	 
-*/	        	 
+        	 
 	        	 for (String item : clientList) {
 	        		 System.out.println("reçu par Client " + item);
 	        	 }
 	        	 
-//	        	 listThreadReceptList.interrupt();
-/*	        	 
-	        	 for (String item : listEchang) {
-	        		 cpt++;
-	        		 System.out.println(cpt + " : " + item);
-	        	 }
-*/	        	 
-//                 listEchang = listExchange.listReceived();
 
 	            //On attend la demande du client            
 	            response = read();
 	        	 	
 		           System.out.println("Réponse du client av Switch : " + response);
-  	 	            
-	            //On affiche quelques infos, pour le débuggage
-/*	            String debug = "";
-	            debug = "Thread : " + Thread.currentThread().getName() + ". ";
-	            debug += "Demande de l'adresse : " + remote.getAddress().getHostAddress() +".";
-	            debug += " Sur le port : " + remote.getPort() + ".\n";
-	            debug += "\t -> Commande reçue : " + response + "\n";
-	            System.err.println("\n" + debug);
-*/	            
-	            //On traite la demande du client en fonction de la commande envoyée
+
+		           //On traite la demande du client en fonction de la commande envoyée
 	            String toSend = "path music";
 	            
-	            /* response.toUpperCase() */
 	            
 	            switch( response){
 	               case "1" :
@@ -203,22 +157,17 @@ System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
 	                  response="1";
 	                  System.out.println("SWITCH COTE SERVEUR : " + response);
 	                  writer.write(response);							
-
-	                  //	                  sendList ();
-/*
-	                  listThreadTransfList = new ThreadToTransf (sendFile = new GiveFichier(clientList, clientSocketOnServer));
-	    	          
-	                  listThreadTransfList.start();
-	    	          
-	    	          sendFile.run();
-*/    //	    	          listThreadTransfList.interrupt();
-	    	          
+	                  writer.flush();
 	                  
 	                  totalListFile = fileTemp;
-	                  Connexion_Give connexionGive = new Connexion_Give(totalListFile);
-	     		     Thread t1 = new Thread (sendFile = connexionGive.transmisson());
-//	                  Thread t1 = new Thread(sendFile = new GiveFichier (totalListFile));
+	                  
+			           Socket socketTemp = new Socket(serverAdress, 45000);
+//			           echangeSocketTemp.close();
+//			           echangeSocketTemp = new Socket(serverAdress, 45000);
+
+	                  Thread t1 = new Thread(sendFile = new GiveFichier (totalListFile, socketTemp));
 	                  t1.start();
+	                  t1.wait(5000);
 	                  sendFile.run();
 	                  sendFile.sendFile();
 	                  break;
@@ -295,6 +244,7 @@ System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
 	      int stream;
 	      int cpt = 0;
 	      
+	      is = clientSocketOnServer.getInputStream();
          reader = new BufferedInputStream(is);
 
 	      byte[] b = new byte[4096];
@@ -325,10 +275,8 @@ System.out.println(" Il doit y avoir une liste !!!!!!!!!!!!!!");
 	
 	   public synchronized void readList () {
 		   
-		   Thread t = new Thread();
 		   
 		   try {
-			t.start();
 			  
 			clientList = (ArrayList<String>) readObj.readObject();
 			
