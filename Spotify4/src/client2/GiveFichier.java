@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -19,8 +20,10 @@ import java.util.ArrayList;
 public class GiveFichier implements Runnable{
 
 	private OutputStream os = null;
+	private InputStream in = null;
 	private /* ArrayList<String> */ File list = null;
 	private Socket socket;
+//	private InetAddress serverAdress;
 	private PrintWriter writer;
 	
 	private ObjetSerialisable objList;
@@ -32,6 +35,10 @@ public class GiveFichier implements Runnable{
 		this.list = listFile;
 		this.socket = socket;
 		
+//		this.serverAdress = serverAdress;
+		
+		
+		
 	}
 	
 	@Override
@@ -41,8 +48,16 @@ public class GiveFichier implements Runnable{
 
 //		sendFile ();
 		
-	
-		
+/*		try {
+			this.socket = new Socket(serverAdress, 4505);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+/*		
+		while (socket.isConnected()) {
+			sendFile();
+		}
+*/		
 		
 	}
 	
@@ -64,7 +79,7 @@ System.out.println("Debut List transfert !!!!!!!!!!!!!!!!!!!!!!");
 			       
 				
 				byte[] bytes = new byte[4096];
-				InputStream in = new FileInputStream(list);
+				in = new FileInputStream(list);
 //				FileOutputStream bufo = new FileOutputStream(list);
 				
 //		        OutputStream out = socket.getOutputStream();
@@ -74,28 +89,36 @@ System.out.println("Debut List transfert !!!!!!!!!!!!!!!!!!!!!!");
 		            os.write(bytes, 0, count);
 		        }
 		        
-		        in.close();
 		        os.flush();
 
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
 
-			finally {
+/*			finally {
 				try {
-					os.close();
-			        socket.close();
+//			        in.close();
+//					os.close();
+//			        socket.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			
+*/			
 			
 			System.out.println("Fin List transfert !!!!!!!!!!!!!!!!!!!!!!");
 	
 		   	 
 	   }
 
+	
+	public OutputStream getOutPutStreamBuffer () {
+		return os;
+	}
+	
+	public  InputStream getInPutStreamBuffer () {
+		return in; 
+	}
 	
 	
 }

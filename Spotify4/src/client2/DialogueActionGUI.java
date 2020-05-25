@@ -33,8 +33,8 @@ public class DialogueActionGUI {
 	private ObjectInputStream readObj = null;
 	private Data_OwnList onwnList;
 	private ArrayList<String> serverList;
-	private Socket mySocketTemp;
-	private Socket echangeSocketTemp;
+	private Socket socketRead;
+	private Socket socketGive;
 
 	private InetAddress serverAdress;
 	private int port;
@@ -60,7 +60,7 @@ public class DialogueActionGUI {
 		this.serverAdress = serverAdress;
 		this.port = port;
 
-		while (true) {
+//		while (true) {
 
 			this.socketOnServer = socket;
 			String response = null;
@@ -93,13 +93,33 @@ public class DialogueActionGUI {
 
 					Scanner scan = new Scanner(System.in);
 
-					echangeSocketTemp = new Socket(serverAdress, 4505);
-					Thread t = new Thread(
-							sendFile = new GiveFichier(onwnList.listFichierAEchange(), echangeSocketTemp));
-					t.start();
-					sendFile.run();
 
+					socketGive = new Socket(socketOnServer.getInetAddress(), 4505);
+					
+					while (!socketGive.isClosed()) {
+
+					Thread t = new Thread(
+					sendFile = new GiveFichier(onwnList.listFichierAEchange(), socketGive));
+					t.start();
+//					t.sleep(2000);
+					
+					sendFile.run();
+					
 					sendFile.sendFile();
+
+//					t.sleep(5000);
+					
+					if (!socketGive.getReuseAddress()) {
+						
+						sendFile.getOutPutStreamBuffer().close();
+			    		
+						sendFile.getInPutStreamBuffer ().close();
+						socketGive.close();
+					}
+			
+					}
+
+					while (true) {
 
 					System.out.println("QUe voulez-vous faire ?");
 
@@ -131,16 +151,31 @@ public class DialogueActionGUI {
 						System.out.println("J'ai bien choisi get music");
 						System.out.println();
 
-						ServerSocket servSock = new ServerSocket(45000);
-						echangeSocketTemp.close();
+						ServerSocket servSock = new ServerSocket(4505);
+	//					echangeSocketTemp.close();
 	//					Socket socketTemp = servSock.accept();
-						echangeSocketTemp = servSock.accept();
+						socketRead = servSock.accept();
 						
-						Thread t1 = new Thread(readList = new ReadList(echangeSocketTemp));
+						System.out.println("J'ai bien choisi get music");
+
+						while (!socketRead.isClosed()) {
+						Thread t1 = new Thread(readList = new ReadList(socketRead));
 						t1.start();
 						readList.run();
 						serverList = readList.readList();
-
+						
+						while (serverList.contains("EMPTY LIST")) {
+							serverList = readList.readList();
+						      
+				    	  }			    	  
+				    		
+				    	  readList.getOutPutStreamBuffer().close();
+				    		
+				    	  readList.getInPutStreamBuffer ().close();
+				    	  socketRead.close();
+				    	  servSock.close();
+						}
+						
 						for (String item : serverList) {
 							System.out.println("reçu par serveur " + item);
 						}
@@ -165,8 +200,10 @@ public class DialogueActionGUI {
 					}
 
 				}
+			}
 
-			} catch (IOException e) {
+			} 
+			catch (IOException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -180,7 +217,7 @@ public class DialogueActionGUI {
 					e.printStackTrace();
 				}
 			}
-		}
+//		}
 
 	}
 

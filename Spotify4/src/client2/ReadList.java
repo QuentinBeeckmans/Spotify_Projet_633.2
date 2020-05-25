@@ -13,6 +13,8 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -20,11 +22,13 @@ public class ReadList implements Runnable {
 	
 
 	private InputStream is = null;
+	private OutputStream out = null;
 	private DataInputStream readObj;
 	private ArrayList<String> arraylist = new ArrayList<>(); 
 	private File list = null;
 	private boolean isRunning = false;
 	private Socket socket;
+//	private ServerSocket servSock;
 	private BufferedInputStream reader = null;
 	
 	private File newTempFile;
@@ -37,7 +41,7 @@ public class ReadList implements Runnable {
 //		this.list = list;
 		
 		try {
-	        is = socket.getInputStream();
+//	        is = socket.getInputStream();
 //			is.reset();
 			
 		       
@@ -45,7 +49,8 @@ public class ReadList implements Runnable {
 			
 	        newTempFile = File.createTempFile("MaListTemp", ".txt");
 
-			
+//			servSock = new ServerSocket(4505);
+
 			
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -58,9 +63,11 @@ public class ReadList implements Runnable {
 		
 		isRunning = true;
 		
-/*		while (true) {
-			
-			this.socket = connexion.getSocket();
+ /*       try {
+			socket = servSock.accept();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 */		
 
@@ -76,7 +83,7 @@ public class ReadList implements Runnable {
 	}
 	
 	
-	public synchronized File getTempListFile () {
+	public File getTempListFile () {
 		
 		System.out.println("Run READLIST -- ");
 
@@ -86,11 +93,16 @@ public class ReadList implements Runnable {
 	}
 	
 	 public synchronized ArrayList<String> readList () {
-		 OutputStream out = null;
+		 
 //System.out.println("LIST arrayList ; ReadList ; readList() :  TEST INIT ");
 		
-//		 do {		
 			try {
+//				 while (arraylist.size()<1 && arraylist.contains("EMPTY LIST")) {
+					
+					 System.out.println(("EMPTY LIST TEST : " + arraylist.contains("EMPTY LIST")));
+					 
+//					 is = socket.getInputStream();
+
 								
 			byte[] bytes = new byte[4096];
 	        is=socket.getInputStream();
@@ -123,16 +135,10 @@ public class ReadList implements Runnable {
 	
 	          out.flush();
 
- System.out.println("Sortie de la première boucle readList () ¨¨¨¨¨¨¨¨¨¨");			
-
 		        bytes = new byte[0];
-		        is.close();
-		        out.close();
-//		    	socket.setKeepAlive(true);	        
-	        
+		        	        
 		        InputStream ips = null;
 		        
-//			    if (newTempFile.isFile()) {
 						ips = new FileInputStream(newTempFile);
 					
 				    	InputStreamReader ipsr=new InputStreamReader(ips);
@@ -140,49 +146,58 @@ public class ReadList implements Runnable {
 				    	String ligne;
 				    	
 				    	if ((ligne=br.readLine())!=null) {
-//						      
+						      
 						      //parcour du fichier
 					    	while ((ligne=br.readLine())!=null){
 					    		
-					    		System.out.println("Entrée dans la deuxième boucle readList () ¨¨¨¨¨¨¨¨¨¨");			
-
 					    		arraylist.add(ligne);
 			
 					    	}
 				    	}
 				    	
-				    	
-				    	
+				    	if (arraylist.isEmpty()) {
+							arraylist.add("EMPTY LIST");
+							System.out.println("En attente de réception d'une list non vide");
+						}
+//				 }  	
 			
 			} catch ( /* ClassNotFoundException | */ IOException e) {
 				e.printStackTrace();
 			} 
 			finally {
 				
-				if (arraylist.isEmpty()) {
-					arraylist.add("EMPTY LIST");
-					System.out.println("En attente de réception d'une list non vide");
-				}
-				else {
+				
+//				else {
 					if (arraylist.size()>1) {					
 						for (String item : arraylist) {
 							if (item.contentEquals("EMPTY LIST")) {
 								arraylist.remove(item);
 							}
-							System.out.println(item);
 						}
 					}					
-				}
+//				}
 					
-				try {
-			        socket.close();
+/*				try {
+			        is.close();
+			        out.close();
+//			        socket.close();
+//			        servSock.close();
 			        
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			
+*/			
 			}
 
 				return arraylist;
 	  }
+	 
+	 public OutputStream getOutPutStreamBuffer () {
+		return out;
+	}
+	
+	public  InputStream getInPutStreamBuffer () {
+		return is; 
+	}
+	 
 }

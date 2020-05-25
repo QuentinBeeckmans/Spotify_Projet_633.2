@@ -65,16 +65,20 @@ public class AcceptClientD implements Runnable {
 	private File totalListFile;
 	
 	private InetAddress serverAdress;
+//	private InetAddress servInetAddressRead;
+	private InetAddress clientInetAddresss;
+	
 	private int port;
-	private Socket echangeSocketTemp;
+	private Socket socketRead;
+	private Socket socketGive;
 
 	//Constructor
-	public AcceptClientD (Socket clientSocketOnServer, int clientNo, InetAddress serverAddress, int port)
+	public AcceptClientD (Socket clientSocketOnServer, int clientNo, int port)
 	{
 		this.clientSocketOnServer = clientSocketOnServer;
 		this.clientNumber = clientNo;
 		this.serverList = serverList;
-		this.serverAdress = serverAddress;
+		this.clientInetAddresss = clientSocketOnServer.getInetAddress();
 		this.port = port;
 		
 
@@ -88,7 +92,7 @@ public class AcceptClientD implements Runnable {
 		   	 	
 	    boolean closeConnexion = false;
 	    
-	    boolean serverActivity = true;
+//	    boolean serverActivity = true;
 	    
 	      //tant que la connexion est active, on traite les demandes
 	    while(!clientSocketOnServer.isClosed() ){
@@ -121,21 +125,32 @@ public class AcceptClientD implements Runnable {
 	        	 
 
 	        	 ServerSocket servSock = new ServerSocket(4505);
-	           echangeSocketTemp = servSock.accept();
-	        	 Thread t = new Thread (  readList = new ReadList (echangeSocketTemp)  )  ;
-						      t.start();
-						      readList.run(); 
-				    	   clientList = readList.readList();
+	           socketRead = servSock.accept();
 
-			    	  while (clientList.isEmpty() || clientList.contains("EMPTY LIST")) {
-					      clientList = readList.readList();
-					      
-			    	  }			    	  
-			    		  
-				      fileTemp = readList.getTempListFile();
+	           while (!socketRead.isClosed()) {
+
+	        	   Thread t = new Thread (  readList = new ReadList (socketRead)  )  ;
+	        	   t.start();
+	        	   readList.run();
+//	        	   t.sleep(5000);
+				   clientList = readList.readList();
+
+		    	  while (clientList.isEmpty() && clientList.contains("EMPTY LIST")) {
+				      clientList = readList.readList();
+				      
+		    	  }			    	  
+		    		
+		    	  readList.getOutPutStreamBuffer().close();
+		    		
+		    	  readList.getInPutStreamBuffer ().close();
+		    	  socketRead.close();
+		    	  servSock.close();
+	  
+	           }
+			      fileTemp = readList.getTempListFile();
 	        	 
-        		 System.out.println("Début de réception !!!!!!!!!");
-
+			      System.out.println(fileTemp.getAbsolutePath());
+	           
         	 
 	        	 for (String item : clientList) {
 	        		 System.out.println("reçu par Client " + item);
@@ -161,15 +176,31 @@ public class AcceptClientD implements Runnable {
 	                  
 	                  totalListFile = fileTemp;
 	                  
-			           Socket socketTemp = new Socket(serverAdress, 45000);
+//			           Socket socketTemp = new Socket(serverAdress, 45000);
 //			           echangeSocketTemp.close();
-//			           echangeSocketTemp = new Socket(serverAdress, 45000);
 
-	                  Thread t1 = new Thread(sendFile = new GiveFichier (totalListFile, socketTemp));
-	                  t1.start();
-	                  t1.wait(5000);
-	                  sendFile.run();
-	                  sendFile.sendFile();
+
+			           socketGive = new Socket(clientInetAddresss, 4505);
+
+			           while (!socketGive.isClosed()) {
+		                  Thread t1 = new Thread(sendFile = new GiveFichier (totalListFile, socketGive));
+		                  t1.start();
+//		                  t1.sleep(5000);
+
+		                  sendFile.run();
+		                  
+		                  sendFile.sendFile();
+		                  
+		                  if (!socketGive.getReuseAddress()) {
+								System.out.println(socketGive.getReuseAddress());
+								
+								sendFile.getOutPutStreamBuffer().close();
+					    		
+								sendFile.getInPutStreamBuffer ().close();
+								socketGive.close();
+							}
+					
+			           }
 	                  break;
 	                  
 	               case "2" : // "CLOSE" 

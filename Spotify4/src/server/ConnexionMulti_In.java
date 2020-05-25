@@ -37,7 +37,7 @@ public class ConnexionMulti_In {
             }
 			
 			//Warning : the backlog value (2nd parameter is handled by the implementation
-			mySkServer = new ServerSocket(4500,10,localAddress);
+			mySkServer = new ServerSocket(4500 /* ,10,localAddress */);
 			System.out.println("Default Timeout :" + mySkServer.getSoTimeout());
 			System.out.println("Used IpAddress :" + mySkServer.getInetAddress());
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
@@ -50,7 +50,7 @@ public class ConnexionMulti_In {
 				clientSocket = mySkServer.accept();
 				System.out.println("connection request received");
 				
-				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, localAddress, 4500));
+				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, 4500));
 				ClientNo++;
 				
 
@@ -75,8 +75,8 @@ public class ConnexionMulti_In {
 */		
 	}
 	
-	public ServerSocket getServerSocket () {
-		return mySkServer;
+	public InetAddress getInetLocalAddress () {
+		return localAddress;
 		
 	}
 	
