@@ -24,11 +24,16 @@ import javax.swing.JFrame;
 public class MyList {
 	
 	private Socket sockEchange;
+	private int portListening;
 	private ArrayList<String> list;
 	
-	public MyList (Socket sockEchange ) {
+	private BufferedReader reader;
+	//private PrintWriter send;
+	
+	public MyList (Socket sockEchange, int portListening ) {
 		
 		this.sockEchange = sockEchange;
+		this.portListening = portListening;
 		System.out.println("Je créer ma liste");	
 	}
 	
@@ -37,42 +42,58 @@ public class MyList {
 	}
 	
 	public int getPort() {
-		return sockEchange.getLocalPort();
+		return portListening;
 	}
 	
-	public void sendFileList () {
-		
-		try {
+	synchronized public void sendFileList (DialogueActionGUI d) {
+		synchronized(this) {
 			list=getArrayListMusics();
-			OutputStream os = sockEchange.getOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(os);
-			System.out.println("j'envoie bien");
-			
-			oos.writeObject(list);
-			oos.flush();
-			oos.close();
-
-		} catch (IOException e) {
-			System.out.println("Problème dans sendFileList");
-			e.printStackTrace();
-		} 
+		}
+		
+		new Thread(new Runnable() {
+			public void run() {
+				for(String temp:list) {
+					//System.out.println("add|" + getIp() + "|" + getPort() + "|" +  temp);
+					d.toSend("add|" + getIp() + "|" + getPort() + "|" +  temp);
+					 
+				}
+				
+			}
+		}).start();
+		
 
 	}
 	
-	private ArrayList <String> getArrayListMusics () {
-		String temp = choosePathDirectory();
+	public ArrayList getMyList() {
+		
+		return list;
+		
+	}
+	
+	public void removeFileList (DialogueActionGUI d) {
+		
+		ArrayList <String> temp=getMyList();
+
+		System.out.println("removeFileList");
+		
+		for(String temp1:temp) {
+			d.toSend("rem|" + getIp() + "|" + getPort() + "|" +  temp1);
+		}
+		
+
+	}
+	
+	public ArrayList <String> getArrayListMusics () {
 		ArrayList<String> arrayTemp = new ArrayList<String>();
-		ArrayList<String> toReturn = new ArrayList<String>();
 		
+		String temp = choosePathDirectory();
 		File directory = new File(temp);
-		
+
 		if(directory!=null) {
 			arrayTemp = new ArrayList<String>(Arrays.asList(directory.list()));
 		}
-		for(String array : arrayTemp) {
-			toReturn.add(getIp() +":" + getPort() + ":" + array);
-		}
-		return toReturn;
+		
+		return arrayTemp;
 	}
 		
 	private String choosePathDirectory () {

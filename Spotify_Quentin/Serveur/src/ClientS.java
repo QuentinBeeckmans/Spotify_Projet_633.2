@@ -10,32 +10,31 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
 
 public class ClientS implements Runnable {
 	private Socket clientSocket;
-	private String clientId;
+	private int clientId;
 	
 	private Hashtable <String, ArrayList> globalList = new Hashtable<String, ArrayList>();
-	private ArrayList<String> clientList ;
 	
-	private ObjectInputStream reader;
-	private Object obj;
+	private ArrayList<String> clientList = new ArrayList<String>() ;
 	
-	private ObjectOutputStream send;
+	private BufferedReader reader;
+	private PrintWriter send;
 	
-	private BufferedReader bufferReader;
-	//ip
-	private String address; 
+	
+	private String address; //ip
 	private int port;
 	
 	private String reponse;
 	
 	public ClientS(Socket clientSocket, int clientId, ArrayList<String> clientList) {
 		this.clientSocket=clientSocket;
-		this.clientId=Integer.toString(clientId);
+		this.clientId=clientId;
 		this.clientList=clientList;
 	}
 
@@ -44,90 +43,92 @@ public class ClientS implements Runnable {
 		try {
 			System.out.println("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
 			
-			reader = new ObjectInputStream(clientSocket.getInputStream());
-			send = new ObjectOutputStream(clientSocket.getOutputStream());
-			
-			
-			bufferReader= new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			
-			
-			
-			reponse = readLine();
-			
-			switch( Integer.parseInt(reponse)){
-              
-			case 1 : //getlist
-				System.out.println("Côté serveur on me demande d'envoyer la liste des musiques");
-				addListClientToServer(); //j'ajoute la liste à ma global liste
- 	          sendList(this); //je n'envoie rien si j'ai le même id
-              break;
-                 
-            case 3 :
-               System.out.println("La connexion va être arrêtée");
-               
-               Thread.sleep(5000);          
-               remove(this);
-               reader.close();
-               send.close();
-               bufferReader.close();
-               clientSocket.close();
-               break;
-             
-            default : 
-            	System.out.println("Commande inconnu !");                     
-           }
+			reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			send = new PrintWriter(clientSocket.getOutputStream());
+
+			reading();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
+	public void reading() {
+		while(true) {
+			try {
+				String line = readLine();
+				addFilesClientToServer(line); 
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
-	public int getClientId() {
-		return Integer.parseInt(clientId);
-	}
-	public String getIpAddress() {
-		return address;
-	}
+	
 
-	public void addListClientToServer() throws ClassNotFoundException, IOException {
-			obj=reader.readObject();
-		   //clientList = (ArrayList<String>) reader.readObject(); BUGGEY READER
-		   clientList = (ArrayList<String>) obj;
-		   System.out.println("test ok ARRAYLIST passée");
-		   for(String test:clientList) {
-			   System.out.println(test);
-		   }
-			//globalList.put(clientId, clientList);	
+
+	public void addFilesClientToServer(String ligne) throws ClassNotFoundException, IOException {
+			String [] temp = ligne.split("|");
+			switch(temp[0]+temp[1]+temp[2]) {
+			case "add":
+				System.out.println("demande d'ajout d'un client");
+				 clientList.add(ligne);
+				 put(this,Integer.toString(clientId), clientList);	
+				break;
+			case "rem":
+				System.out.println("demande de retirer d'un client");
+				remove(Integer.toString(clientId));
+				break;
+			
+			default:
+				System.out.println("Wrong message");
+			}
+			
 	}
-	
-	private void sendList (ClientS c) throws IOException{
+	public void put(ClientS clientS, String id, ArrayList<String> clientList2) {
+		globalList.put(id, clientList2);
+		try {
+			sendGlobalList(clientS);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	synchronized public void sendGlobalList (ClientS c) throws IOException{
 		Set<String> clients = globalList.keySet();
 		ArrayList<String> lisToSend = null;
 		
 		for(String key: clients){
 			if(key != Integer.toString(c.getClientId())) {
 				lisToSend = globalList.get(key);
-				send.writeObject(lisToSend);
-				send.flush();
 			}
         }
-		for(String test:lisToSend) {
-			System.out.println();
+		for(String temp:lisToSend) {
+			toSend(temp);
 		}
 		
 		
+		//serverLogger.info("Global list have been sending to client");
    
 	}
-
-	 public void remove(ClientS c) {
-		 globalList.remove(c.getClientId());
+	/**
+	 * To remove all arrayList from globalList with the key parameter clientId
+	 * @param key
+	 */
+	 public void remove(String key) {
+		 globalList.remove(key);
 	 }
 	 
-	 private String readLine() throws IOException{
-			String line = null;
+	public void toSend(String message) {
+		send.println(message);
+		send.flush();
+	}
+	 
+	 private String readLine() throws IOException, ClassNotFoundException{
+		 String line = null;
 			while(true) {
-				line = bufferReader.readLine();
+				line = reader.readLine();
 				
 				if(line != null) {
 					break;
@@ -135,7 +136,15 @@ public class ClientS implements Runnable {
 			}
 			
 			return line;
-		}
+	}
+	 
+	public int getClientId() {
+		return clientId;
+	}
+	
+	public String getIpAddress() {
+		return address;
+	}
 }
 
 

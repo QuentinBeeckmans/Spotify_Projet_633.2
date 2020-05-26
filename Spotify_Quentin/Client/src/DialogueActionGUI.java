@@ -1,7 +1,9 @@
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -15,96 +17,66 @@ import java.util.Timer;
 
 public class DialogueActionGUI {
 
-	private boolean closeConnexion = false;
 	private Socket clientSocketOnServer;
-	private PrintWriter writer;
-	private BufferedInputStream reader;
 	
-	private OutputStream os = null;
-	private InputStream is = null;
-	
-	private ObjectOutputStream wObj;
-	private ObjectInputStream rObj;
+	private BufferedReader reader;
+	private PrintWriter send;
 	
 	private MyList onwnList;
 	private ArrayList <String> serverList;
-	private int portEcoute; //pour savoir le port pour délivrer la musique
+	private int portListening; //pour savoir le port pour délivrer la musique
+	private Scanner scan = new Scanner(System.in);
 	
 	public DialogueActionGUI (Socket clientSocket, int port) {
 		this.clientSocketOnServer = clientSocket;
-		this.portEcoute=port;
+		this.portListening=port;
 		
 		String response = null ;
 		
-		onwnList = new MyList(clientSocketOnServer);
+		onwnList = new MyList(clientSocketOnServer, portListening);
 		
 		while(true){
 			
 	        try {
-	        	 os = clientSocketOnServer.getOutputStream(); 
-		           is = clientSocketOnServer.getInputStream();
-		           writer = new PrintWriter(os,true);
-		           //reader = new BufferedInputStream(is);
-		           rObj = new ObjectInputStream(is);
-		           
-		           Scanner scan = new Scanner(System.in);
-		 	      System.out.println("Que voulez-vous faire ?");
-	 	      
+	        
+	        	reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				send = new PrintWriter(clientSocket.getOutputStream());
+
 	        	int choix;
-			do {
-				System.out.println("1 : Ajouter des musiques");
-				System.out.println("2 : Ecouter des musiques");
-				System.out.println("3 : Se déconnecter");
-				choix = scan.nextInt();
-			
-
-				System.out.println("MON CHOIX" + choix);
-	           
-		         switch(choix) {
-		         
-		         case 1: 
-		        	 System.out.println("J'ajoute des musiques");
-		        	 writer.write(choix);
-			         writer.flush();
-		        	 onwnList.sendFileList();
-		        	 break;
-		        	 
-		         case 2: 
-		        	 System.out.println("J'écoute la musique");
-			         displayMusics(); //J'affiche les musiques et en joue une
-	
-		        	 break;
-		         case 3: 
-			         System.out.println("Je sors");
-			         writer.write(choix);
-			         writer.flush();
+	        	
+				do {
+					System.out.println("Que voulez-vous faire ?");
+					System.out.println("1 : Ajouter des musiques");
+					System.out.println("2 : Ecouter des musiques");
+					System.out.println("3 : Se déconnecter");
+					choix = scan.nextInt();
+				
+			         switch(choix) {
 			         
-			         // je dois envoyer la demande de supprimer du hashtable l'id de ce client
-			         Thread.sleep(5000);
-			         writer.close();
-
-		        	 break;
-		         }
-			}while(choix==3);
-			
-	           
-	          /* response = read();
-	           
-	           switch (response) {
-			   
-			   case "1":
-				   System.out.println("J'attends en retour la liste des musiques");
-				   readList();
-				   break;
-				   
-			   case "CLOSE":
-				   System.out.println("J'ai choisi de fermer");
-//				   long startTime = System.currentTimeMillis();
-//				   System.out.println(startTime);
-	        	   break;
-	           }*/
-	           
-	           
+			         case 1: 
+			        	 System.out.println("J'ajoute des musiques au serveur");
+			        	 onwnList.sendFileList(this);
+			        	 break;
+			        	 
+			         case 2: 
+			        	 System.out.println("J'affiche les musiques du serveur: ");
+				         displayMusics(); //J'affiche les musiques et en joue une
+		
+			        	 break;
+			         case 3: 
+				         System.out.println("Je sors");
+		
+				         onwnList.removeFileList(this);
+				         // je dois envoyer la demande de supprimer du hashtable l'id de ce client
+				         Thread.sleep(5000);
+				         send.close();
+				         reader.close();
+				         clientSocket.close();
+	
+			        	 break;
+			         }
+				}while(choix!=3);
+   
 	        }catch (IOException e) {
 		        e.printStackTrace();
 		    } catch (InterruptedException e) {
@@ -113,36 +85,58 @@ public class DialogueActionGUI {
 		}      
 		
 	}
+	public void toSend(String message) {
+		send.println(message);
+		send.flush();
+	}
 	
 	
-	   public ArrayList<String> readList () {
-		   
-			try {
-				serverList = (ArrayList<String>) rObj.readObject();
-				
-			} catch (ClassNotFoundException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		   
-			return serverList;
-	   }
 	   
-	   public void displayMusics() {
-		   Scanner scan = new Scanner(System.in);
-		   ArrayList<String> temp = readList();
+	
+		 
+	   
+	   public void displayMusics(){
+		   try {
+			listFromServer(); //je rempli ma liste locale venant du serveur
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		   int cpt = 0;
 		   System.out.println("Choisissez une musique: ");
-		   for(String lineList: temp) {
-			   System.out.println(cpt + lineList);
+		   for(String lineList: serverList) {
+			   System.out.println(cpt + " : "  + lineList);
 		   }
-		   int m = scan.nextInt();
+		   int m=scan.nextInt();
 		   
-		   String choice = temp.get(m);
-		   String [] address = choice.split(":");
+		   String choice = serverList.get(m);
+		   String [] address = choice.split("|");
 		   
-		   newServerConnection(address[0], address[1], address[2]);
+		   
+		   System.out.println(address[0] + "-> "+ address[1] + "-> "+ address[2]);
+		   //newServerConnection(address[0], address[1], address[2]);
 		  
+	   }
+	  /* public ArrayList<String> readList () throws ClassNotFoundException, IOException {
+		   while(true) {
+			synchronized(this) {
+				serverList.add(readLine());
+			}
+			return serverList;
+		   }
+	   }*/
+	
+	   synchronized public void listFromServer() throws IOException, ClassNotFoundException{
+		String line = null;
+		
+		while((line = reader.readLine()) != null) {
+			synchronized(this) {
+				serverList.add(line);
+			}
+		}	
 	   }
 
 	private void newServerConnection(String Ipaddress, String port, String musiquePath) {
