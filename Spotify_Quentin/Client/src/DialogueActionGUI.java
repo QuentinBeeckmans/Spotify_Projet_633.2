@@ -17,18 +17,21 @@ public class DialogueActionGUI {
 
 	private boolean closeConnexion = false;
 	private Socket clientSocketOnServer;
-	private PrintWriter writer = null;
-	private BufferedInputStream reader = null;
+	private PrintWriter writer;
+	private BufferedInputStream reader;
+	
 	private OutputStream os = null;
 	private InputStream is = null;
-	private ObjectOutputStream writeObj = null;
-	private ObjectInputStream readObj = null;
+	
+	private ObjectOutputStream wObj;
+	private ObjectInputStream rObj;
+	
 	private MyList onwnList;
 	private ArrayList <String> serverList;
 	private int portEcoute; //pour savoir le port pour d�livrer la musique
 	
-	public DialogueActionGUI (Socket clientSocketOnServer, int port) {
-		this.clientSocketOnServer = clientSocketOnServer;
+	public DialogueActionGUI (Socket clientSocket, int port) {
+		this.clientSocketOnServer = clientSocket;
 		this.portEcoute=port;
 		
 		String response = null ;
@@ -36,23 +39,24 @@ public class DialogueActionGUI {
 		onwnList = new MyList(clientSocketOnServer);
 		
 		while(true){
-
+			
 	        try {
-	        	os = clientSocketOnServer.getOutputStream(); 
-	        	is = clientSocketOnServer.getInputStream();
-	        	writer = new PrintWriter(os,true);
-	        	reader = new BufferedInputStream(is);
-	                      
-	        	Scanner scan = new Scanner(System.in);
-	        	System.out.println("Que voulez-vous faire ?");
+	        	 os = clientSocketOnServer.getOutputStream(); 
+		           is = clientSocketOnServer.getInputStream();
+		           writer = new PrintWriter(os,true);
+		           //reader = new BufferedInputStream(is);
+		           rObj = new ObjectInputStream(is);
+		           
+		           Scanner scan = new Scanner(System.in);
+		 	      System.out.println("Que voulez-vous faire ?");
 	 	      
-	 	    int choix;
+	        	int choix;
 			do {
-					System.out.println((1) + " : " + "Ajouter des musiques");
-					System.out.println((2) + " : " + "Ecouter des musiques");
-					System.out.println((3) + " : " + "Se d�connecter");
-					choix = scan.nextInt();
-	 	    
+				System.out.println("1 : Ajouter des musiques");
+				System.out.println("2 : Ecouter des musiques");
+				System.out.println("3 : Se d�connecter");
+				choix = scan.nextInt();
+			
 
 				System.out.println("MON CHOIX" + choix);
 	           
@@ -78,17 +82,13 @@ public class DialogueActionGUI {
 			         // je dois envoyer la demande de supprimer du hashtable l'id de ce client
 			         Thread.sleep(5000);
 			         writer.close();
-			         reader.close();
-			         readObj.close();
-			         writeObj.close();
-			          
-			        
+
 		        	 break;
 		         }
-		         
-			 }while(choix!=3);
+			}while(choix==3);
+			
 	           
-	           response = read();
+	          /* response = read();
 	           
 	           switch (response) {
 			   
@@ -102,7 +102,7 @@ public class DialogueActionGUI {
 //				   long startTime = System.currentTimeMillis();
 //				   System.out.println(startTime);
 	        	   break;
-	           }
+	           }*/
 	           
 	           
 	        }catch (IOException e) {
@@ -114,36 +114,11 @@ public class DialogueActionGUI {
 		
 	}
 	
-	//La méthode pour lire les réponses
-	   private String read() throws IOException{      
-	      
-	      String response = "";
-	      int stream;
-	      
-	      byte[] b = new byte[4096];
-/*	      while ( (stream = reader.read(b)) >=0 ) {
-		      
-		      response = new String(b, 0, stream);
-		      }
-*/		      
-	      stream = reader.read(b);
-	      response = new String(b, 0, stream); 
-		  
-	      
-		      // remise à zèro du buffer (sécurité peut-être pas obligatoire)
-		      b = new byte [8] ;
-//	      stream = reader.read(b);
-//	      response = new String(b, 0, stream); 
-	      
-	      return response;
-
-	   }
-	   
+	
 	   public ArrayList<String> readList () {
 		   
 			try {
-				readObj = new ObjectInputStream(is);
-				serverList = (ArrayList<String>) readObj.readObject();
+				serverList = (ArrayList<String>) rObj.readObject();
 				
 			} catch (ClassNotFoundException | IOException e) {
 				// TODO Auto-generated catch block

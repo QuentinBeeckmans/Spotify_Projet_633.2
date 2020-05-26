@@ -14,7 +14,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
 
-public class Client implements Runnable {
+public class ClientS implements Runnable {
 	private Socket clientSocket;
 	private String clientId;
 	
@@ -22,6 +22,8 @@ public class Client implements Runnable {
 	private ArrayList<String> clientList ;
 	
 	private ObjectInputStream reader;
+	private Object obj;
+	
 	private ObjectOutputStream send;
 	
 	private BufferedReader bufferReader;
@@ -31,7 +33,7 @@ public class Client implements Runnable {
 	
 	private String reponse;
 	
-	public Client(Socket clientSocket, int clientId, ArrayList<String> clientList) {
+	public ClientS(Socket clientSocket, int clientId, ArrayList<String> clientList) {
 		this.clientSocket=clientSocket;
 		this.clientId=Integer.toString(clientId);
 		this.clientList=clientList;
@@ -45,20 +47,22 @@ public class Client implements Runnable {
 			reader = new ObjectInputStream(clientSocket.getInputStream());
 			send = new ObjectOutputStream(clientSocket.getOutputStream());
 			
+			
 			bufferReader= new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			
-			addListClientToServer();
+			
 			
 			reponse = readLine();
 			
-			switch( reponse){
+			switch( Integer.parseInt(reponse)){
               
-			case "1" : //getlist
+			case 1 : //getlist
 				System.out.println("Côté serveur on me demande d'envoyer la liste des musiques");
+				addListClientToServer(); //j'ajoute la liste à ma global liste
  	          sendList(this); //je n'envoie rien si j'ai le même id
               break;
                  
-            case "3" :
+            case 3 :
                System.out.println("La connexion va être arrêtée");
                
                Thread.sleep(5000);          
@@ -86,21 +90,20 @@ public class Client implements Runnable {
 		return address;
 	}
 
-	public void addListClientToServer() {
-
-		   try {
-				clientList = (ArrayList<String>) reader.readObject();
-				
-			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
-			}
-		   
-			globalList.put(clientId, clientList);	
+	public void addListClientToServer() throws ClassNotFoundException, IOException {
+			obj=reader.readObject();
+		   //clientList = (ArrayList<String>) reader.readObject(); BUGGEY READER
+		   clientList = (ArrayList<String>) obj;
+		   System.out.println("test ok ARRAYLIST passée");
+		   for(String test:clientList) {
+			   System.out.println(test);
+		   }
+			//globalList.put(clientId, clientList);	
 	}
 	
-	private void sendList (Client c) throws IOException{
+	private void sendList (ClientS c) throws IOException{
 		Set<String> clients = globalList.keySet();
-		ArrayList<String> lisToSend;
+		ArrayList<String> lisToSend = null;
 		
 		for(String key: clients){
 			if(key != Integer.toString(c.getClientId())) {
@@ -109,10 +112,15 @@ public class Client implements Runnable {
 				send.flush();
 			}
         }
+		for(String test:lisToSend) {
+			System.out.println();
+		}
+		
+		
    
 	}
 
-	 public void remove(Client c) {
+	 public void remove(ClientS c) {
 		 globalList.remove(c.getClientId());
 	 }
 	 

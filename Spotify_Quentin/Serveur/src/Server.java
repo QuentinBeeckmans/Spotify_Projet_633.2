@@ -51,7 +51,7 @@ public class Server {
 				e.printStackTrace();
 			}
 			System.out.println("Connection reçue");
-			Thread t = new Thread(new Client(clientSocket,clientId, clientList));
+			Thread t = new Thread(new ClientS(clientSocket,clientId, clientList));
 			clientId++;
 			t.start();
 		}

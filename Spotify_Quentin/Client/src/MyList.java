@@ -41,12 +41,12 @@ public class MyList {
 	}
 	
 	public void sendFileList () {
-		System.out.println("j'envoie bien");
+		
 		try {
 			list=getArrayListMusics();
 			OutputStream os = sockEchange.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(os);
-
+			System.out.println("j'envoie bien");
 			
 			oos.writeObject(list);
 			oos.flush();
