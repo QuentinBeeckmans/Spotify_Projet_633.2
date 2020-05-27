@@ -13,7 +13,7 @@ public class Connexion1ToServer_AcrossThread {
 	
 	private Socket mySocket ;
 	private DialogueActionGUI dialogueActionGUI;
-	private GiveFichier giveFichier;
+	private TransmitList giveFichier;
 	private ReadList readList;
 	
 
