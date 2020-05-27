@@ -20,12 +20,16 @@ import java.util.concurrent.Exchanger;
 
 import client2.Connexion_Give;
 import client2.Connexion_read;
-import client2.GiveFichier;
+import client2.TransmitList;
+import client2.TransmitSwitch;
 import client2.ReadList;
+import client2.ReadSwitch;
 /*
  import client1.ThreadToTransf;
 import client1.TransfertList;
 */
+import client2.SocketRead;
+import client2.SocketTransmit;
 
 /*
 �	The client will be able to connect to the server through socket connections 
@@ -39,346 +43,237 @@ import client1.TransfertList;
 
  */
 public class AcceptClientD implements Runnable {
-	
+
+	private static int portList = 4505;
+	private static int portList2 = 4506;
+	private static int portSwitch1 = 4510;
+	private static int portSwitch2 = 4511;
+	private static int portStream = 4550;
 	private Socket clientSocketOnServer;
 	private int clientNumber;
-	private PrintWriter writer = null;
-	private BufferedInputStream reader = null;
-	private OutputStream os = null;
-	private InputStream is = null;
-	private ObjectOutputStream writeObj = null;
-	private ObjectInputStream readObj = null;
-//	private BufferedReader bufRead = null;
 	private String response = null;
-	private ArrayList <String> serverList;
+	private String choice = null;
+	private ArrayList<String> serverList;
 	private ArrayList<String> clientList = null;;
-	
-//	private TransfertList listThread;
-//	private ThreadToTransf listThreadReceptList;
-	private GiveFichier sendFile;
+	private Socket socketTransmitSwitch;
+	private Socket socketReadSwitch;
+	private Socket socketTransmitList;
+	private Socket socketReadList;
+	private TransmitList sendFile;
 	private ReadList readList;
-	
+	private ReadSwitch readSwitch;
+	private TransmitSwitch transmitSwitch;
 	private Connexion_read connexionRead;
-
-	
 	private File fileTemp;
 	private File totalListFile;
-	
-	private InetAddress serverAdress;
-//	private InetAddress servInetAddressRead;
 	private InetAddress clientInetAddresss;
-	
 	private int port;
-	private Socket socketRead;
-	private Socket socketGive;
 
-	//Constructor
-	public AcceptClientD (Socket clientSocketOnServer, int clientNo, int port)
-	{
+	public AcceptClientD(Socket clientSocketOnServer, int clientNo, int port) {
 		this.clientSocketOnServer = clientSocketOnServer;
 		this.clientNumber = clientNo;
 		this.serverList = serverList;
 		this.clientInetAddresss = clientSocketOnServer.getInetAddress();
 		this.port = port;
-		
 
 	}
-	//overwrite the thread run()
+
 	public void run() {
-		
-		System.out.println("IP CLIENT connecté" +clientSocketOnServer.getInetAddress());
-		System.out.println("Client Nr "+clientNumber+ " is connected");
-		System.out.println("Socket is available for connection"+ clientSocketOnServer);
-		   	 	
-	    boolean closeConnexion = false;
-	    
-//	    boolean serverActivity = true;
-	    
-	      //tant que la connexion est active, on traite les demandes
-	    while(!clientSocketOnServer.isClosed() ){
-	    	
-	         try {
-//	        	 serverActivity = serverAdress.isReachable(5000);
 
-//	 	    	clientSocketOnServer.setKeepAlive(true);
-	        	 
-//	        	 Socket echangeSwitchWrite = new Socket(serverAdress, 4510);
-	 	           
-/*	 	           ServerSocket servSockTemp = new ServerSocket(4502);
-	 	          Socket echangeSwitchRead = servSockTemp.accept();
-*/
-//				os = echangeSwitchWrite.getOutputStream(); 
-//	           is = echangeSwitchRead.getInputStream();
-	        	 
-		         os = clientSocketOnServer.getOutputStream(); 
-//		         is = clientSocketOnServer.getInputStream()
-		        		 ;
-		         writer = new PrintWriter(os,true);
+		System.out.println("IP CLIENT connecté" + clientSocketOnServer.getInetAddress());
+		System.out.println("Client Nr " + clientNumber + " is connected");
+		System.out.println("Socket is available for connection" + clientSocketOnServer);
 
-//		         reader = new BufferedInputStream(is);
+		boolean closeConnexion = false;
 
-//		         readObj = new ObjectInputStream(is);
-//		         writeObj = new ObjectOutputStream (os);
-		         
-		           
-	        	 int cpt = 0;
-	        	 
+		// tant que la connexion est active, on traite les demandes
+		while (!clientSocketOnServer.isClosed()) {
 
-	        	 ServerSocket servSock = new ServerSocket(4505);
-	           socketRead = servSock.accept();
+			try {
 
-	           while (!socketRead.isClosed()) {
+				SocketRead socketRead = new SocketRead(portList);
+				socketReadList = socketRead.getSocket();
 
-	        	   Thread t = new Thread (  readList = new ReadList (socketRead)  )  ;
-	        	   t.start();
-	        	   readList.run();
-//	        	   t.sleep(5000);
-				   clientList = readList.readList();
+				while (!socketReadList.isClosed()) {
 
-		    	  while (clientList.isEmpty() && clientList.contains("EMPTY LIST")) {
-				      clientList = readList.readList();
-				      
-		    	  }			    	  
-		    		
-		    	  readList.getOutPutStreamBuffer().close();
-		    		
-		    	  readList.getInPutStreamBuffer ().close();
-		    	  socketRead.close();
-		    	  servSock.close();
-	  
-	           }
-			      fileTemp = readList.getTempListFile();
-	        	 
-			      System.out.println(fileTemp.getAbsolutePath());
-	           
-        	 
-	        	 for (String item : clientList) {
-	        		 System.out.println("reçu par Client " + item);
-	        	 }
-	        	 
+					Thread t = new Thread(readList = new ReadList(socketReadList));
+					t.start();
+					readList.run();
+					clientList = readList.readList();
 
-	            //On attend la demande du client            
-	            response = read();
-	        	 	
-		           System.out.println("Réponse du client av Switch : " + response);
+					while (clientList.isEmpty() && clientList.contains("EMPTY LIST")) {
+						clientList = readList.readList();
 
-		           //On traite la demande du client en fonction de la commande envoyée
-	            String toSend = "path music";
-	            
-	            
-	            switch( response){
-	               case "1" :
-	                  toSend = "1";
-	                  response="1";
-	                  System.out.println("SWITCH COTE SERVEUR : " + response);
-	                  writer.write(response);							
-	                  writer.flush();
-	                  
-	                  totalListFile = fileTemp;
-	                  
-//			           Socket socketTemp = new Socket(serverAdress, 45000);
-//			           echangeSocketTemp.close();
+					}
 
+					readList.close();
 
-			           socketGive = new Socket(clientInetAddresss, 4505);
+				}
+				fileTemp = readList.getTempListFile();
 
-			           while (!socketGive.isClosed()) {
-		                  Thread t1 = new Thread(sendFile = new GiveFichier (totalListFile, socketGive));
-		                  t1.start();
-//		                  t1.sleep(5000);
+				/**********
+				 * A retirer !! Juste pour nous pour savoir qu'on peut connaître et accéder au
+				 * fichier temporaire
+				 ***************/
+				System.out.println(fileTemp.getAbsolutePath());
+				/***************************************************************************************************************/
 
-		                  sendFile.run();
-		                  
-		                  sendFile.sendFile();
-		                  
-		                  if (!socketGive.getReuseAddress()) {
-								System.out.println(socketGive.getReuseAddress());
-								
-								sendFile.getOutPutStreamBuffer().close();
-					    		
-								sendFile.getInPutStreamBuffer ().close();
-								socketGive.close();
-							}
-					
-			           }
-	                  break;
-	                  
-	               case "2" : // "CLOSE" 
-	                  toSend = "CLOSE";
-	                  System.out.println("La connexion va être arrêté");
-	                  closeConnexion = true;
-	                  break;
-	              /* 
-	               default : 
-	                  toSend = "Commande inconnu !";                     
-	                  break;
-	               */
-	            }
-	            
-//	            System.out.println(toSend);
-	            
-	            //On envoie la réponse au client
-	            //Il FAUT IMPERATIVEMENT UTILISER flush()
-	            //Sinon les données ne seront pas transmises au client
-	            //et il attendra indéfiniment
-	            writer.flush();
-	            
-	            if(closeConnexion){
-	               System.err.println("COMMANDE CLOSE DETECTEE ! ");
-	                  closeConnexion = true;
-	                  
-	                  removeClientList();
-	                  
-	                  
-	                  Thread.sleep(5000);
+				for (String item : clientList) {
+					System.out.println("reçu par Client " + item);
+				}
 
-	                  writer.close();
-	                  reader.close();
-	                  writeObj.close();
-	                  readObj.close();	               
+				SocketRead socketReadSwicth = new SocketRead(portSwitch1);
+				socketReadSwitch = socketReadSwicth.getSocket();
 
-	               clientSocketOnServer.close();
-	               break;
-	            }
-	         }catch (IOException e) {
-		            e.printStackTrace();
-		         }  
-/*	         catch(SocketException e){
-	            System.err.println("LA CONNEXION A ETE INTERROMPUE ! ");
-	            break;
-	         }        
-	         */
- catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				while (!socketReadSwitch.isClosed()) {
+					Thread tReadSwitch = new Thread(readSwitch = new ReadSwitch(socketReadSwitch));
+					tReadSwitch.start();
+					readSwitch.run();
+
+					response = "";
+
+					while (response == "") {
+
+						response = readSwitch.readSwitch();
+
+					}
+
+					readSwitch.close();
+
+				}
+
+				System.out.println("Réponse du client av Switch : " + response);
+
+				// On traite la demande du client en fonction de la commande envoyée
+				String toSend = "path music";
+
+				switch (response) {
+				case "1":
+					response = "1";
+					System.out.println("SWITCH COTE SERVEUR : " + response);
+
+					Socket socketTransmitSwitch = new SocketTransmit(clientInetAddresss, portSwitch2).getSocket();
+
+					while (!socketTransmitSwitch.isClosed()) {
+						Thread tTransmitSwitch = new Thread(
+								transmitSwitch = new TransmitSwitch(response, socketTransmitSwitch));
+						tTransmitSwitch.start();
+
+						transmitSwitch.run();
+
+						transmitSwitch.sendSwitch();
+
+						if (!socketTransmitSwitch.getReuseAddress()) {
+
+							transmitSwitch.close();
+
+						}
+
+					}
+
+					totalListFile = fileTemp;
+
+					Socket socketTransmitList2 = new SocketTransmit(clientInetAddresss, portList2).getSocket();
+
+					while (!socketTransmitList2.isClosed()) {
+						Thread t1 = new Thread(sendFile = new TransmitList(totalListFile, socketTransmitList2));
+						t1.start();
+
+						sendFile.run();
+
+						sendFile.sendFile();
+
+						if (!socketTransmitList2.getReuseAddress()) {
+							t1.sleep(2000);
+							sendFile.close();
+						}
+
+					}
+
+					break;
+
+				case "2": // "CLOSE"
+					toSend = "CLOSE";
+					System.out.println("La connexion va être arrêté");
+
+					SocketRead socketReadSwicth2 = new SocketRead(portSwitch2);
+					Socket socketReadSwitch = socketReadSwicth2.getSocket();
+
+					while (!socketReadSwitch.isClosed()) {
+						Thread tReadSwitch = new Thread(readSwitch = new ReadSwitch(socketReadSwitch));
+						tReadSwitch.start();
+						readSwitch.run();
+
+//						response = readSwitch.readSwitch();
+
+						response = "111";
+
+						System.out.println("J'ai bien " + response);
+
+						while (response == "111") {
+
+							System.out.println(socketReadSwitch.isClosed());
+
+							response = readSwitch.readSwitch();
+
+							System.out.println("Réponse SERVEUR av Switch : " + response);
+
+						}
+
+						readSwitch.close();
+
+					}
+
+					closeConnexion = true;
+
+					socketReadSwitch.close();
+
+					break;
+
+				}
+
+				if (closeConnexion) {
+					System.err.println("COMMANDE CLOSE DETECTEE ! ");
+					closeConnexion = true;
+
+					removeClientList();
+
+					// PERMET UN TEMPS DE LATENCE POUR ÊTRE SÛR QUE LA TRANSMISSION SOIT FAITE
+					Thread.sleep(5000);
+
+					clientSocketOnServer.close();
+					break;
+				}
+			} catch (IOException e) {
 				e.printStackTrace();
-			}	
-	         finally {
-		        	System.out.println("LA connexion est coupé suite à un arrêt de la connexion du Serveur");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				System.out.println("LA connexion est coupé suite à un arrêt de la connexion du Serveur");
 
-	               try {
+				try {
 					clientSocketOnServer.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-	 	    }
-			
-			    }
-	    
-	    
-		
+			}
+		}
+
 	}
-	
-	//La méthode pour lire les réponses
-	   private String read() throws IOException{      
-		  String response;
-	      int stream;
-	      int cpt = 0;
-	      
-	      is = clientSocketOnServer.getInputStream();
-         reader = new BufferedInputStream(is);
 
-	      byte[] b = new byte[4096];
-//	      while ( (stream = reader.read(b)) >=0 ) {
-//	    	  response += new String(b, 0, stream);
-//	      }
-//	   
-	      stream = reader.read(b);
-	      response = new String(b, 0, stream); 
-	      
-	      // remise � z�ro du buffer (s�curit� peut-�tre pas obligatoire)
-	      b = new byte [0] ;
-	      
-	      return response;
-	   }
-	   
+	public ArrayList<String> getGlobalList() {
 
-	public Socket getSocketClient() {
-
-		return clientSocketOnServer;		
-	}
-	
-	
-	public ArrayList <String> getGlobalList () {
-		
 		return serverList;
 	}
-	
-	   public synchronized void readList () {
-		   
-		   
-		   try {
-			  
-			clientList = (ArrayList<String>) readObj.readObject();
-			
-			readObj.wait();
 
-			serverList.addAll(clientList);
-			
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		   
-/*		   for(String item : serverList) {
-			   System.out.println(item);
-		   }
-		   
-		   System.out.println();
-		   
-		   for(String item : clientList) {
-			   System.out.println(item);
-		   }
-*/		   
-	   }
-	   
-	   private synchronized void sendList (){
-		   
-		   Thread t = new Thread();
-		   ArrayList<String> lisToSend;
-		   
-		   lisToSend = serverList;
-		   
-		   // Permet de ne pas envoyer au client ses propres musiques
-/*		   
-		   for(String item : lisToSend) {
-			   
-			   if(item.contains((CharSequence) clientSocketOnServer.getInetAddress())) {
-				   lisToSend.remove(item);
-				}			   
-		   }
-*/		   
-		   try {
-//			   t.start();
-			   
-			   writeObj.writeObject(lisToSend);
+	private void removeClientList() {
 
-			   writeObj.flush();
-			   
-				writeObj.wait();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-				e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		   
-		   
-	   }
-	   
-	   private void removeClientList() {
-		   
-		   for (String item : serverList) {
-				if(item.contains((CharSequence) clientSocketOnServer.getInetAddress())) {
-					serverList.remove(item);
-				}
+		for (String item : serverList) {
+			if (item.contains((CharSequence) clientSocketOnServer.getInetAddress())) {
+				serverList.remove(item);
 			}
-		   
-	   }
+		}
+
+	}
 
 }
