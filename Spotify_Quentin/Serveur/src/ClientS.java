@@ -22,6 +22,7 @@ public class ClientS implements Runnable {
 	private Hashtable <String, ArrayList> globalList = new Hashtable<String, ArrayList>();
 	
 	private ArrayList<String> clientList = new ArrayList<String>() ;
+	private ArrayList<String> lisToSend;
 	
 	private BufferedReader reader;
 	private PrintWriter send;
@@ -32,7 +33,7 @@ public class ClientS implements Runnable {
 	
 	private String reponse;
 	
-	public ClientS(Socket clientSocket, int clientId, ArrayList<String> clientList) {
+	public ClientS(int clientId, Socket clientSocket, ArrayList<String> clientList) {
 		this.clientSocket=clientSocket;
 		this.clientId=clientId;
 		this.clientList=clientList;
@@ -69,16 +70,17 @@ public class ClientS implements Runnable {
 	
 
 
-	public void addFilesClientToServer(String ligne) throws ClassNotFoundException, IOException {
-			String [] temp = ligne.split("|");
+	public void addFilesClientToServer(String line) throws ClassNotFoundException, IOException {
+			String [] temp = line.split("|");
+			
 			switch(temp[0]+temp[1]+temp[2]) {
 			case "add":
-				System.out.println("demande d'ajout d'un client");
-				 clientList.add(ligne);
-				 put(this,Integer.toString(clientId), clientList);	
+				System.out.println("demande d'ajout d'un client de sa liste");
+				 
+				addingLinetoList(this, line);
 				break;
 			case "rem":
-				System.out.println("demande de retirer d'un client");
+				System.out.println("demande de retirer d'un client de sa liste pour déconnection");
 				remove(Integer.toString(clientId));
 				break;
 			
@@ -87,25 +89,45 @@ public class ClientS implements Runnable {
 			}
 			
 	}
-	public void put(ClientS clientS, String id, ArrayList<String> clientList2) {
-		globalList.put(id, clientList2);
-		try {
-			sendGlobalList(clientS);
-		} catch (IOException e) {
-			e.printStackTrace();
+	private void addingLinetoList(ClientS clientS, String line2) {
+		synchronized (clientS) {
+			clientList.add(line2);
 		}
-	}
-	synchronized public void sendGlobalList (ClientS c) throws IOException{
-		Set<String> clients = globalList.keySet();
-		ArrayList<String> lisToSend = null;
 		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				put(clientS,Integer.toString(clientId), clientList); 
+				
+			}
+		}).start();
+		
+		
+	}
+
+	public void put(ClientS clientS, String id, ArrayList<String> clientList2) {
+		synchronized (clientS) {
+			globalList.put(id, clientList2);
+		}
+
+		sendClientListtoOther(clientS);
+		
+	}
+	
+	synchronized public void sendClientListtoOther (ClientS c){
+		Set<String> clients = globalList.keySet();
+
 		for(String key: clients){
-			if(key != Integer.toString(c.getClientId())) {
+		System.out.println(key  +  Integer.toString(c.getClientId()));
+			if(key != (Integer.toString(c.getClientId()))) {
 				lisToSend = globalList.get(key);
+				
 			}
         }
 		for(String temp:lisToSend) {
-			toSend(temp);
+			//toSend(temp);
+			System.out.println("ici probleme" + temp);
 		}
 		
 		

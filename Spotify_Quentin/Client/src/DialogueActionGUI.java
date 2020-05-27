@@ -56,13 +56,15 @@ public class DialogueActionGUI {
 			         case 1: 
 			        	 System.out.println("J'ajoute des musiques au serveur");
 			        	 onwnList.sendFileList(this);
+			        	 
 			        	 break;
 			        	 
 			         case 2: 
 			        	 System.out.println("J'affiche les musiques du serveur: ");
-				         displayMusics(); //J'affiche les musiques et en joue une
-		
+			        	 reading();
+			        	 displayMusics(); //J'affiche les musiques et en joue une
 			        	 break;
+			        	 
 			         case 3: 
 				         System.out.println("Je sors");
 		
@@ -72,7 +74,6 @@ public class DialogueActionGUI {
 				         send.close();
 				         reader.close();
 				         clientSocket.close();
-	
 			        	 break;
 			         }
 				}while(choix!=3);
@@ -85,26 +86,58 @@ public class DialogueActionGUI {
 		}      
 		
 	}
+	
 	public void toSend(String message) {
 		send.println(message);
 		send.flush();
 	}
-	
-	
-	   
-	
-		 
-	   
-	   public void displayMusics(){
-		   try {
-			listFromServer(); //je rempli ma liste locale venant du serveur
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+	public void reading() {
+		while(true) {
+			try {
+				String line = readLine();
+				addLineToClient(line); 
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+	}
+	
+	 private String readLine() throws IOException, ClassNotFoundException{
+		 String line = null;
+			while(true) {
+				line = reader.readLine();
+				
+				if(line != null) {
+					break;
+				}
+			}
+			return line;
+	}
+	
+	 synchronized public void addLineToClient(String ligne) throws ClassNotFoundException, IOException {
+		String [] temp = ligne.split("|");
+
+		switch(temp[0]+temp[1]+temp[2]) {
+		case "add":
+			System.out.println("demande d'ajout d'un client");
+			System.out.println(ligne);
+			serverList.add(ligne);
+			break;
+		case "rem":
+			System.out.println("demande de retirer d'un client");
+			serverList.remove(ligne);
+			break;
+		
+		default:
+			System.out.println("Wrong message");
+		}
+		
+	}
+
+	public void displayMusics(){
 		   int cpt = 0;
 		   System.out.println("Choisissez une musique: ");
 		   for(String lineList: serverList) {
@@ -119,25 +152,9 @@ public class DialogueActionGUI {
 		   System.out.println(address[0] + "-> "+ address[1] + "-> "+ address[2]);
 		   //newServerConnection(address[0], address[1], address[2]);
 		  
-	   }
-	  /* public ArrayList<String> readList () throws ClassNotFoundException, IOException {
-		   while(true) {
-			synchronized(this) {
-				serverList.add(readLine());
-			}
-			return serverList;
-		   }
-	   }*/
+	}
+
 	
-	   synchronized public void listFromServer() throws IOException, ClassNotFoundException{
-		String line = null;
-		
-		while((line = reader.readLine()) != null) {
-			synchronized(this) {
-				serverList.add(line);
-			}
-		}	
-	   }
 
 	private void newServerConnection(String Ipaddress, String port, String musiquePath) {
 		try {

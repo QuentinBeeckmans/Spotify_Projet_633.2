@@ -8,15 +8,12 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 public class Server {
-	private InetAddress localAddress = null;
+	
 	private int port;
 	private ServerSocket serverSocket;
-	private String interfaceName = "eth4";
 	private int clientId = 0;
 	
 	private ArrayList <String> clientList = new ArrayList<String>();
-	
-	//static ArrayList <String> globalList = new ArrayList<String>();
 	
 	public Server(int port) {
 		this.port=port;
@@ -25,19 +22,7 @@ public class Server {
 
 	public void listenSocket() {
 		try {
-			NetworkInterface ni = NetworkInterface.getByName(interfaceName);
-	        Enumeration<InetAddress> inetAddresses =  ni.getInetAddresses();
-			while(inetAddresses.hasMoreElements()) {
-	            InetAddress ia = inetAddresses.nextElement();
-	            
-	            if(!ia.isLinkLocalAddress()) {
-	               if(!ia.isLoopbackAddress()) {
-	            	   System.out.println(ni.getName() + "->IP: " + ia.getHostAddress());
-	            	   localAddress = ia;
-	               }
-	            }   
-            }
-			serverSocket = new ServerSocket(port, 10, localAddress);
+			serverSocket = new ServerSocket(port);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -51,13 +36,9 @@ public class Server {
 				e.printStackTrace();
 			}
 			System.out.println("Connection reçue");
-			Thread t = new Thread(new ClientS(clientSocket,clientId, clientList));
+			Thread t = new Thread(new ClientS(clientId, clientSocket,clientList));
 			clientId++;
 			t.start();
-		}
-		
+		}	
 	}
-	
-	
-	
 }
