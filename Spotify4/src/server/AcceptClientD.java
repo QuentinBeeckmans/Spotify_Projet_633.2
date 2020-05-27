@@ -2,18 +2,30 @@ package server;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Exchanger;
+
+import client2.Connexion_Give;
+import client2.Connexion_read;
+import client2.GiveFichier;
+import client2.ReadList;
+/*
+ import client1.ThreadToTransf;
+import client1.TransfertList;
+*/
 
 /*
 �	The client will be able to connect to the server through socket connections 
@@ -39,15 +51,35 @@ public class AcceptClientD implements Runnable {
 //	private BufferedReader bufRead = null;
 	private String response = null;
 	private ArrayList <String> serverList;
-	private ArrayList<String> clientList ;
-	private Thread ExchangeListThread;
+	private ArrayList<String> clientList = null;;
+	
+//	private TransfertList listThread;
+//	private ThreadToTransf listThreadReceptList;
+	private GiveFichier sendFile;
+	private ReadList readList;
+	
+	private Connexion_read connexionRead;
+
+	
+	private File fileTemp;
+	private File totalListFile;
+	
+	private InetAddress serverAdress;
+//	private InetAddress servInetAddressRead;
+	private InetAddress clientInetAddresss;
+	
+	private int port;
+	private Socket socketRead;
+	private Socket socketGive;
 
 	//Constructor
-	public AcceptClientD (Socket clientSocketOnServer, int clientNo, ArrayList <String> serverList)
+	public AcceptClientD (Socket clientSocketOnServer, int clientNo, int port)
 	{
 		this.clientSocketOnServer = clientSocketOnServer;
 		this.clientNumber = clientNo;
 		this.serverList = serverList;
+		this.clientInetAddresss = clientSocketOnServer.getInetAddress();
+		this.port = port;
 		
 
 	}
@@ -59,59 +91,120 @@ public class AcceptClientD implements Runnable {
 		System.out.println("Socket is available for connection"+ clientSocketOnServer);
 		   	 	
 	    boolean closeConnexion = false;
+	    
+//	    boolean serverActivity = true;
+	    
 	      //tant que la connexion est active, on traite les demandes
-	    while(!clientSocketOnServer.isClosed()){
-	         
+	    while(!clientSocketOnServer.isClosed() ){
+	    	
 	         try {
-	            
+//	        	 serverActivity = serverAdress.isReachable(5000);
+
+//	 	    	clientSocketOnServer.setKeepAlive(true);
+	        	 
+//	        	 Socket echangeSwitchWrite = new Socket(serverAdress, 4510);
+	 	           
+/*	 	           ServerSocket servSockTemp = new ServerSocket(4502);
+	 	          Socket echangeSwitchRead = servSockTemp.accept();
+*/
+//				os = echangeSwitchWrite.getOutputStream(); 
+//	           is = echangeSwitchRead.getInputStream();
+	        	 
 		         os = clientSocketOnServer.getOutputStream(); 
-		         is = clientSocketOnServer.getInputStream();
+//		         is = clientSocketOnServer.getInputStream()
+		        		 ;
 		         writer = new PrintWriter(os,true);
-		         reader = new BufferedInputStream(is);
-		         readObj = new ObjectInputStream(is);
-		         writeObj = new ObjectOutputStream (os); 
+
+//		         reader = new BufferedInputStream(is);
+
+//		         readObj = new ObjectInputStream(is);
+//		         writeObj = new ObjectOutputStream (os);
+		         
 		           
 	        	 int cpt = 0;
 	        	 
-//	        	 Thread.sleep(20000);
+
+	        	 ServerSocket servSock = new ServerSocket(4505);
+	           socketRead = servSock.accept();
+
+	           while (!socketRead.isClosed()) {
+
+	        	   Thread t = new Thread (  readList = new ReadList (socketRead)  )  ;
+	        	   t.start();
+	        	   readList.run();
+//	        	   t.sleep(5000);
+				   clientList = readList.readList();
+
+		    	  while (clientList.isEmpty() && clientList.contains("EMPTY LIST")) {
+				      clientList = readList.readList();
+				      
+		    	  }			    	  
+		    		
+		    	  readList.getOutPutStreamBuffer().close();
+		    		
+		    	  readList.getInPutStreamBuffer ().close();
+		    	  socketRead.close();
+		    	  servSock.close();
+	  
+	           }
+			      fileTemp = readList.getTempListFile();
 	        	 
-	        	 readList ();
-/*	        	 
-	        	 for (String item : listEchang) {
-	        		 cpt++;
-	        		 System.out.println(cpt + " : " + item);
+			      System.out.println(fileTemp.getAbsolutePath());
+	           
+        	 
+	        	 for (String item : clientList) {
+	        		 System.out.println("reçu par Client " + item);
 	        	 }
-*/	        	 
-//                 listEchang = listExchange.listReceived();
+	        	 
 
 	            //On attend la demande du client            
 	            response = read();
 	        	 	
-	            System.out.println("R�ponse re�ue du Serveur : " + response);
-	        	 	            
-	            //On affiche quelques infos, pour le débuggage
-/*	            String debug = "";
-	            debug = "Thread : " + Thread.currentThread().getName() + ". ";
-	            debug += "Demande de l'adresse : " + remote.getAddress().getHostAddress() +".";
-	            debug += " Sur le port : " + remote.getPort() + ".\n";
-	            debug += "\t -> Commande reçue : " + response + "\n";
-	            System.err.println("\n" + debug);
-*/	            
-	            //On traite la demande du client en fonction de la commande envoyée
+		           System.out.println("Réponse du client av Switch : " + response);
+
+		           //On traite la demande du client en fonction de la commande envoyée
 	            String toSend = "path music";
 	            
-	            /* response.toUpperCase() */
 	            
 	            switch( response){
 	               case "1" :
-	                  toSend = "2" /* "get list" */;
-	                  response="2";
-	  	            writer.write(toSend);
-	  	            	sendList ();
+	                  toSend = "1";
+	                  response="1";
+	                  System.out.println("SWITCH COTE SERVEUR : " + response);
+	                  writer.write(response);							
+	                  writer.flush();
+	                  
+	                  totalListFile = fileTemp;
+	                  
+//			           Socket socketTemp = new Socket(serverAdress, 45000);
+//			           echangeSocketTemp.close();
+
+
+			           socketGive = new Socket(clientInetAddresss, 4505);
+
+			           while (!socketGive.isClosed()) {
+		                  Thread t1 = new Thread(sendFile = new GiveFichier (totalListFile, socketGive));
+		                  t1.start();
+//		                  t1.sleep(5000);
+
+		                  sendFile.run();
+		                  
+		                  sendFile.sendFile();
+		                  
+		                  if (!socketGive.getReuseAddress()) {
+								System.out.println(socketGive.getReuseAddress());
+								
+								sendFile.getOutPutStreamBuffer().close();
+					    		
+								sendFile.getInPutStreamBuffer ().close();
+								socketGive.close();
+							}
+					
+			           }
 	                  break;
 	                  
 	               case "2" : // "CLOSE" 
-	                  toSend = "CLOSE"; 
+	                  toSend = "CLOSE";
 	                  System.out.println("La connexion va être arrêté");
 	                  closeConnexion = true;
 	                  break;
@@ -125,7 +218,6 @@ public class AcceptClientD implements Runnable {
 //	            System.out.println(toSend);
 	            
 	            //On envoie la réponse au client
-/*	            writer.write(toSend);							*/
 	            //Il FAUT IMPERATIVEMENT UTILISER flush()
 	            //Sinon les données ne seront pas transmises au client
 	            //et il attendra indéfiniment
@@ -159,9 +251,21 @@ public class AcceptClientD implements Runnable {
  catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}	  
+			}	
+	         finally {
+		        	System.out.println("LA connexion est coupé suite à un arrêt de la connexion du Serveur");
+
+	               try {
+					clientSocketOnServer.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	 	    }
 			
 			    }
+	    
+	    
 		
 	}
 	
@@ -171,6 +275,9 @@ public class AcceptClientD implements Runnable {
 	      int stream;
 	      int cpt = 0;
 	      
+	      is = clientSocketOnServer.getInputStream();
+         reader = new BufferedInputStream(is);
+
 	      byte[] b = new byte[4096];
 //	      while ( (stream = reader.read(b)) >=0 ) {
 //	    	  response += new String(b, 0, stream);
@@ -180,7 +287,7 @@ public class AcceptClientD implements Runnable {
 	      response = new String(b, 0, stream); 
 	      
 	      // remise � z�ro du buffer (s�curit� peut-�tre pas obligatoire)
-	      b = new byte [8] ;
+	      b = new byte [0] ;
 	      
 	      return response;
 	   }
@@ -197,19 +304,26 @@ public class AcceptClientD implements Runnable {
 		return serverList;
 	}
 	
-	   public void readList () {
+	   public synchronized void readList () {
+		   
 		   
 		   try {
+			  
 			clientList = (ArrayList<String>) readObj.readObject();
 			
+			readObj.wait();
+
 			serverList.addAll(clientList);
 			
 		} catch (ClassNotFoundException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		   
-		   for(String item : serverList) {
+/*		   for(String item : serverList) {
 			   System.out.println(item);
 		   }
 		   
@@ -218,28 +332,38 @@ public class AcceptClientD implements Runnable {
 		   for(String item : clientList) {
 			   System.out.println(item);
 		   }
-		   
+*/		   
 	   }
 	   
-	   private void sendList (){
+	   private synchronized void sendList (){
 		   
+		   Thread t = new Thread();
 		   ArrayList<String> lisToSend;
 		   
 		   lisToSend = serverList;
 		   
+		   // Permet de ne pas envoyer au client ses propres musiques
+/*		   
 		   for(String item : lisToSend) {
 			   
 			   if(item.contains((CharSequence) clientSocketOnServer.getInetAddress())) {
 				   lisToSend.remove(item);
 				}			   
 		   }
-		   
+*/		   
 		   try {
+//			   t.start();
+			   
+			   writeObj.writeObject(lisToSend);
 
-			writeObj.writeObject(lisToSend);
+			   writeObj.flush();
+			   
+				writeObj.wait();
 
-			writeObj.flush();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+				e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

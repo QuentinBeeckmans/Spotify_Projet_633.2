@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.*;
+import java.rmi.server.SocketSecurityException;
 import java.util.*;
 import java.util.concurrent.Exchanger;
 
@@ -15,9 +16,11 @@ public class ConnexionMulti_In {
 	static ServerSocket mySkServer;
 	static String interfaceName = /* "eth4" */ "eth0";
 	
-	public static void main(String[] args) {
-
+//	public static void main(String[] args) {
+	public ConnexionMulti_In() {
+		
 		int ClientNo = 1;
+	
 		
 		try {
 			NetworkInterface ni = NetworkInterface.getByName(interfaceName);
@@ -34,29 +37,32 @@ public class ConnexionMulti_In {
             }
 			
 			//Warning : the backlog value (2nd parameter is handled by the implementation
-			mySkServer = new ServerSocket(4500,10,localAddress);
+			mySkServer = new ServerSocket(4500 /* ,10,localAddress */);
 			System.out.println("Default Timeout :" + mySkServer.getSoTimeout());
 			System.out.println("Used IpAddress :" + mySkServer.getInetAddress());
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
 			
 			//wait for a client connection
-			while(true)
-			{
+			
+//			while(!mySkServer.isClosed())	{
+				
 				AcceptClientD client ;
 				clientSocket = mySkServer.accept();
 				System.out.println("connection request received");
-				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, globalList));
+				
+				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, 4500));
 				ClientNo++;
-				globalList = client.getGlobalList();
 				
-			//starting the thread
-				t.start();
-				
+
+	//				globalList = client.getGlobalList();
+					
+				//starting the thread
+					t.start();
 //				t.sleep(3000);
 				
 //				addList(client.transfertList ());
 								
-			}
+//			}
 
 		} catch (IOException e) {
 
@@ -69,7 +75,12 @@ public class ConnexionMulti_In {
 */		
 	}
 	
-	static public void addList(ArrayList <String> newList) {
+	public InetAddress getInetLocalAddress () {
+		return localAddress;
+		
+	}
+	
+	public void addList(ArrayList <String> newList) {
 		
 		int cpt =0;
 		

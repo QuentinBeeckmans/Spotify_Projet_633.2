@@ -27,6 +27,8 @@ public class Data_OwnList {
 	String dataDirectory = "dataDirectory.txt";
 	private Thread echangeListThread ;
 	private Thread receptListThread;
+	private File newTempFile;
+	private PrintWriter writer;
 	
 	public Data_OwnList (Socket sockEchange ) {
 		
@@ -35,28 +37,31 @@ public class Data_OwnList {
 					
 		//sockEchange.setSoTimeout(30000);
 		
-		ArrayList<String> listFichierAEchanger = listFichierAEchange ();
-		
+
+		/* ArrayList<String> */ File listFichierAEchanger = listFichierAEchange ();
+/*		
 		for (String item : listFichierAEchanger) {
 			System.out.println("Test contenu List : " + item);
 //			item = cpt + " ; " + item + " ; " + sockEchange.getInetAddress();
 
 		}
-				
+*/				
 	}
 	
-	public ArrayList <String> listFichierAEchange () {
+	public /* ArrayList <String> */ File listFichierAEchange () {
 				
 		String whereDataDirectory = dataDirectory;
 		File file = new File (whereDataDirectory);
-				
+		File list = null;
+		
 		String dataDirectoryPath ;
 		File dataDir = null ;
 		
-		ArrayList<String> list = new ArrayList<>() ;
+//		ArrayList<String>  list = new  ArrayList<>();
 		
 		try {
-			
+			newTempFile = File.createTempFile("MaListTemp", ".txt");
+	
 			if ( ! file.exists()) {				
 				chooseRepertory ();			
 		}
@@ -69,11 +74,12 @@ public class Data_OwnList {
 			}
 			in.close();
 					
-			list = listFileTypeInDir (dataDir,".mp3", list) ;
+			list /* newTempFile */ = listFileTypeInDir (dataDir,".mp3", newTempFile) ;
 			
-			if (list == null || list.isEmpty()) {
-				
-				list.add("EMPTY/VIDE");
+			if (list == null || list.length() == 0 /* isEmpty() */ ) {
+				writer = new PrintWriter(list);
+				writer.write("EMPTY/VIDE");
+				writer.close();
 			}
 			
 		} catch (FileNotFoundException e) {
@@ -85,10 +91,23 @@ public class Data_OwnList {
 		return list;
 	}
 		
-	private ArrayList<String> listFileTypeInDir (File file, String fileType, ArrayList<String> list) {
+	private /* ArrayList<String> */ File listFileTypeInDir (File file, String fileType, File newTempFile /* ArrayList<String> list */ ) {
+		
+		File newFile = null;
+		
+		try {
+			newFile = File.createTempFile("MaListTemp", ".txt");
+
+			writer = new PrintWriter(newFile);
+			
+			
+				
 		
 		 if (file.getAbsolutePath().endsWith(fileType)) {			
-				list.add(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
+//				list.add(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
+				
+				writer.println(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
+//				newFile.add(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
 			}
 						 
 		        if (file.isDirectory()) {	 
@@ -96,11 +115,22 @@ public class Data_OwnList {
 		 
 		            for (File child : children) {	            	
 		                // Récursive
-		                listFileTypeInDir(child, fileType, list);	                
+		                listFileTypeInDir(child, fileType, /* list* */ newFile);	                
 		            }	            
 		        }
-		        
-		return list ;
+
+		        writer.close();
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	        
+		return newFile ;
 	}
 		
 	

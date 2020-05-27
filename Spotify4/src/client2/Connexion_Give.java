@@ -1,5 +1,6 @@
 package client2;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -9,43 +10,43 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 
-public class Connexion2ToServer_AcrossThread {
+public class Connexion_Give {
 	
-	static Socket mySocket ;
-	static DialogueActionGUI dialogueActionGUI;
+	private Socket mySocket ;
+	private GiveFichier giveFichier;
 
-
-	public static void main(String[] args) {
+	public Connexion_Give(File data_ownList) {
 
 		InetAddress serverAddress;
         String serverName = /*IP Matthieu */ "10.0.2.15" /*IP Quentin "192.168.56.1" */ ;
         
         int port = 4500;
         
-        Data_OwnList fileList = null ;
+//        Data_OwnList fileList = null ;
 
 		try {
-			
-			while (true) {
-			System.out.println("Client 1");
+	           System.out.println(" Pendant GIVE connexion");
+
+//			while (true) {
+			System.out.println("Client 2");
 			serverAddress = InetAddress.getByName(serverName);
 
 			mySocket = new Socket(serverAddress, port);
 			
 			
-			fileList = new Data_OwnList(mySocket) ;
+//			fileList = new Data_OwnList(mySocket) ;
 			
 			System.out.println("IP SERVEUR connecté" + mySocket.getInetAddress());
 		
-			dialogueActionGUI = new DialogueActionGUI (mySocket);
 			
+			giveFichier = new GiveFichier(data_ownList, mySocket);
 			
 //			InputStream is = mySocket.getInputStream();
 //			ObjectInputStream ois = new ObjectInputStream(mySocket.getInputStream());
  
 //			ArrayList <String> al = (ArrayList ) ois.readObject() ;
 
-			}
+//			}
 			
 		}catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -57,6 +58,8 @@ public class Connexion2ToServer_AcrossThread {
 		
 	}
 
-
+	public GiveFichier transmisson () {
+		return giveFichier;
+	}
 
 }
