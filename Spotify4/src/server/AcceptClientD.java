@@ -20,12 +20,16 @@ import java.util.concurrent.Exchanger;
 
 import client2.Connexion_Give;
 import client2.Connexion_read;
-import client2.GiveFichier;
+import client2.TransmitList;
+import client2.TransmitSwitch;
 import client2.ReadList;
+import client2.ReadSwitch;
 /*
  import client1.ThreadToTransf;
 import client1.TransfertList;
 */
+import client2.SocketRead;
+import client2.SocketTransmit;
 
 /*
 �	The client will be able to connect to the server through socket connections 
@@ -40,23 +44,41 @@ import client1.TransfertList;
  */
 public class AcceptClientD implements Runnable {
 	
+	private static int portList = 4505;
+	private static int portList2 = 4506;
+	private static int portSwitch1 = 4510;
+	private static int portSwitch2 = 4511;
+	private static int portStream = 4550;
+	
 	private Socket clientSocketOnServer;
 	private int clientNumber;
-	private PrintWriter writer = null;
+	
+	//private PrintWriter writer = null;
 	private BufferedInputStream reader = null;
-	private OutputStream os = null;
-	private InputStream is = null;
+	//private OutputStream os = null;
+	// private InputStream is = null;
 	private ObjectOutputStream writeObj = null;
 	private ObjectInputStream readObj = null;
 //	private BufferedReader bufRead = null;
+	
 	private String response = null;
+	private String choice = null;
+	
 	private ArrayList <String> serverList;
 	private ArrayList<String> clientList = null;;
 	
+	private Socket socketTransmitSwitch;
+	private Socket socketReadSwitch;
+	private Socket socketTransmitList;
+	private Socket socketReadList;
+	
 //	private TransfertList listThread;
 //	private ThreadToTransf listThreadReceptList;
-	private GiveFichier sendFile;
+	private TransmitList sendFile;
 	private ReadList readList;
+	
+	private ReadSwitch readSwitch;
+	private TransmitSwitch transmitSwitch;
 	
 	private Connexion_read connexionRead;
 
@@ -64,13 +86,13 @@ public class AcceptClientD implements Runnable {
 	private File fileTemp;
 	private File totalListFile;
 	
-	private InetAddress serverAdress;
+//	private InetAddress serverAdress;
 //	private InetAddress servInetAddressRead;
 	private InetAddress clientInetAddresss;
 	
 	private int port;
-	private Socket socketRead;
-	private Socket socketGive;
+//	private Socket socketRead;
+//	private Socket socketGive;
 
 	//Constructor
 	public AcceptClientD (Socket clientSocketOnServer, int clientNo, int port)
@@ -98,38 +120,13 @@ public class AcceptClientD implements Runnable {
 	    while(!clientSocketOnServer.isClosed() ){
 	    	
 	         try {
-//	        	 serverActivity = serverAdress.isReachable(5000);
 
-//	 	    	clientSocketOnServer.setKeepAlive(true);
-	        	 
-//	        	 Socket echangeSwitchWrite = new Socket(serverAdress, 4510);
-	 	           
-/*	 	           ServerSocket servSockTemp = new ServerSocket(4502);
-	 	          Socket echangeSwitchRead = servSockTemp.accept();
-*/
-//				os = echangeSwitchWrite.getOutputStream(); 
-//	           is = echangeSwitchRead.getInputStream();
-	        	 
-		         os = clientSocketOnServer.getOutputStream(); 
-//		         is = clientSocketOnServer.getInputStream()
-		        		 ;
-		         writer = new PrintWriter(os,true);
+		        SocketRead socketRead =  new SocketRead(portList);
+				socketReadList = socketRead.getSocket();
+				
+	           while (!socketReadList.isClosed()) {
 
-//		         reader = new BufferedInputStream(is);
-
-//		         readObj = new ObjectInputStream(is);
-//		         writeObj = new ObjectOutputStream (os);
-		         
-		           
-	        	 int cpt = 0;
-	        	 
-
-	        	 ServerSocket servSock = new ServerSocket(4505);
-	           socketRead = servSock.accept();
-
-	           while (!socketRead.isClosed()) {
-
-	        	   Thread t = new Thread (  readList = new ReadList (socketRead)  )  ;
+	        	   Thread t = new Thread (  readList = new ReadList (socketReadList)  )  ;
 	        	   t.start();
 	        	   readList.run();
 //	        	   t.sleep(5000);
@@ -140,11 +137,12 @@ public class AcceptClientD implements Runnable {
 				      
 		    	  }			    	  
 		    		
-		    	  readList.getOutPutStreamBuffer().close();
-		    		
-		    	  readList.getInPutStreamBuffer ().close();
-		    	  socketRead.close();
-		    	  servSock.close();
+		    	  readList.close();
+		    	  
+		  //  	  getOutPutStreamBuffer().close();
+		  //  	  readList.getInPutStreamBuffer ().close();
+//		    	  socketReadList.close();
+//		    	  socketRead.getServerSocket().close();
 	  
 	           }
 			      fileTemp = readList.getTempListFile();
@@ -157,10 +155,50 @@ public class AcceptClientD implements Runnable {
 	        	 }
 	        	 
 
-	            //On attend la demande du client            
-	            response = read();
-	        	 	
+	            //On attend la demande du client 
+	        	 
+//	            Thread tSwitch = new thread();
+//	            tSwitch.start();
+	            
+
+
+	//	            response = readSwitch();
+		            
+		            SocketRead socketReadSwicth =  new SocketRead(portSwitch1);
+					socketReadSwitch = socketReadSwicth.getSocket();
+					
+					System.out.println("J'ai bien choisi get music");
+
+					while (!socketReadSwitch.isClosed()) {
+						Thread tReadSwitch = new Thread (  readSwitch = new ReadSwitch (socketReadSwitch)  )  ;
+						tReadSwitch.start();
+						readSwitch.run();
+			        	   
+					response = "";
+					
+//					response = readSwitch.readSwitch();
+
+					
+					while (response =="") {
+						
+						System.out.println("Est-ce que je passe ici ++++++++++++++++");
+
+						response = readSwitch.readSwitch();
+						
+						System.out.println("Est-ce que response ici ++++++++++++++++" + response);
+
+					      
+			    	  }	
+					
+						readSwitch.getReader().close();				    		
+						readSwitch.getInPutStreamBuffer ().close();
+//			    	  socketReadSwitch.close();
+//			    	  socketRead.getServerSocket().close();
+					}
+
 		           System.out.println("Réponse du client av Switch : " + response);
+		           
+		           
 
 		           //On traite la demande du client en fonction de la commande envoyée
 	            String toSend = "path music";
@@ -171,8 +209,53 @@ public class AcceptClientD implements Runnable {
 	                  toSend = "1";
 	                  response="1";
 	                  System.out.println("SWITCH COTE SERVEUR : " + response);
-	                  writer.write(response);							
-	                  writer.flush();
+
+/*	                  int choix = scan.nextInt();
+
+						String choice = Integer.toString(choix);
+
+						System.out.println("MON CHOIX" + choice);
+*/
+						// On envoie la réponse au serveur
+/*						writeSwitch(response);
+
+						if (socketTransmitSwitch.isClosed()) {
+//							os.close();
+							System.out.println("Commade saisie : " + response + "\t Envoyée au Client");
+							
+						}
+*/						
+//	                  clientInetAddresss = clientSocketOnServer.getInetAddress();
+	                  
+						Socket socketTransmitSwitch = new SocketTransmit (clientInetAddresss, portSwitch2).getSocket();
+
+				           while (!socketTransmitSwitch.isClosed()) {
+			                  Thread tTransmitSwitch = new Thread(transmitSwitch = new TransmitSwitch (response, socketTransmitSwitch));
+			                  tTransmitSwitch.start();
+//			                  t1.sleep(5000);
+
+			                  transmitSwitch.run();
+		                  
+			                  transmitSwitch.sendSwitch();
+			                  
+//			                  System.out.println("COTE SERVEUR transmitSwitch ");
+
+					           if (!socketTransmitSwitch.getReuseAddress()) {
+	//				           if (socketTransmitSwitch.isClosed()) {
+									
+									transmitSwitch.getOutPutStreamBuffer().close();					    		
+									transmitSwitch.getWriter().close();
+//									socketTransmitSwitch.close();
+
+//									System.out.println(socketTransmitSwitch.isClosed());
+									
+								}       
+  
+
+				           }
+				           
+
+
 	                  
 	                  totalListFile = fileTemp;
 	                  
@@ -180,33 +263,73 @@ public class AcceptClientD implements Runnable {
 //			           echangeSocketTemp.close();
 
 
-			           socketGive = new Socket(clientInetAddresss, 4505);
+//			           socketGive = new Socket(clientInetAddresss, 4505);
 
-			           while (!socketGive.isClosed()) {
-		                  Thread t1 = new Thread(sendFile = new GiveFichier (totalListFile, socketGive));
+	                  Socket socketTransmitList2 = new SocketTransmit (clientInetAddresss, portList2).getSocket();
+
+			           while (!socketTransmitList2.isClosed()) {
+		                  Thread t1 = new Thread(sendFile = new TransmitList (totalListFile, socketTransmitList2));
 		                  t1.start();
-//		                  t1.sleep(5000);
 
 		                  sendFile.run();
 		                  
 		                  sendFile.sendFile();
-		                  
-		                  if (!socketGive.getReuseAddress()) {
-								System.out.println(socketGive.getReuseAddress());
-								
-								sendFile.getOutPutStreamBuffer().close();
-					    		
-								sendFile.getInPutStreamBuffer ().close();
-								socketGive.close();
-							}
 					
+		                  if (!socketTransmitList2.getReuseAddress()) {
+//					           if (socketTransmitList.isClosed()) {
+									System.out.println(socketTransmitList2.isClosed());
+									t1.sleep(2000);
+									sendFile.close();
+					//				getOutPutStreamBuffer().close();					    		
+					//				sendFile.getInPutStreamBuffer ().close();
+//									socketTransmitList.close();
+								}  
+		                  
 			           }
+			           
+			           
+			           
 	                  break;
 	                  
 	               case "2" : // "CLOSE" 
 	                  toSend = "CLOSE";
 	                  System.out.println("La connexion va être arrêté");
+	                  
+						SocketRead socketReadSwicth2 =  new SocketRead(portSwitch2);
+						Socket socketReadSwitch = socketReadSwicth2.getSocket();					
+
+						while (!socketReadSwitch.isClosed()) {
+							Thread tReadSwitch = new Thread (  readSwitch = new ReadSwitch (socketReadSwitch)  )  ;
+							tReadSwitch.start();
+							readSwitch.run();
+
+//						response = readSwitch.readSwitch();
+
+
+							response = "111";
+
+							System.out.println("J'ai bien " + response);
+
+						while (     response =="111") {
+
+							System.out.println(socketReadSwitch.isClosed());
+
+							response = readSwitch.readSwitch();
+							
+							System.out.println("Réponse SERVEUR av Switch : " + response);
+					      
+				    	  }	
+						
+							readSwitch.getReader().close();				    		
+							readSwitch.getInPutStreamBuffer ().close();
+//				    	  socketReadSwitch.close();
+//				    	  socketRead.getServerSocket().close();
+						}
+	                  	                  
 	                  closeConnexion = true;
+	                  
+	                  socketReadSwitch.close();
+
 	                  break;
 	              /* 
 	               default : 
@@ -221,7 +344,7 @@ public class AcceptClientD implements Runnable {
 	            //Il FAUT IMPERATIVEMENT UTILISER flush()
 	            //Sinon les données ne seront pas transmises au client
 	            //et il attendra indéfiniment
-	            writer.flush();
+//	            writer.flush();
 	            
 	            if(closeConnexion){
 	               System.err.println("COMMANDE CLOSE DETECTEE ! ");
@@ -232,7 +355,7 @@ public class AcceptClientD implements Runnable {
 	                  
 	                  Thread.sleep(5000);
 
-	                  writer.close();
+//	                  writer.close();
 	                  reader.close();
 	                  writeObj.close();
 	                  readObj.close();	               
@@ -269,30 +392,60 @@ public class AcceptClientD implements Runnable {
 		
 	}
 	
-	//La méthode pour lire les réponses
-	   private String read() throws IOException{      
-		  String response;
-	      int stream;
-	      int cpt = 0;
-	      
-	      is = clientSocketOnServer.getInputStream();
-         reader = new BufferedInputStream(is);
 
-	      byte[] b = new byte[4096];
-//	      while ( (stream = reader.read(b)) >=0 ) {
-//	    	  response += new String(b, 0, stream);
-//	      }
-//	   
-	      stream = reader.read(b);
-	      response = new String(b, 0, stream); 
-	      
-	      // remise � z�ro du buffer (s�curit� peut-�tre pas obligatoire)
-	      b = new byte [0] ;
-	      
-	      return response;
-	   }
-	   
+/*	private synchronized void writeSwitch (String choice) throws IOException {
+		
+		socketTransmitSwitch = new SocketTransmit(clientInetAddresss, portSwitch).getSocket();
+		
+//		while (!socketTransmitSwitch.isClosed()) {
+			
+			OutputStream osWrite = socketTransmitSwitch.getOutputStream();
+	
+			PrintWriter writerSwitch = new PrintWriter(osWrite, true);
+			
+			writerSwitch.write(choice);
+	
+			writerSwitch.flush();
 
+			writerSwitch.close();	
+			osWrite.close();
+//		}
+	}
+	
+	// La méthode pour lire les réponses
+/*	private synchronized String readSwitch() throws IOException {
+		
+		InputStream is = null;
+		BufferedInputStream reader = null;
+		socketReadSwitch = new SocketRead(portSwitch).getSocket();
+		response = null;
+		int stream;
+
+		byte[] b = new byte[0];
+
+		b = new byte[4096];
+		
+		while (response == null) {
+		 is = socketReadSwitch.getInputStream();
+		reader = new BufferedInputStream(is);
+
+		stream = reader.read(b);
+		response = new String(b, 0, stream);
+
+		// remise à zèro du buffer (sécurité peut-être pas obligatoire)
+				
+		}
+		
+		is.close();
+    	reader.close();
+    	socketReadSwitch.close();
+    	
+		System.out.println("socketReadSwitch : " + socketReadSwitch.isClosed());
+
+    	
+		return response;
+	}
+*/
 	public Socket getSocketClient() {
 
 		return clientSocketOnServer;		

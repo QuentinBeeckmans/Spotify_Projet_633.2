@@ -23,28 +23,49 @@ import server.AcceptClientD;
 public class DialogueActionGUI {
 
 	private static String[] listChoiceAction = { "get list", "CLOSE" };
+	private static int portList = 4505;
+	private static int portList2 = 4506;
+	private static int portSwitch1 = 4510;
+	private static int portSwitch2 = 4511;
+	private static int portStream = 4550;
+	
+	
+	
 	private boolean closeConnexion = false;
 	private Socket socketOnServer;
 	private PrintWriter writer = null;
 	private BufferedInputStream reader = null;
 	private OutputStream os = null;
 	private InputStream is = null;
+//	InputStream isRead = null;
+	
 	private ObjectOutputStream writeObj = null;
 	private ObjectInputStream readObj = null;
 	private Data_OwnList onwnList;
 	private ArrayList<String> serverList;
-	private Socket socketRead;
-	private Socket socketGive;
+	
+//	private Socket socketRead;
+	private Socket socketTransmitSwitch;
+	private Socket socketReadSwitch;
+	private Socket socketTransmitList;
+	private Socket socketReadList;
+	
+	private Socket socketTransmitStream;
+	private Socket socketReadStream;
 
 	private InetAddress serverAdress;
 	private int port;
+
 
 	private Connexion_read connexionRead;
 
 	private File newFile;
 
-	private GiveFichier sendFile;
+	private TransmitList sendFile;
 	private ReadList readList;
+	
+	private ReadSwitch readSwitch;
+	private TransmitSwitch transmitSwitch;
 //	private /* ThreadToTransf */ TransfertList listThread;
 
 	public DialogueActionGUI(Socket socket, InetAddress serverAdress, int port) {
@@ -58,7 +79,7 @@ public class DialogueActionGUI {
 		 */
 
 		this.serverAdress = serverAdress;
-		this.port = port;
+//		this.port = port;
 
 //		while (true) {
 
@@ -67,9 +88,11 @@ public class DialogueActionGUI {
 
 			onwnList = new Data_OwnList(socketOnServer);
 
+			while (!socketOnServer.isClosed() /* || response != "CLOSE" */) {
+
+			
 			try {
 
-				while (!socketOnServer.isClosed() /* || response != "CLOSE" */) {
 
 //	        	SocketOnServer.setKeepAlive(true);
 
@@ -81,11 +104,7 @@ public class DialogueActionGUI {
 */
 //					 os = echangeSwitchWrite.getOutputStream(); 
 //					 is = echangeSwitchRead.getInputStream();
-					 
-					os = socketOnServer.getOutputStream();
-//					is = socketOnServer.getInputStream();
-
-					writer = new PrintWriter(os, true);
+					
 
 //					reader = new BufferedInputStream(is);
 
@@ -93,13 +112,13 @@ public class DialogueActionGUI {
 
 					Scanner scan = new Scanner(System.in);
 
-
-					socketGive = new Socket(socketOnServer.getInetAddress(), 4505);
+/**************************************  Transmission de la liste >> faire méthode à mettre ici 
+ * 								et à lancer dans le main au démarrage de la connexion de l'utilisteur **********************************/
+					socketTransmitList = new SocketTransmit (socketOnServer.getInetAddress(), portList).getSocket();
 					
-					while (!socketGive.isClosed()) {
+					while (!socketTransmitList.isClosed()) {
 
-					Thread t = new Thread(
-					sendFile = new GiveFichier(onwnList.listFichierAEchange(), socketGive));
+					Thread t = new Thread(sendFile = new TransmitList(onwnList.listFichierAEchange(), socketTransmitList));
 					t.start();
 //					t.sleep(2000);
 					
@@ -109,16 +128,17 @@ public class DialogueActionGUI {
 
 //					t.sleep(5000);
 					
-					if (!socketGive.getReuseAddress()) {
+					if (!socketTransmitList.getReuseAddress()) {
 						
 						sendFile.getOutPutStreamBuffer().close();
 			    		
 						sendFile.getInPutStreamBuffer ().close();
-						socketGive.close();
+						socketTransmitList.close();
 					}
-			
+			System.out.println("TransmitList du Client à sa connexion ; socket close ? " + socketTransmitList.isClosed());
 					}
-
+/*****************************   FIN de la méthode à créer *****************************************/
+					
 					while (true) {
 
 					System.out.println("QUe voulez-vous faire ?");
@@ -136,55 +156,148 @@ public class DialogueActionGUI {
 					System.out.println("MON CHOIX" + choice);
 
 					// On envoie la réponse au serveur
-					writer.write(choice);
+					
+//					writeSwitch(choice);
+					
+					socketTransmitSwitch = new SocketTransmit (serverAdress, portSwitch1).getSocket();
 
-					writer.flush();
+			           while (!socketTransmitSwitch.isClosed()) {
+		                  Thread tTransmitSwitch = new Thread(transmitSwitch = new TransmitSwitch (choice, socketTransmitSwitch));
 
+//		                  tTransmitSwitch.sleep(5000);
+		                  
+		                  tTransmitSwitch.start();
+
+		                  transmitSwitch.run();
+		                  
+		                  transmitSwitch.sendSwitch();
+					
+		                  
+		                  
+							if (!socketTransmitSwitch.getReuseAddress()) {
+//		                  if (socketTransmitSwitch.isClosed()) {
+								
+//				                  tTransmitSwitch.sleep(5000);
+								
+								transmitSwitch.getOutPutStreamBuffer().close();					    		
+								transmitSwitch.getWriter().close();
+//								socketTransmitSwitch.close();
+								System.out.println(socketTransmitSwitch.isClosed());
+							}
+		                  
+			           }
+			           
+			          
+					
+/*					if (socketTransmitSwitch.isClosed()) {
+						
+						os.close();
+						
+						System.out.println("socketTransmitSwitch : " + socketTransmitSwitch.isClosed());
+
+
+//						Thread.currentThread().sleep(5000);
+						
+						cpt++;
+
+					}
+*/										
 					System.out.println("Commade saisie : " + choice + "\t Envoyée au serveur");
 
-					response = read();
+//					response = readSwitch();
+//					reader.close();
+
+					SocketRead socketReadSwicth2 =  new SocketRead(portSwitch2);
+					Socket socketReadSwitch = socketReadSwicth2.getSocket();
+					
+
+					while (!socketReadSwitch.isClosed()) {
+						Thread tReadSwitch = new Thread (  readSwitch = new ReadSwitch (socketReadSwitch)  )  ;
+						tReadSwitch.start();
+						readSwitch.run();
+
+//					response = readSwitch.readSwitch();
+
+
+						response = "111";
+
+						System.out.println("J'ai bien " + response);
+
+					while (     response =="111") {
+
+						System.out.println(socketReadSwitch.isClosed());
+
+						response = readSwitch.readSwitch();
+						
+						System.out.println("Réponse SERVEUR av Switch : " + response);
+				      
+			    	  }	
+					
+						readSwitch.getReader().close();				    		
+						readSwitch.getInPutStreamBuffer ().close();
+//			    	  socketReadSwitch.close();
+//			    	  socketRead.getServerSocket().close();
+					}
+					
+					
 					System.out.println("Réponse SERVEUR av Switch : " + response);
+
+//					Thread.currentThread().sleep(5000);
 
 					switch (response) {
 
 					case "1":
-						System.out.println("J'ai bien choisi get music");
+//						System.out.println("J'ai bien choisi get music");
 						System.out.println();
 
-						ServerSocket servSock = new ServerSocket(4505);
-	//					echangeSocketTemp.close();
-	//					Socket socketTemp = servSock.accept();
-						socketRead = servSock.accept();
-						
-						System.out.println("J'ai bien choisi get music");
 
-						while (!socketRead.isClosed()) {
-						Thread t1 = new Thread(readList = new ReadList(socketRead));
+	//					ServerSocket servSock = new ServerSocket(portReadTransfList);
+	//					Socket socketTemp = servSock.accept();
+	//					socketRead = servSock.accept();
+						
+						SocketRead socketRead =  new SocketRead(portList2);
+						socketReadList = socketRead.getSocket();
+						
+
+						while (!socketReadList.isClosed()) {
+						Thread t1 = new Thread(readList = new ReadList(socketReadList));
 						t1.start();
 						readList.run();
-						serverList = readList.readList();
+//						serverList = readList.readList();
 						
-						while (serverList.contains("EMPTY LIST")) {
+						serverList = new ArrayList<String>();
+
+
+						while (serverList.isEmpty()) {
+
+							System.out.println("J'ai bien choisi get music");
+
 							serverList = readList.readList();
 						      
 				    	  }			    	  
 				    		
-				    	  readList.getOutPutStreamBuffer().close();
-				    		
+				    	  readList.getOutPutStreamBuffer().close();				    		
 				    	  readList.getInPutStreamBuffer ().close();
-				    	  socketRead.close();
-				    	  servSock.close();
+//				    	  socketReadList.close();
+//				    	  socketRead.getServerSocket().close();
 						}
 						
 						for (String item : serverList) {
-							System.out.println("reçu par serveur " + item);
+							System.out.println("reçu du serveur " + item);
 						}
 						System.out.println();
 						System.out.println();
-
+						
+						socketTransmitSwitch.close();
+						socketReadList.close();
+						socketReadSwitch.close();
+						
 						break;
 
 					case "CLOSE":
+						
+	//					response = readSwitch();
+
 						Thread.sleep(5000);
 
 						writer.close();
@@ -202,7 +315,7 @@ public class DialogueActionGUI {
 				}
 			}
 
-			} 
+//			} 
 			catch (IOException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -217,29 +330,79 @@ public class DialogueActionGUI {
 					e.printStackTrace();
 				}
 			}
-//		}
+		}
 
 	}
 
+/*	private synchronized void writeSwitch (String choice) throws IOException {
+		
+		socketTransmitSwitch = new SocketTransmit(serverAdress, portSwitch).getSocket();
+			
+				os = socketTransmitSwitch.getOutputStream();	
+				writer = new PrintWriter(os, true);
+				
+				writer.write(choice);
+		
+				writer.flush();
+				
+				writer.close();
+			
+	}
+	
 	// La méthode pour lire les réponses
-	private String read() throws IOException {
-
-		InputStream isRead = socketOnServer.getInputStream();
-		reader = new BufferedInputStream(isRead);
-
-		String response;
+/*	private synchronized String readSwitch() throws IOException {
+		
+		System.out.println("Est-ce que readSwitch se lance ???????????????????");
+		
+		
+		
+//		System.out.println("test socketReadSwitch : " + socketReadSwitch.getPort());
+		try {
+			Thread.currentThread().sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		socketReadSwitch.close();
+		socketReadSwitch = new SocketRead(portSwitch).getSocket();
+		
+		try {
+			Thread.currentThread().sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		String response = null;
 		int stream;
 
-		byte[] b = new byte[4096];
+		byte[] b = new byte[0];
+
+		b = new byte[4096];
+		
+		while (response == null) {
+		 is = socketReadSwitch.getInputStream();
+		reader = new BufferedInputStream(is);
 
 		stream = reader.read(b);
 		response = new String(b, 0, stream);
 
 		// remise à zèro du buffer (sécurité peut-être pas obligatoire)
 		b = new byte[0];
-
+				
+		}
+		
+		is.close();
+    	reader.close();
+    	socketReadSwitch.close();
+    	
 		return response;
 	}
+	*/
+	
+	
 	/*
 	 * public synchronized void readList () { ArrayList<String> affichList = new
 	 * ArrayList<String>(); Thread t = new Thread();

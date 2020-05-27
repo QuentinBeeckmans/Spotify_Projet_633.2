@@ -13,5 +13,13 @@ public class MainClient {
 //		client1.dialogWithServeur();
 		
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

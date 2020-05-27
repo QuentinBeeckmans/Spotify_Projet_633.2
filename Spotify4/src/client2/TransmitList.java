@@ -17,27 +17,23 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-public class GiveFichier implements Runnable{
+public class TransmitList implements Runnable{
 
 	private OutputStream os = null;
 	private InputStream in = null;
 	private /* ArrayList<String> */ File list = null;
 	private Socket socket;
 //	private InetAddress serverAdress;
-	private PrintWriter writer;
+//	private PrintWriter writer;
 	
 	private ObjetSerialisable objList;
 
 	
-	public GiveFichier( /* File list */ File listFile, Socket socket) {
+	public TransmitList( /* File list */ File listFile, Socket socket) {
 
-		this.writer = writer;
+//		this.writer = writer;
 		this.list = listFile;
 		this.socket = socket;
-		
-//		this.serverAdress = serverAdress;
-		
-		
 		
 	}
 	
@@ -120,5 +116,12 @@ System.out.println("Debut List transfert !!!!!!!!!!!!!!!!!!!!!!");
 		return in; 
 	}
 	
+	public void close () throws IOException {
+		
+		in.close();
+		os.close();
+//		socket.close();
+		
+	}
 	
 }

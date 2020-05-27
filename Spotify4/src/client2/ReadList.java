@@ -22,8 +22,11 @@ public class ReadList implements Runnable {
 	
 
 	private InputStream is = null;
+	private InputStream ips;
+	private InputStreamReader ipsr;
 	private OutputStream out = null;
-	private DataInputStream readObj;
+	private BufferedReader br;
+//	private DataInputStream readObj;
 	private ArrayList<String> arraylist = new ArrayList<>(); 
 	private File list = null;
 	private boolean isRunning = false;
@@ -92,14 +95,14 @@ public class ReadList implements Runnable {
 		return list;
 	}
 	
-	 public synchronized ArrayList<String> readList () {
+	 public ArrayList<String> readList () {
 		 
 //System.out.println("LIST arrayList ; ReadList ; readList() :  TEST INIT ");
 		
 			try {
 //				 while (arraylist.size()<1 && arraylist.contains("EMPTY LIST")) {
 					
-					 System.out.println(("EMPTY LIST TEST : " + arraylist.contains("EMPTY LIST")));
+					 System.out.println("EMPTY LIST TEST : " + arraylist.isEmpty());
 					 
 //					 is = socket.getInputStream();
 
@@ -137,12 +140,12 @@ public class ReadList implements Runnable {
 
 		        bytes = new byte[0];
 		        	        
-		        InputStream ips = null;
+		        ips = null;
 		        
 						ips = new FileInputStream(newTempFile);
 					
-				    	InputStreamReader ipsr=new InputStreamReader(ips);
-				    	BufferedReader br=new BufferedReader(ipsr);
+				    	ipsr=new InputStreamReader(ips);
+				    	br=new BufferedReader(ipsr);
 				    	String ligne;
 				    	
 				    	if ((ligne=br.readLine())!=null) {
@@ -156,7 +159,6 @@ public class ReadList implements Runnable {
 				    	}
 				    	
 				    	if (arraylist.isEmpty()) {
-							arraylist.add("EMPTY LIST");
 							System.out.println("En attente de réception d'une list non vide");
 						}
 //				 }  	
@@ -170,11 +172,15 @@ public class ReadList implements Runnable {
 //				else {
 					if (arraylist.size()>1) {					
 						for (String item : arraylist) {
-							if (item.contentEquals("EMPTY LIST")) {
+/*							if (item.contentEquals("")) {
 								arraylist.remove(item);
 							}
+*/
+							System.out.println(item);
 						}
-					}					
+					}	
+					
+//					isRunning = false;
 //				}
 					
 /*				try {
@@ -200,4 +206,15 @@ public class ReadList implements Runnable {
 		return is; 
 	}
 	 
+	public void close() throws IOException {
+		
+		is.close();
+		ips.close();
+		ipsr.close();
+		out.close();
+		br.close();
+//		socket.close();
+		
+	}
+	
 }

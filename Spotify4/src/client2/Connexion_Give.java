@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class Connexion_Give {
 	
 	private Socket mySocket ;
-	private GiveFichier giveFichier;
+	private TransmitList giveFichier;
 
 	public Connexion_Give(File data_ownList) {
 
@@ -39,7 +39,7 @@ public class Connexion_Give {
 			System.out.println("IP SERVEUR connecté" + mySocket.getInetAddress());
 		
 			
-			giveFichier = new GiveFichier(data_ownList, mySocket);
+			giveFichier = new TransmitList(data_ownList, mySocket);
 			
 //			InputStream is = mySocket.getInputStream();
 //			ObjectInputStream ois = new ObjectInputStream(mySocket.getInputStream());
@@ -58,7 +58,7 @@ public class Connexion_Give {
 		
 	}
 
-	public GiveFichier transmisson () {
+	public TransmitList transmisson () {
 		return giveFichier;
 	}
 
