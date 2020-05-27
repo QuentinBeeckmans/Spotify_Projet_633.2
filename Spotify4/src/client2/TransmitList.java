@@ -17,111 +17,58 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-public class TransmitList implements Runnable{
+public class TransmitList implements Runnable {
 
 	private OutputStream os = null;
 	private InputStream in = null;
-	private /* ArrayList<String> */ File list = null;
+	private File list = null;
 	private Socket socket;
-//	private InetAddress serverAdress;
-//	private PrintWriter writer;
-	
-	private ObjetSerialisable objList;
 
-	
-	public TransmitList( /* File list */ File listFile, Socket socket) {
+	public TransmitList(File listFile, Socket socket) {
 
-//		this.writer = writer;
 		this.list = listFile;
 		this.socket = socket;
-		
+
 	}
-	
+
 	@Override
 	public void run() {
-		
-//		System.out.println("Debut List transfert !!!!!!!!!!!!!!!!!!!!!!");
 
-//		sendFile ();
-		
-/*		try {
-			this.socket = new Socket(serverAdress, 4505);
+	}
+
+	public synchronized void sendFile() {
+
+		try {
+
+			if (socket.isClosed()) {
+				System.out
+						.println("Activité socket de transfert du fichier est arrêtée ! \n Veuillez nous en excuser.");
+
+			}
+
+			os = socket.getOutputStream();
+
+			byte[] bytes = new byte[4096];
+			in = new FileInputStream(list);
+
+			int count;
+			while ((count = in.read(bytes)) > 0) {
+				os.write(bytes, 0, count);
+			}
+
+			os.flush();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-/*		
-		while (socket.isConnected()) {
-			sendFile();
-		}
-*/		
-		
+
 	}
-	
-	public synchronized void sendFile (){
-	//	   Thread t = new Thread();
-			try {
-				
-				if(socket.isClosed()) {
-					System.out.println("Activité socket GiveFichier est arrêtée !!!!!!!!!!!!");
-				
-				}
-				
-				os = socket.getOutputStream(); 
-//	           writer = new PrintWriter(os,true);
 
-//		        os.notify();
+	public void close() throws IOException {
 
-System.out.println("Debut List transfert !!!!!!!!!!!!!!!!!!!!!!");
-			       
-				
-				byte[] bytes = new byte[4096];
-				in = new FileInputStream(list);
-//				FileOutputStream bufo = new FileOutputStream(list);
-				
-//		        OutputStream out = socket.getOutputStream();
-
-		        int count;
-		        while ((count = in.read(bytes)) > 0) {
-		            os.write(bytes, 0, count);
-		        }
-		        
-		        os.flush();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			} 
-
-/*			finally {
-				try {
-//			        in.close();
-//					os.close();
-//			        socket.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-*/			
-			
-			System.out.println("Fin List transfert !!!!!!!!!!!!!!!!!!!!!!");
-	
-		   	 
-	   }
-
-	
-	public OutputStream getOutPutStreamBuffer () {
-		return os;
-	}
-	
-	public  InputStream getInPutStreamBuffer () {
-		return in; 
-	}
-	
-	public void close () throws IOException {
-		
 		in.close();
 		os.close();
-//		socket.close();
-		
+
 	}
-	
+
 }

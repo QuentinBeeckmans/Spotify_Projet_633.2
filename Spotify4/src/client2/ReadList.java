@@ -19,202 +19,114 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ReadList implements Runnable {
-	
 
 	private InputStream is = null;
 	private InputStream ips;
 	private InputStreamReader ipsr;
 	private OutputStream out = null;
 	private BufferedReader br;
-//	private DataInputStream readObj;
-	private ArrayList<String> arraylist = new ArrayList<>(); 
+	private ArrayList<String> arraylist = new ArrayList<>();
 	private File list = null;
 	private boolean isRunning = false;
 	private Socket socket;
-//	private ServerSocket servSock;
 	private BufferedInputStream reader = null;
-	
 	private File newTempFile;
-	
-	private ObjetSerialisable objList;
-	
+
 	public ReadList(Socket socket) {
-		
+
 		this.socket = socket;
-//		this.list = list;
-		
+
 		try {
-//	        is = socket.getInputStream();
-//			is.reset();
-			
-		       
-//	        reader = new BufferedInputStream(is);
-			
-	        newTempFile = File.createTempFile("MaListTemp", ".txt");
+			newTempFile = File.createTempFile("MaListTemp", ".txt");
 
-//			servSock = new ServerSocket(4505);
-
-			
-			} catch (IOException e) {
-				e.printStackTrace();
-			} 
-
-	}
-	
-	@Override
-	public void run() {
-		
-		isRunning = true;
-		
- /*       try {
-			socket = servSock.accept();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-*/		
+
+	}
+
+	@Override
+	public void run() {
+
+		isRunning = true;
 
 	}
 
 	public boolean isRunning() {
-		
+
 		if (isRunning) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	
-	public File getTempListFile () {
-		
+
+	public File getTempListFile() {
+
 		System.out.println("Run READLIST -- ");
 
 		list = newTempFile;
-		
+
 		return list;
 	}
-	
-	 public ArrayList<String> readList () {
-		 
-//System.out.println("LIST arrayList ; ReadList ; readList() :  TEST INIT ");
-		
-			try {
-//				 while (arraylist.size()<1 && arraylist.contains("EMPTY LIST")) {
-					
-					 System.out.println("EMPTY LIST TEST : " + arraylist.isEmpty());
-					 
-//					 is = socket.getInputStream();
 
-								
+	public ArrayList<String> readList() {
+
+		try {
+
 			byte[] bytes = new byte[4096];
-	        is=socket.getInputStream();
 
-//			InputStream in = socket.getInputStream();
-			out = new OutputStream() {
-				
-				@Override
-				public void write(int b) throws IOException {
-					// TODO Auto-generated method stub
-					
-				}
-			};
-//			out = new FileOutputStream(newTempFile);
+			is = socket.getInputStream();
 			out = new FileOutputStream(newTempFile);
-			 System.out.println("out  : " + out.toString()); 			          
-			 System.out.println("is  : " + is.available()); 			          
 
-	        int count = 0;
-	        
-//	        if ((count = in.read(bytes)) > 0){
-//	        out.notify();
-	        			          
-	        
-	        while ((count = is.read(bytes)) > 0) {
-		        	
-			          out.write(bytes, 0, count);
-		            
-		        }
-	
-	          out.flush();
+			int count = 0;
 
-		        bytes = new byte[0];
-		        	        
-		        ips = null;
-		        
-						ips = new FileInputStream(newTempFile);
-					
-				    	ipsr=new InputStreamReader(ips);
-				    	br=new BufferedReader(ipsr);
-				    	String ligne;
-				    	
-				    	if ((ligne=br.readLine())!=null) {
-						      
-						      //parcour du fichier
-					    	while ((ligne=br.readLine())!=null){
-					    		
-					    		arraylist.add(ligne);
-			
-					    	}
-				    	}
-				    	
-				    	if (arraylist.isEmpty()) {
-							System.out.println("En attente de réception d'une list non vide");
-						}
-//				 }  	
-			
-			} catch ( /* ClassNotFoundException | */ IOException e) {
-				e.printStackTrace();
-			} 
-			finally {
-				
-				
-//				else {
-					if (arraylist.size()>1) {					
-						for (String item : arraylist) {
-/*							if (item.contentEquals("")) {
-								arraylist.remove(item);
-							}
-*/
-							System.out.println(item);
-						}
-					}	
-					
-//					isRunning = false;
-//				}
-					
-/*				try {
-			        is.close();
-			        out.close();
-//			        socket.close();
-//			        servSock.close();
-			        
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-*/			
+			while ((count = is.read(bytes)) > 0) {
+				out.write(bytes, 0, count);
+
 			}
 
-				return arraylist;
-	  }
-	 
-	 public OutputStream getOutPutStreamBuffer () {
-		return out;
+			out.flush();
+
+			bytes = new byte[0];
+
+			ips = null;
+
+			ips = new FileInputStream(newTempFile);
+
+			ipsr = new InputStreamReader(ips);
+			br = new BufferedReader(ipsr);
+			String ligne;
+
+			if ((ligne = br.readLine()) != null) {
+
+				// parcour du fichier
+				while ((ligne = br.readLine()) != null) {
+
+					arraylist.add(ligne);
+
+				}
+			}
+
+			if (arraylist.isEmpty()) {
+				System.out.println("En attente de réception d'une list non vide");
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return arraylist;
 	}
-	
-	public  InputStream getInPutStreamBuffer () {
-		return is; 
-	}
-	 
+
 	public void close() throws IOException {
-		
+
 		is.close();
 		ips.close();
 		ipsr.close();
 		out.close();
 		br.close();
-//		socket.close();
-		
+
 	}
-	
+
 }
