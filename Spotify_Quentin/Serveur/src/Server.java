@@ -13,11 +13,10 @@ public class Server {
 	private ServerSocket serverSocket;
 	private int clientId = 0;
 	
-	private ArrayList <String> clientList = new ArrayList<String>();
-	
 	public Server(int port) {
 		this.port=port;
 		System.out.println("Serveur ok. En attente de connection...");
+		listenSocket();
 	}
 
 	public void listenSocket() {
@@ -36,7 +35,7 @@ public class Server {
 				e.printStackTrace();
 			}
 			System.out.println("Connection reçue");
-			Thread t = new Thread(new ClientS(clientId, clientSocket,clientList));
+			Thread t = new Thread(new ClientS(clientId, clientSocket));
 			clientId++;
 			t.start();
 		}	

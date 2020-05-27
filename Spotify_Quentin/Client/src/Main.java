@@ -9,7 +9,6 @@ public class Main {
 		
 		//c'est le Client qui se connecte
 		ClientSocket myClient = new ClientSocket(server.getPort());
-		myClient.exchangeSocket(); //cela me crée un socket serveur
 	}
 
 }

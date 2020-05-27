@@ -18,14 +18,14 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
 //COTE CLIENT
-public class Client implements Runnable {
+public class ClientServeur implements Runnable {
 	private Socket clientSocket;
 	private String musicChoice;
 	
 	private String reponse;
 	
 	//je récupère les infos de mon client 2 pour lui envoyer la musique
-	public Client(Socket clientSocket, String musiqueChoice) {
+	public ClientServeur(Socket clientSocket, String musiqueChoice) {
 		this.clientSocket=clientSocket;
 		this.musicChoice=musiqueChoice;
 	}

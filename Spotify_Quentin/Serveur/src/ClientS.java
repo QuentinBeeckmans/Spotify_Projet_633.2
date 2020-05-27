@@ -12,20 +12,20 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Set;
 
 public class ClientS implements Runnable {
-	private Socket clientSocket;
-	private int clientId;
 	
-	private Hashtable <String, ArrayList> globalList = new Hashtable<String, ArrayList>();
+	private Socket clientSocket;
+	private String clientId;
 	
 	private ArrayList<String> clientList = new ArrayList<String>() ;
-	private ArrayList<String> lisToSend;
+	private HashMap<String, ArrayList<String>> serverList = new HashMap<String, ArrayList<String>>() ;
 	
-	private BufferedReader reader;
-	private PrintWriter send;
+	private ObjectOutputStream send;
+	private ObjectInputStream reader;
 	
 	
 	private String address; //ip
@@ -33,10 +33,9 @@ public class ClientS implements Runnable {
 	
 	private String reponse;
 	
-	public ClientS(int clientId, Socket clientSocket, ArrayList<String> clientList) {
+	public ClientS(int clientId, Socket clientSocket) {
 		this.clientSocket=clientSocket;
-		this.clientId=clientId;
-		this.clientList=clientList;
+		this.clientId=Integer.toString(clientId);
 	}
 
 	@Override
@@ -44,128 +43,62 @@ public class ClientS implements Runnable {
 		try {
 			System.out.println("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
 			
-			reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			send = new PrintWriter(clientSocket.getOutputStream());
+			reader = new ObjectInputStream(clientSocket.getInputStream());
+			send = new ObjectOutputStream(clientSocket.getOutputStream());
 
-			reading();
+			readList();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
-	public void reading() {
-		while(true) {
-			try {
-				String line = readLine();
-				addFilesClientToServer(line); 
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 	
 	
-
-
-	public void addFilesClientToServer(String line) throws ClassNotFoundException, IOException {
-			String [] temp = line.split("|");
-			
-			switch(temp[0]+temp[1]+temp[2]) {
-			case "add":
-				System.out.println("demande d'ajout d'un client de sa liste");
-				 
-				addingLinetoList(this, line);
-				break;
-			case "rem":
-				System.out.println("demande de retirer d'un client de sa liste pour déconnection");
-				remove(Integer.toString(clientId));
-				break;
-			
-			default:
-				System.out.println("Wrong message");
-			}
-			
-	}
-	private void addingLinetoList(ClientS clientS, String line2) {
-		synchronized (clientS) {
-			clientList.add(line2);
+	public void readList () {
+		   
+		try {
+			clientList = (ArrayList<String>) reader.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
 		}
-		
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				put(clientS,Integer.toString(clientId), clientList); 
-				
-			}
-		}).start();
-		
-		
-	}
-
-	public void put(ClientS clientS, String id, ArrayList<String> clientList2) {
-		synchronized (clientS) {
-			globalList.put(id, clientList2);
-		}
-
-		sendClientListtoOther(clientS);
-		
-	}
 	
-	synchronized public void sendClientListtoOther (ClientS c){
-		Set<String> clients = globalList.keySet();
+		addToServer(clientId, clientList);
+	}
+		   
+	
+	 synchronized private void addToServer(String index,ArrayList<String> list) {
+		serverList.put(index, list);
+		   
+		shareGlobalList(index);
+	}
 
+	 private void shareGlobalList(String index) {
+		Set<String> clients = serverList.keySet(); //on récupère les key de chaque champs du Hashmap
+		ArrayList<String> lisToSend;
+		
 		for(String key: clients){
-		System.out.println(key  +  Integer.toString(c.getClientId()));
-			if(key != (Integer.toString(c.getClientId()))) {
-				lisToSend = globalList.get(key);
-				
-			}
-        }
-		for(String temp:lisToSend) {
-			//toSend(temp);
-			System.out.println("ici probleme" + temp);
-		}
-		
-		
-		//serverLogger.info("Global list have been sending to client");
-   
-	}
-	/**
-	 * To remove all arrayList from globalList with the key parameter clientId
-	 * @param key
-	 */
-	 public void remove(String key) {
-		 globalList.remove(key);
-	 }
-	 
-	public void toSend(String message) {
-		send.println(message);
-		send.flush();
-	}
-	 
-	 private String readLine() throws IOException, ClassNotFoundException{
-		 String line = null;
-			while(true) {
-				line = reader.readLine();
-				
-				if(line != null) {
-					break;
+		System.out.println("test sharegloballist");
+			if(key==index) {
+				System.out.println("J'ai trouvé un client");
+				lisToSend = serverList.get(key);
+				sendObject(lisToSend);
+				System.out.println("Ca se passe ici");
+				for(String item:lisToSend) {
+					System.out.println(item);
 				}
 			}
-			
-			return line;
-	}
-	 
-	public int getClientId() {
-		return clientId;
+		}
 	}
 	
-	public String getIpAddress() {
-		return address;
+	private void sendObject(ArrayList<String> list) {
+		try {
+			send.writeObject(list);
+			send.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
 

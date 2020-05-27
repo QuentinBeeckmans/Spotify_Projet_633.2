@@ -41,7 +41,7 @@ public class Server{
     				
     				
     				//ceci est mon client 2 qui se connecte au client 1
-    				Thread t = new Thread(new Client(clientSocket, musiqueChoice));
+    				Thread t = new Thread(new ClientServeur(clientSocket, musiqueChoice));
     				t.start();
     			}
     		}
