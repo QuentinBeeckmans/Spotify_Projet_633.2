@@ -10,27 +10,19 @@ import javax.swing.JFrame;
 
 public class MyList {
 	
-	private Socket sockEchange;
-	private int portListening;
-	private ArrayList<String> list;
+	public ArrayList<String> list;
 	
-	public InetAddress getIp() {
-		return sockEchange.getInetAddress();
-	}
-	
-	public int getPort() {
-		return portListening;
-	}
 	
 	synchronized public void sendFileList (Dialogue d) {
-
+		ArrayList<String> temp = new ArrayList<String>();
 		list=getArrayListMusics();
 		
 		if(!list.isEmpty()) {
-			d.sendObject(list);
+			for(String item:list) {
+				temp.add(d.getPort() + ";" + d.getIp() + ";" +  item);
+			}
+			d.sendObject(temp);
 		}
-		
-		
 	}
 	
 	public ArrayList<String> getMyList() {
@@ -43,11 +35,18 @@ public class MyList {
 		ArrayList<String> arrayTemp = new ArrayList<String>();
 		
 		String temp = choosePathDirectory();
-		File directory = new File(temp);
-
+		//File directory = new File(temp);
+		File[] files = new File(temp).listFiles();
+		/*
 		if(directory!=null) {
 			arrayTemp = new ArrayList<String>(Arrays.asList(directory.list()));
-		}
+		}*/
+		
+		for(File file : files){
+			  if(file.isFile()){
+				  arrayTemp.add(file.getAbsolutePath());
+			  }
+			}
 		
 		return arrayTemp;
 	}

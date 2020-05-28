@@ -20,20 +20,21 @@ import java.util.Set;
 //COTE CLIENT
 public class ClientServeur implements Runnable {
 	private Socket clientSocket;
-	private String musicChoice;
+
+	private BufferedReader reader;
 	
-	private String reponse;
 	
 	//je récupère les infos de mon client 2 pour lui envoyer la musique
-	public ClientServeur(Socket clientSocket, String musiqueChoice) {
+	public ClientServeur(Socket clientSocket) {
 		this.clientSocket=clientSocket;
-		this.musicChoice=musiqueChoice;
 	}
 
 	@Override
 	public void run() {
 		try {
-			streamMusic(musicChoice);
+			
+			reading();
+			
 			//clientSocket.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -41,6 +42,38 @@ public class ClientServeur implements Runnable {
 
 	}
 	
+	public void reading() {
+		while(true) {
+			try {
+				String line = null;
+				line=readLine();
+				System.out.println(line);
+				streamMusic(line);
+				
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			
+		}
+	}
+	
+	 private String readLine() throws IOException, ClassNotFoundException{
+		 reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		 String line = null;
+			while(true) {
+				line = reader.readLine();
+				
+				if(line != null) {
+					break;
+				}
+			}
+			
+			return line;
+	}
+
 	public void streamMusic(String path) {
 		try {
 			File myFile = new File(path);
@@ -53,7 +86,7 @@ public class ClientServeur implements Runnable {
 			OutputStream os = clientSocket.getOutputStream();
 			os.write(mybytearrea,0,mybytearrea.length);
 			os.flush();
-			os.close();
+			//os.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

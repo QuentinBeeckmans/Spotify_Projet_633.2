@@ -1,10 +1,15 @@
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
+
 
 
 public class Dialogue implements Runnable {
@@ -14,9 +19,9 @@ public class Dialogue implements Runnable {
 	private ObjectOutputStream send;
 	private ObjectInputStream reader;
 	
-	private MyList mList;
+	public MyList mList;
 	
-	private ArrayList<String> serverList = new ArrayList<String>() ;
+	public ArrayList<String> serverList = new ArrayList<String>() ;
 	
 	private int portListening; //pour savoir le port pour délivrer la musique
 	private Scanner scan = new Scanner(System.in);
@@ -27,6 +32,15 @@ public class Dialogue implements Runnable {
 		this.mList=mList;	
 	}
 
+	public String getPort() {
+		return Integer.toString(portListening);
+		
+	}
+	
+	public String getIp() {
+		return clientSocketOnServer.getInetAddress().toString();
+		
+	}
 	@Override
 	public void run() {
 		int choix;
@@ -107,11 +121,12 @@ public class Dialogue implements Runnable {
 		   int m=scan.nextInt();
 		   
 		   String choice = serverList2.get(m);
-		   String [] address = choice.split("|");
+		   String [] address = choice.split(";");
+		   String str = address[1];
+		   String strNew = str.replace("/", "");
 		   
-		   
-		   System.out.println(address[0] + "-> "+ address[1] + "-> "+ address[2]);
-		   //newServerConnection(address[0], address[1], address[2]);
+
+		   newServerConnection(strNew, address[0], address[2]); //ip - port - Nom musique
 		  
 	}
 
@@ -120,12 +135,16 @@ public class Dialogue implements Runnable {
 
 	
 
-	/*private void newServerConnection(String Ipaddress, String port, String musiquePath) {
+	private void newServerConnection(String Ipaddress, String port, String musiquePath) {
 		try {
 			Socket exchangeSocket = new Socket(Ipaddress, Integer.parseInt(port));
 			System.out.println("Je suis connecté au client pour écouter");
+			
 			PrintWriter writerPath = new PrintWriter(exchangeSocket.getOutputStream());
-			writerPath.write(musiquePath);
+			writerPath.println(musiquePath);
+			writerPath.flush();
+			
+			
 			InputStream is = new BufferedInputStream(exchangeSocket.getInputStream());
 			
 			//j'ajoute pour stream
@@ -136,7 +155,7 @@ public class Dialogue implements Runnable {
 			// TODO: handle exception
 		}
 		
-	}*/
+	}
 	   
 
 }

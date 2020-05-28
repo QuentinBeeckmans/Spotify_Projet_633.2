@@ -6,12 +6,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 
 public class Server {
 	
 	private int port;
 	private ServerSocket serverSocket;
 	private int clientId = 0;
+	public static HashMap<Integer, ArrayList<String>> serverList = new HashMap<Integer, ArrayList<String>>() ;
 	
 	public Server(int port) {
 		this.port=port;
@@ -40,4 +42,6 @@ public class Server {
 			t.start();
 		}	
 	}
+	
+
 }

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class Server{
    
     private ServerSocket serverSocket = null;
-    private String musiqueChoice;
 	private int port;
    
    public Server() {
@@ -38,10 +37,8 @@ public class Server{
 						e.printStackTrace();
 					}
     				
-    				
-    				
     				//ceci est mon client 2 qui se connecte au client 1
-    				Thread t = new Thread(new ClientServeur(clientSocket, musiqueChoice));
+    				Thread t = new Thread(new ClientServeur(clientSocket));
     				t.start();
     			}
     		}
