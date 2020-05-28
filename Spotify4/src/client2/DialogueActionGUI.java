@@ -109,7 +109,7 @@ public class DialogueActionGUI {
 
 					socketTransmitSwitch = new SocketTransmit(serverAdress, portSwitch1).getSocket();
 
-					while (!socketTransmitSwitch.isClosed()) {
+//					while (!socketTransmitSwitch.isClosed()) {
 						Thread tTransmitSwitch = new Thread(
 								transmitSwitch = new TransmitSwitch(choice, socketTransmitSwitch));
 
@@ -119,16 +119,16 @@ public class DialogueActionGUI {
 
 						transmitSwitch.sendSwitch();
 
-						if (!socketTransmitSwitch.getReuseAddress()) {
+/*						if (!socketTransmitSwitch.getReuseAddress()) {
 							transmitSwitch.close();
 						}
-
-					}
+*/
+//					}
 
 					SocketRead socketReadSwicth2 = new SocketRead(portSwitch2);
 					Socket socketReadSwitch = socketReadSwicth2.getSocket();
 
-					while (!socketReadSwitch.isClosed()) {
+//					while (!socketReadSwitch.isClosed()) {
 						Thread tReadSwitch = new Thread(readSwitch = new ReadSwitch(socketReadSwitch));
 						tReadSwitch.start();
 						readSwitch.run();
@@ -142,9 +142,9 @@ public class DialogueActionGUI {
 
 						}
 
-						readSwitch.close();
+//						readSwitch.close();
 
-					}
+//					}
 
 					switch (response) {
 
@@ -161,8 +161,6 @@ public class DialogueActionGUI {
 
 							while (serverList.isEmpty()) {
 
-								System.out.println("J'ai bien choisi get music");
-
 								serverList = readList.readList();
 
 							}
@@ -176,20 +174,20 @@ public class DialogueActionGUI {
 						}
 						System.out.println();
 						System.out.println();
-
-						socketTransmitSwitch.close();
+						
+						ArrayList<String> searchList = onwnList.formatList(serverList);
+						onwnList.printList(searchList);
+						
+						
+//						socketTransmitSwitch.close();
 						socketReadList.close();
-						socketReadSwitch.close();
+//						socketReadSwitch.close();
 						break;
 
 					case "CLOSE":
 
 						Thread.sleep(5000);
 
-						writer.close();
-						reader.close();
-						readObj.close();
-						writeObj.close();
 						socketOnServer.isClosed();
 						break;
 

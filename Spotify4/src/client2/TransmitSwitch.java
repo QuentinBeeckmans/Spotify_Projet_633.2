@@ -15,7 +15,7 @@ public class TransmitSwitch implements Runnable {
 	private String choice = null;
 	private Socket socket;
 
-	public TransmitSwitch( /* File list */ String choice, Socket socket) {
+	public TransmitSwitch(String choice, Socket socket) {
 
 		this.choice = choice;
 		this.socket = socket;

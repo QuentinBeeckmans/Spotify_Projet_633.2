@@ -125,7 +125,7 @@ public class AcceptClientD implements Runnable {
 				SocketRead socketReadSwicth = new SocketRead(portSwitch1);
 				socketReadSwitch = socketReadSwicth.getSocket();
 
-				while (!socketReadSwitch.isClosed()) {
+//				while (!socketReadSwitch.isClosed()) {
 					Thread tReadSwitch = new Thread(readSwitch = new ReadSwitch(socketReadSwitch));
 					tReadSwitch.start();
 					readSwitch.run();
@@ -138,11 +138,9 @@ public class AcceptClientD implements Runnable {
 
 					}
 
-					readSwitch.close();
+//					readSwitch.close();
 
-				}
-
-				System.out.println("Réponse du client av Switch : " + response);
+//				}
 
 				// On traite la demande du client en fonction de la commande envoyée
 				String toSend = "path music";
@@ -150,11 +148,10 @@ public class AcceptClientD implements Runnable {
 				switch (response) {
 				case "1":
 					response = "1";
-					System.out.println("SWITCH COTE SERVEUR : " + response);
 
 					Socket socketTransmitSwitch = new SocketTransmit(clientInetAddresss, portSwitch2).getSocket();
 
-					while (!socketTransmitSwitch.isClosed()) {
+//					while (!socketTransmitSwitch.isClosed()) {
 						Thread tTransmitSwitch = new Thread(
 								transmitSwitch = new TransmitSwitch(response, socketTransmitSwitch));
 						tTransmitSwitch.start();
@@ -163,13 +160,13 @@ public class AcceptClientD implements Runnable {
 
 						transmitSwitch.sendSwitch();
 
-						if (!socketTransmitSwitch.getReuseAddress()) {
+/*						if (!socketTransmitSwitch.getReuseAddress()) {
 
 							transmitSwitch.close();
 
 						}
-
-					}
+*/
+//					}
 
 					totalListFile = fileTemp;
 
@@ -199,9 +196,9 @@ public class AcceptClientD implements Runnable {
 					SocketRead socketReadSwicth2 = new SocketRead(portSwitch2);
 					Socket socketReadSwitch = socketReadSwicth2.getSocket();
 
-					while (!socketReadSwitch.isClosed()) {
-						Thread tReadSwitch = new Thread(readSwitch = new ReadSwitch(socketReadSwitch));
-						tReadSwitch.start();
+//					while (!socketReadSwitch.isClosed()) {
+						Thread tReadSwitch2 = new Thread(readSwitch = new ReadSwitch(socketReadSwitch));
+						tReadSwitch2.start();
 						readSwitch.run();
 
 //						response = readSwitch.readSwitch();
@@ -216,17 +213,15 @@ public class AcceptClientD implements Runnable {
 
 							response = readSwitch.readSwitch();
 
-							System.out.println("Réponse SERVEUR av Switch : " + response);
-
 						}
 
-						readSwitch.close();
+//						readSwitch.close();
 
-					}
+//					}
 
 					closeConnexion = true;
 
-					socketReadSwitch.close();
+//					socketReadSwitch.close();
 
 					break;
 

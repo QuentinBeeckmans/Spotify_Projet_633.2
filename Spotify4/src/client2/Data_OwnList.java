@@ -16,6 +16,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -98,9 +99,7 @@ public class Data_OwnList {
 		try {
 //			newFile = File.createTempFile("MaListTemp", ".txt");
 //			File tempFile = newFile;
-			FileWriter fileWriter = new FileWriter(newTempFile, true);
-			
-			
+			FileWriter fileWriter = new FileWriter(newTempFile, true);		
 				
 		
 		 if (file.getAbsolutePath().endsWith(fileType)) {			
@@ -135,8 +134,33 @@ public class Data_OwnList {
 		return newTempFile ;
 	}
 		
+	public ArrayList <String> formatList(ArrayList <String> list) {
+		
+		ArrayList <String> listTemp = new ArrayList <String> ();
+		ArrayList <String> newList = new ArrayList <String> ();
+		long cpt = 0;
+		
+		for (String item : list) {
+			cpt++;
+			newList.add(/* list.iterator() */ String.valueOf(cpt) + "\t " + item.substring(item.lastIndexOf("\\")+1, item.indexOf(";")));
+		}
+		
+		Collections.sort(newList.subList(1, newList.size()));
+		
+		return newList;
+		
+	}
 	
-	
+	public void printList (ArrayList <String> list) {
+		
+		for (String item : list) {
+			
+			System.out.println(item);
+			
+		}
+
+	}
+		
 	public void chooseRepertory () {
 		 JFileChooser choix = new JFileChooser();
 		 choix.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
