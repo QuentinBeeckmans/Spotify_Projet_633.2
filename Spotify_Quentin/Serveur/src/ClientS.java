@@ -97,7 +97,6 @@ public class ClientS implements Runnable {
 			send.writeObject(list);
 			send.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -96,6 +96,7 @@ public class Dialogue implements Runnable {
 			e.printStackTrace();
 		}
 		
+		
 	}
 	
 	public void sendObject(ArrayList<String> list) {
