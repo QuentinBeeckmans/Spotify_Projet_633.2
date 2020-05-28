@@ -12,10 +12,10 @@ public class ClientSocket {
     private Socket clientSocket;
 
     private InetAddress serverAddress;
-    private String serverName = "192.168.56.1";
+    private String serverName = /* "192.168.56.1" */ "10.0.2.5";
     private MyList mList = new MyList();
     
-	private int listenerPort; //c'est le port d'écoute de mon client
+	private int listenerPort; //c'est le port d'ï¿½coute de mon client
    
    public ClientSocket(int port) {
 	   this.listenerPort=port;  
@@ -25,7 +25,7 @@ public class ClientSocket {
    public void exchangeSocket() {
 		try {
 			serverAddress = InetAddress.getByName(serverName);
-			clientSocket = new Socket(serverAddress, 4501); //pour créer mon socketClient je me connecte au port dispo PAS le port d'écoute
+			clientSocket = new Socket(serverAddress, 4501); //pour crï¿½er mon socketClient je me connecte au port dispo PAS le port d'ï¿½coute
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
