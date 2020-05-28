@@ -78,8 +78,8 @@ public class ClientS implements Runnable {
 		ArrayList<String> lisToSend;
 		
 		for(String key: clients){
-		System.out.println("test sharegloballist");
-			if(key==index) {
+		System.out.println(key + " - " + index);
+			if(key.equals(index)) {
 				System.out.println("J'ai trouvé un client");
 				lisToSend = serverList.get(key);
 				sendObject(lisToSend);
