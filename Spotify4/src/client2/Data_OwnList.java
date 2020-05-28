@@ -145,7 +145,7 @@ public class Data_OwnList {
 			newList.add(/* list.iterator() */ String.valueOf(cpt) + "\t " + item.substring(item.lastIndexOf("\\")+1, item.indexOf(";")));
 		}
 		
-		Collections.sort(newList.subList(1, newList.size()));
+		Collections.sort(newList.subList(10, newList.size()));
 		
 		return newList;
 		
