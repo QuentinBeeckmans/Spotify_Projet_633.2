@@ -1,31 +1,25 @@
 package client2;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
-
-public class Connexion1ToServer_AcrossThread {
+public class ConnexionToClient {
 	
-	private static int port = 4500;
-
 	private Socket mySocket ;
 	private DialogueActionGUI dialogueActionGUI;
 	private TransmitList giveFichier;
 	private ReadList readList;
-//	private int port;
+	private int port;
 
-//	public static void main(String[] args) {
-	public Connexion1ToServer_AcrossThread () {
+	
+	public ConnexionToClient(int port) {
 
 		InetAddress serverAddress;
-        String serverName = /*IP Matthieu */ "10.0.3.15" /*IP Quentin "192.168.56.1" */ ;
+        String serverName = /*IP Matthieu */ "10.0.2.15" /*IP Quentin "192.168.56.1" */ ;
         
- //       this.port = port;
+        this.port = port;
         
         Data_OwnList fileList = null ;
         
@@ -78,4 +72,5 @@ public class Connexion1ToServer_AcrossThread {
 	}
 
 	
+
 }

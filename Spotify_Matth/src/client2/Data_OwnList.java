@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
@@ -15,7 +16,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,132 +26,148 @@ import javax.swing.JFrame;
 public class Data_OwnList {
 	
 	private Socket sockEchange;
-//	private ServerSocket sockEcoute;
+	String dataDirectory = "dataDirectory.txt";
+	private Thread echangeListThread ;
+	private Thread receptListThread;
+	private File newTempFile = null;
+	private PrintWriter writer;
 	
-	public Data_OwnList (Socket sockEchange /* ownSocket */) {
+	public Data_OwnList (Socket sockEchange ) {
 		
 		this.sockEchange = sockEchange;
-//		this.sockEcoute = sockEcoute;
-		
-		System.out.println("Etape 1; list");
+		System.out.println("Client 1");
 					
-			//sockEcoute.setSoTimeout(30000);
-			
-			System.out.println("Je suis le client");
-				
-			System.out.println("One client is conneted !");
-			
-			System.out.println("Etape 2; list");
-		
+		try {
+			newTempFile = File.createTempFile("MaListTemp", ".txt");
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+//		File listFichierAEchanger = listFichierAEchange ();
+
 	}
 	
-	public void sendFileList () {
-		
-		String whereDataDirectory = "dataDirectory.txt";
-//		String currentDirectoryPath = "test";
+	public File listFichierAEchange () {
+				
+		String whereDataDirectory = dataDirectory;
 		File file = new File (whereDataDirectory);
-		
-		System.out.println("FICHIER DATA STOCK : " + file.getAbsolutePath());
+		File list = null;
 		
 		String dataDirectoryPath ;
 		File dataDir = null ;
-		
-		ArrayList<String> list = new ArrayList<>() ;
-		
-//		PrintWriter writer;
+
 		try {
+	
+			if ( ! file.exists()) {				
+				chooseRepertory ();			
+			}
 			
-			if ( ! file.exists()) {
-				
-				chooseRepertory ();
+			BufferedReader in = new BufferedReader(new FileReader(file));
 			
-		}
-			
-		BufferedReader in = new BufferedReader(new FileReader(file));
-//		String line;
-		
-		/////   A remplacer par :   line = in.readLine()
-		while ((dataDirectoryPath = in.readLine()) != null)
-		{
-	      // Afficher le contenu du fichier
-			  System.out.println (dataDirectoryPath + " 1");
-			  dataDir = new File (dataDirectoryPath);
-		}
-		in.close();
-				
-		list = listFileTypeInDir (dataDir,".txt", list) ;
-		
-		OutputStream os = sockEchange.getOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(os);
+			while ((dataDirectoryPath = in.readLine()) != null)
+			{
+				  dataDir = new File (dataDirectoryPath);
+			}
+//			in.close();
 
-		oos.writeObject(list);
 
-		oos.flush();
-//		oos.close();
-		os.flush();		
-		
-		 /* socketExange.close(); */   // A ne pas fermer ici (normalement)
+			
+			list  = listFileTypeInDir (dataDir,".mp3", newTempFile) ;
+			
+			if (list == null || list.length() == 0) {
+				writer = new PrintWriter(list);
+				writer.write("EMPTY/VIDE");
+				writer.flush();
+//				writer.close();
+			}
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-/*		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-*/			e.printStackTrace();
 		}
 		
+		return list;
 	}
-	
-	private ArrayList<String> listFileTypeInDir (File file, String fileType, ArrayList<String> list) {
 		
-		// A mettre dans le main ou la fonction appelant cette méthode
-				/*
-						File repertoireCourant = null;
-				        try {
-				            repertoireCourant = new File(".").getCanonicalFile();
-				            System.out.println("Répertoire courant : " + repertoireCourant);
-				        } catch(IOException e) {}
-						
-						ArrayList<String> list = new ArrayList<>() ;
-						
-						list = listFileTypeInDir (repertoireCourant,".txt", list) ;
-						
-						for (String item : list) {
-							
-							System.out.println(item);
-							
-						}
-				 */
+	private File listFileTypeInDir (File file, String fileType, File newTempFile) {
+		
+		File newFile = null;
+		
+		try {
+//			newFile = File.createTempFile("MaListTemp", ".txt");
+//			File tempFile = newFile;
+			FileWriter fileWriter = new FileWriter(newTempFile, true);		
 				
 		
-	 if (file.getAbsolutePath().endsWith(fileType)) {			
-			list.add(file.getAbsolutePath());
-		}
-		
-		 System.out.println(file.getAbsolutePath());
+		 if (file.getAbsolutePath().endsWith(fileType)) {			
+//				list.add(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
+				
+			 fileWriter.write(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550 \n");
+//				newFile.add(file.getAbsolutePath() + ";" + sockEchange.getInetAddress() + ";4550");
+			 
+		        fileWriter.flush();
+			}
+						 
+		        if (file.isDirectory()) {	 
+		            File[] children = file.listFiles();
 		 
-	        if (file.isDirectory()) {	 
-	            File[] children = file.listFiles();
-	 
-	            for (File child : children) {	            	
-	                // Récursive
-	                listFileTypeInDir(child, fileType, list);	                
-	            }	            
-	        }
-		
-	        return list ;
+		            for (File child : children) {	            	
+		                // Récursive
+		                listFileTypeInDir(child, fileType, /* list* */ newTempFile);	                
+		            }	            
+		        }
+
+//		        fileWriter.close();
+       
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	        
+		return newTempFile ;
 	}
 		
+	public ArrayList <String> formatList(ArrayList <String> list) {
+		
+		ArrayList <String> listTemp = new ArrayList <String> ();
+		ArrayList <String> newList = new ArrayList <String> ();
+		long cpt = 0;
+		
+		for (String item : list) {
+			cpt++;
+			newList.add(/* list.iterator() */ String.valueOf(cpt) + "\t " + item.substring(item.lastIndexOf("\\")+1, item.indexOf(";")));
+		}
+		
+		Collections.sort(newList.subList(10, newList.size()));
+		
+		return newList;
+		
+	}
 	
-	
+	public void printList (ArrayList <String> list) {
+		
+		for (String item : list) {
+			
+			System.out.println(item);
+			
+		}
+
+	}
+		
 	public void chooseRepertory () {
 		 JFileChooser choix = new JFileChooser();
 		 choix.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		 
 	    int retour = choix.showOpenDialog(new JFrame());
 	    String directoryPath ;
-	    String saveDirectoryPath = "dataDirectory.txt";
+	    String saveDirectoryPath = dataDirectory;
 		
 
 	    if(retour == JFileChooser.APPROVE_OPTION) {
@@ -168,7 +187,8 @@ public class Data_OwnList {
 				writer = new PrintWriter(saveDirectoryPath);
 				
 				writer.println(directoryPath);
-				writer.close();
+				writer.flush();
+//				writer.close();
 				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -179,10 +199,9 @@ public class Data_OwnList {
 	    else {
 	    	System.out.println("Le dossier n'a pas été choisi!"); 
 	    	directoryPath = "none" ;
-	    } // pas de fichier choisi
+	    } // pas de fichier choisi	    
 	    
-	    
-	    
-	}
+	}	
 	
+
 }

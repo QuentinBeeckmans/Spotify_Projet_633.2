@@ -23,9 +23,4 @@ public class SocketRead {
 		return servSock;
 	}
 
-	public void serverSocketClose() throws IOException {
-		servSock.close();
-		
-	}
-
 }

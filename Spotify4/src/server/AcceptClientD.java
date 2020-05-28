@@ -84,7 +84,7 @@ public class AcceptClientD implements Runnable {
 		System.out.println("Client Nr " + clientNumber + " is connected");
 		System.out.println("Socket is available for connection" + clientSocketOnServer);
 
-		boolean closeConnexion = false;
+/*		boolean closeConnexion = false;
 
 		// tant que la connexion est active, on traite les demandes
 		while (!clientSocketOnServer.isClosed()) {
@@ -115,10 +115,11 @@ public class AcceptClientD implements Runnable {
 				 * A retirer !! Juste pour nous pour savoir qu'on peut connaître et accéder au
 				 * fichier temporaire
 				 ***************/
-				System.out.println(fileTemp.getAbsolutePath());
+//				System.out.println(fileTemp.getAbsolutePath());
+
 				/***************************************************************************************************************/
 
-				for (String item : clientList) {
+/*				for (String item : clientList) {
 					System.out.println("reçu par Client " + item);
 				}
 
@@ -159,7 +160,7 @@ public class AcceptClientD implements Runnable {
 						transmitSwitch.run();
 
 						transmitSwitch.sendSwitch();
-
+*/
 /*						if (!socketTransmitSwitch.getReuseAddress()) {
 
 							transmitSwitch.close();
@@ -168,7 +169,7 @@ public class AcceptClientD implements Runnable {
 */
 //					}
 
-					totalListFile = fileTemp;
+/*					totalListFile = fileTemp;
 
 					Socket socketTransmitList2 = new SocketTransmit(clientInetAddresss, portList2).getSocket();
 
@@ -253,7 +254,7 @@ public class AcceptClientD implements Runnable {
 				}
 			}
 		}
-
+*/
 	}
 
 	public ArrayList<String> getGlobalList() {

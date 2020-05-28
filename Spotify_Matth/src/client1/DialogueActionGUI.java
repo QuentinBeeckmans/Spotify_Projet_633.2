@@ -93,10 +93,7 @@ public class DialogueActionGUI {
 				/*****************************
 				 * FIN de la méthode à créer
 				 *****************************************/
-/*
-				Thread thread = new Thread();
-				thread.sleep(2000);
-*/				
+
 				while (true) {
 
 					System.out.println("QUe voulez-vous faire ?");
@@ -117,7 +114,7 @@ public class DialogueActionGUI {
 								transmitSwitch = new TransmitSwitch(choice, socketTransmitSwitch));
 
 						tTransmitSwitch.start();
-						tTransmitSwitch.sleep(2000);
+
 						transmitSwitch.run();
 
 						transmitSwitch.sendSwitch();
@@ -145,8 +142,7 @@ public class DialogueActionGUI {
 
 						}
 
-						readSwitch.close();
-						socketReadSwicth2.serverSocketClose();
+//						readSwitch.close();
 
 //					}
 
@@ -170,8 +166,6 @@ public class DialogueActionGUI {
 							}
 
 							readList.close();
-							socketRead.serverSocketClose();
-
 
 						}
 
@@ -186,8 +180,7 @@ public class DialogueActionGUI {
 						
 						
 //						socketTransmitSwitch.close();
-//						socketReadList.close();
-//						socketRead.serverSocketClose();
+						socketReadList.close();
 //						socketReadSwitch.close();
 						break;
 

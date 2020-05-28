@@ -1,4 +1,5 @@
 
+
 package client2;
 
 import server.ConnexionMulti_In;
@@ -9,7 +10,9 @@ public class MainClient {
 
 		Connexion1ToServer_AcrossThread client1 = new Connexion1ToServer_AcrossThread();
 		
-		ConnexionMulti_In serveurinit = new ConnexionMulti_In();
+		ConnexionToClient connexxionToClient1 = new ConnexionToClient();
+		
+//		ConnexionMulti_In serveurinit = new ConnexionMulti_In(5000);
 
 
 	}

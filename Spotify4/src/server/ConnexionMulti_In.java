@@ -10,14 +10,17 @@ import java.util.concurrent.Exchanger;
 
 public class ConnexionMulti_In {
 
-	static ArrayList <String> globalList = new ArrayList<String>();
-	static Socket clientSocket = null ;
-	static InetAddress localAddress = null;
-	static ServerSocket mySkServer;
-	static String interfaceName = /* "eth4" */ "eth0";
+	private ArrayList <String> globalList = new ArrayList<String>();
+	private Socket clientSocket = null ;
+	private InetAddress localAddress = null;
+	private ServerSocket mySkServer;
+	private String interfaceName = /* "eth4" */ "eth2";
+	private int port;
 	
 //	public static void main(String[] args) {
-	public ConnexionMulti_In() {
+	public ConnexionMulti_In(int port) {
+		
+		this.port = port;
 		
 		int ClientNo = 1;
 	
@@ -37,7 +40,7 @@ public class ConnexionMulti_In {
             }
 			
 			//Warning : the backlog value (2nd parameter is handled by the implementation
-			mySkServer = new ServerSocket(4500 /* ,10,localAddress */);
+			mySkServer = new ServerSocket(5000 ,10,localAddress);
 			System.out.println("Default Timeout :" + mySkServer.getSoTimeout());
 			System.out.println("Used IpAddress :" + mySkServer.getInetAddress());
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
@@ -50,7 +53,7 @@ public class ConnexionMulti_In {
 				clientSocket = mySkServer.accept();
 				System.out.println("connection request received");
 				
-				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, 4500));
+				Thread t = new Thread(client = new AcceptClientD(clientSocket,ClientNo, 5000));
 				ClientNo++;
 				
 
@@ -92,42 +95,7 @@ public class ConnexionMulti_In {
 			}
 		}
 		
-		shareGlobalList();
-	}
-	
-	public List receiveList() {
-		return globalList;
-	}
-	
-	public static void shareGlobalList() {
-		
-		OutputStream os;
-		ObjectOutputStream oos;
-		
-		globalList.add("ceci est un test d'écriture");
-		
-		try {
-			os = clientSocket.getOutputStream();
-			oos = new ObjectOutputStream(os);
-			
-			oos.writeObject(globalList);
-
-			oos.flush();
-//			oos.close();
-			os.flush();		
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		int cpt = 0;
-		
-		for (String item : globalList) {
-			cpt++;
-			System.out.println(cpt + ": " + item);
-			item = cpt + " ; " + item + " ; " + clientSocket.getInetAddress();
-
-		}
+//		shareGlobalList();
 	}
 	
 
