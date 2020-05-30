@@ -8,11 +8,20 @@ import java.util.Arrays;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
+/**
+ * This class implements method to manage functions to create list from each client
+ * @author Quentin Beeckmans - Mathieu Roux
+ * @version 1.0
+ * @since 2020-05-30
+ */
 public class MyList {
 	
 	public ArrayList<String> list;
 	
-	
+	/**
+	 * Allows to create arrayList with port listener from client server and Ip from client
+	 * @param d
+	 */
 	synchronized public void sendFileList (Dialogue d) {
 		ArrayList<String> temp = new ArrayList<String>();
 		list=getArrayListMusics();
@@ -24,23 +33,26 @@ public class MyList {
 			d.sendObject(temp);
 		}
 	}
-	
+	/**
+	 * This method allows 
+	 * @return ArrayList
+	 */
 	public ArrayList<String> getMyList() {
 		
 		return list;
 		
 	}
 	
+	/**
+	 * This method allows to get back an ArrayList from a file
+	 * @return an ArrayList
+	 */
 	public ArrayList <String> getArrayListMusics () {
 		ArrayList<String> arrayTemp = new ArrayList<String>();
 		
 		String temp = choosePathDirectory();
-		//File directory = new File(temp);
 		File[] files = new File(temp).listFiles();
-		/*
-		if(directory!=null) {
-			arrayTemp = new ArrayList<String>(Arrays.asList(directory.list()));
-		}*/
+
 		
 		for(File file : files){
 			  if(file.isFile()){
@@ -51,6 +63,10 @@ public class MyList {
 		return arrayTemp;
 	}
 		
+	/**
+	 * This method allows to open a JFileChooser and get back path from directories only
+	 * @return
+	 */
 	private String choosePathDirectory () {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -69,8 +85,4 @@ public class MyList {
 	    return directoryPath;
 	}
 	
-	
-	
-	
-
 }

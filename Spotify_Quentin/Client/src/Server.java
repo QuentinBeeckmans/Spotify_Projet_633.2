@@ -1,11 +1,14 @@
-
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-//NOTRE CLIENT EN TANT QUE SERVER
+/**
+ * This class allows Client to become a server and wait 
+ * @author Quentin Beeckmans - Mathieu Roux
+ * @version 1.0
+ * @since 2020-05-30
+ */
 public class Server{
    
     private ServerSocket serverSocket = null;
@@ -15,7 +18,8 @@ public class Server{
 	   try {
 		   serverSocket = new ServerSocket(0);
 		} catch (Exception e) {
-			// TODO: handle exception
+			ClientLogger.severe("Problème lors de la connection au serveur " + e.toString());
+			e.printStackTrace();
 		}
 	   
 	   port = serverSocket.getLocalPort();

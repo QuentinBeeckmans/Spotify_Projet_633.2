@@ -1,13 +1,17 @@
-
+/**
+ * The Main program implements an application that start two class Client
+ * one simply Client with Client server port and one server Client.
+ * 
+ * @author Quentin Beeckmans - Mathieu Roux
+ * @version 1.0
+ * @since 2020-05-30
+ */
 public class Main {
 
 	public static void main(String[] args) {
-		
-		//Mon serveur chez mon client
-		//Je prépare un socket server qui écoute
+
 		Server server = new Server();
 		
-		//c'est le Client qui se connecte
 		ClientSocket myClient = new ClientSocket(server.getPort());
 	}
 

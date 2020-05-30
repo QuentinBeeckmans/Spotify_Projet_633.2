@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 public class Server {
 	
@@ -15,6 +16,8 @@ public class Server {
 	private int clientId = 0;
 	public static HashMap<Integer, ArrayList<String>> serverList = new HashMap<Integer, ArrayList<String>>() ;
 	
+	 private final static Logger ServerLogger = Logger.getLogger("ServerLog");
+	 
 	public Server(int port) {
 		this.port=port;
 		System.out.println("Serveur ok. En attente de connection...");

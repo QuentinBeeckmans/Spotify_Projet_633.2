@@ -5,6 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * This class initialize AudioPlayer
+ * @author Quentin Beeckmans - Mathieu Roux
+ * @version 1.0
+ * @since 2020-05-30
+ */
 public class SimpleAudioPlayer {
     // to store current position
     Long currentFrame;
@@ -16,7 +22,13 @@ public class SimpleAudioPlayer {
     AudioInputStream audioInputStream;
     static String filePath;
 
-    // constructor to initialize streams and clip
+    /**
+     * Constructor to initialize streams and clip
+     * @param is
+     * @throws UnsupportedAudioFileException
+     * @throws IOException
+     * @throws LineUnavailableException
+     */
     public SimpleAudioPlayer(InputStream is)
             throws UnsupportedAudioFileException,
             IOException, LineUnavailableException
