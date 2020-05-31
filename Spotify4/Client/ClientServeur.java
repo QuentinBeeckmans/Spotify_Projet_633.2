@@ -19,16 +19,23 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.logging.Level;
+
+import ClientsLogsConstruct.LoggerWithFileHandler;
 //COTE CLIENT
 public class ClientServeur implements Runnable {
+	
 	private Socket clientSocket;
+	private LoggerWithFileHandler logsServer;
 
 	private BufferedReader reader;
 	
 	
 	//je r�cup�re les infos de mon client 2 pour lui envoyer la musique
-	public ClientServeur(Socket clientSocket) {
+	public ClientServeur(Socket clientSocket, LoggerWithFileHandler logsServer) {
 		this.clientSocket=clientSocket;
+		this.logsServer = logsServer;
+
 	}
 
 	@Override
@@ -39,6 +46,7 @@ public class ClientServeur implements Runnable {
 			
 			//clientSocket.close();
 		} catch (Exception e) {
+	   	 	logsServer.addHandler(ClientServeur.class.getName(), Level.SEVERE, "Client listen socket turned on",e.toString());
 			e.printStackTrace();
 		}
 
@@ -51,14 +59,12 @@ public class ClientServeur implements Runnable {
 				line=readLine();
 				System.out.println(line);
 				streamMusic(line);
+		   	 	logsServer.addHandler(ClientServeur.class.getName(), Level.WARNING, "Client received list from server","");
 				
-			} catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException | IOException e) {
+		   	 	logsServer.addHandler(ClientServeur.class.getName(), Level.SEVERE, "Client didn't receive list",e.toString());
 				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			
+			} 						
 		}
 	}
 	
@@ -79,7 +85,7 @@ public class ClientServeur implements Runnable {
 	public void streamMusic(String path) {
 		try {
 			File myFile = new File(path);
-			byte[] mybytearrea = new byte[(int)myFile.length()]; //tr�s important de connaitre la taille de notre fichier !!!!
+			byte[] mybytearrea = new byte[(int)myFile.length()];
 			System.out.println("taille fichier: " + myFile.length()); //il va falloir trouver comment envoyer la taille du fichier
 			
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile)); //explications on doit aller chercher ce qu'il y a dans le fichier et le mettre dans le buffer
@@ -88,10 +94,11 @@ public class ClientServeur implements Runnable {
 			OutputStream os = clientSocket.getOutputStream();
 			os.write(mybytearrea,0,mybytearrea.length);
 			os.flush();
-			//os.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+
+			logsServer.addHandler(ClientServeur.class.getName(), Level.WARNING, "Streaming is going on","");
+
 		} catch (IOException e) {
+	   	 	logsServer.addHandler(ClientServeur.class.getName(), Level.SEVERE, "Streaming crashed",e.toString());
 			e.printStackTrace();
 		}
 		

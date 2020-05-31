@@ -4,7 +4,10 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import ClientsLogsConstruct.LoggerWithFileHandler;
 
 /**
  * This class implements Client Socket.
@@ -16,6 +19,7 @@ public class ClientSocket {
 	public final static Logger ClientLogger = Logger.getLogger("ClientLog");
 	
     private Socket clientSocket;
+    private LoggerWithFileHandler logsClient;
 
     private InetAddress serverAddress;
     private String serverName = "192.168.56.1";   //"10.0.2.5"
@@ -31,8 +35,9 @@ public class ClientSocket {
 	 * Client socket creating
 	 * @param port listener 
 	 */
-   public ClientSocket(int port) {
-	   this.listenerPort=port;  
+   public ClientSocket(int port, LoggerWithFileHandler logsClient) {
+	   this.listenerPort=port;
+	   this.logsClient = logsClient;
 	   exchangeSocket();
    }
    
@@ -47,14 +52,19 @@ public class ClientSocket {
 		try {
 			serverAddress = InetAddress.getByName(serverName);
 			clientSocket = new Socket(serverAddress, 4501); //pour cr�er mon socketClient je me connecte au port dispo PAS le port d'�coute
-			} catch (Exception e) {
-				ClientLogger.severe("Exception " + e.toString());
-				e.printStackTrace();
-			}
-			
-			Thread t = new Thread(new Dialogue (clientSocket, listenerPort, mList));
-			t.start();
+
+			logsClient.addHandler(ClientSocket.class.getName(), Level.WARNING, "Socket de connexion du client vers le serveur connecté", "");
+		} catch (Exception e) {
+			logsClient.addHandler(ClientSocket.class.getName(), Level.SEVERE, "Echec socket de connexion du client vers le serveur déconnecté", e.toString());
+			e.printStackTrace();
 		}
+		
+		Thread t = new Thread(new Dialogue (clientSocket, listenerPort, mList));
+		t.start();
+		if (clientSocket.isClosed()) {
+			logsClient.addHandler(ClientSocket.class.getName(), Level.WARNING, "Socket de connexion du client vers le serveur déconnecté", "");
+		}
+	}
     		
     	
    
