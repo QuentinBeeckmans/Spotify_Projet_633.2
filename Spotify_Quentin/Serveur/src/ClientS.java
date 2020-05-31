@@ -16,6 +16,15 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Set;
 
+/**
+ * This Runnable Class implements ClientS
+ * Create client on server
+ * Share server list with client
+ * Receive client list and add it into server list
+ * @author Quentin Beeckmans - Mathieu Roux
+ * @version 1.0
+ * @since 2020-05-30
+ */
 public class ClientS implements Runnable {
 	
 	private Socket clientSocket;
@@ -36,7 +45,7 @@ public class ClientS implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
+			System.out.println("Client nï¿½ " + clientId + " IP" + clientSocket.getInetAddress());
 
 			send = new ObjectOutputStream(clientSocket.getOutputStream());
 
@@ -48,6 +57,13 @@ public class ClientS implements Runnable {
 
 	}
 	
+	/**
+	 * Synchronized public void method readList
+	 * Receive client list
+	 * @author Quentin Beeckmans - Mathieu Roux
+	 * @version 1.0
+	 * @since 2020-05-30
+	 */
 	synchronized public void readList () {
 		
 		try {
@@ -63,25 +79,41 @@ public class ClientS implements Runnable {
 		addToServer(clientId, clientList);
 	}
 		   
-	
+	/**
+	 * Synchronized public void method addToServer
+	 * Add client list into server list
+	 * @param index in HasTable
+	 * @param ArrayList<String> list 
+	 * @author Quentin Beeckmans - Mathieu Roux
+	 * @version 1.0
+	 * @since 2020-05-30
+	 */
 	 synchronized public void addToServer(int index,ArrayList<String> list) {
 		 System.out.println("AVANT PUT " + Server.serverList.keySet());
 		Server.serverList.put(index, list);
 		System.out.println("APRES PUT " + Server.serverList.keySet());
-		   System.out.println("Mon index client passé " + index);
+		   System.out.println("Mon index client passï¿½ " + index);
 		   
 		shareGlobalList(index);
 	}
 
+	 /**
+	  * Private void method shareGlobalList
+	  * Search client list on server list for client applicant
+	  * @param index in HasTable
+	  * @author Quentin Beeckmans - Mathieu Roux
+	  * @version 1.0
+	  * @since 2020-05-30
+	  */
 	 private void shareGlobalList(int index) {
-		Set<Integer> clients = Server.serverList.keySet(); //on récupère les key de chaque champs du Hashmap
+		Set<Integer> clients = Server.serverList.keySet(); //on rï¿½cupï¿½re les key de chaque champs du Hashmap
 		ArrayList<String> lisToSend;
 		
 		
 		for(Integer key: clients){
 		System.out.println(key + " - " + index);
 			if(key!=index) {
-				System.out.println("J'ai trouvé un client");
+				System.out.println("J'ai trouvÃ© un client");
 				lisToSend = Server.serverList.get(key);
 				sendObject(lisToSend);
 				System.out.println("Ca se passe ici");
@@ -92,7 +124,15 @@ public class ClientS implements Runnable {
 		}
 	}
 	
-	private void sendObject(ArrayList<String> list) {
+	 /**
+	  * Private void method shareGlobalList
+	  * Share client list on server list with client applicant
+	  * @param ArrayList<String> list 
+	  * @author Quentin Beeckmans - Mathieu Roux
+	  * @version 1.0
+	  * @since 2020-05-30
+	  */
+	 private void sendObject(ArrayList<String> list) {
 		try {
 			send.writeObject(list);
 			send.flush();

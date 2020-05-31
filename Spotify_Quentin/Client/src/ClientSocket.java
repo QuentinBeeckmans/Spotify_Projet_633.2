@@ -19,7 +19,7 @@ public class ClientSocket {
     private String serverName = "192.168.56.1";   //"10.0.2.5"
     private MyList mList = new MyList();
     
-	private int listenerPort; //c'est le port d'écoute de mon client
+	private int listenerPort; //c'est le port d'ï¿½coute de mon client
 
 	private Calendar currentDate = Calendar.getInstance();
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-H-mm-ss");
@@ -34,7 +34,14 @@ public class ClientSocket {
 	   exchangeSocket();
    }
    
-   public void exchangeSocket() {
+	 /**
+	  * Public void exchangeSocket method
+	  * Activate client socket
+	  * @author Quentin Beeckmans - Mathieu Roux
+	  * @version 1.0
+	  * @since 2020-05-30
+	 */
+   	public void exchangeSocket() {
 		try {
 			serverAddress = InetAddress.getByName(serverName);
 			clientSocket = new Socket(serverAddress, 4501); //pour crï¿½er mon socketClient je me connecte au port dispo PAS le port d'ï¿½coute
