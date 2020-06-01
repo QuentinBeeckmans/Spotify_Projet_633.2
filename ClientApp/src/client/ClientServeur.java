@@ -24,8 +24,12 @@ import java.util.logging.Level;
 import LogsConstructor.LoggerWithFileHandler;
 
 
-//COTE CLIENT
-public class ClientServeur implements Runnable {
+/**
+ * This runnable class permit to transfer music 
+ * @author Quentin Beeckmans - Mathieu Roux
+ * @version 1.0
+ * @since 2020-05-30
+ */public class ClientServeur implements Runnable {
 	
 	private Socket clientSocket;
 	private LoggerWithFileHandler logsServer;
