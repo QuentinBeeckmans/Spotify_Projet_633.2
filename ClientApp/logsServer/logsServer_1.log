@@ -1,0 +1,8 @@
+Mon Jun 01 22:35:10 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Mon Jun 01 22:35:10 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Mon Jun 01 22:35:10 CEST 2020 ; class client.ClientSocket ; WARNING ; Socket de connexion du client vers le serveur connecté;
+Mon Jun 01 22:35:10 CEST 2020 ; class client.Dialogue ; INFO ; Nouveau client: IP: /192.168.56.1;port d'Ã©coute 51469
+Mon Jun 01 22:35:10 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Mon Jun 01 22:35:10 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Mon Jun 01 22:35:16 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : add music on server;
+Mon Jun 01 22:35:16 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : add music on server;

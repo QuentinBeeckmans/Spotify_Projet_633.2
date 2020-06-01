@@ -34,7 +34,7 @@ public class Dialogue implements Runnable {
 	
 	public ArrayList<String> serverList = new ArrayList<String>() ;
 	
-	private int portListening; //pour savoir le port pour dï¿½livrer la musique
+	private int portListening; 
 	private Scanner scan = new Scanner(System.in);
 	
 	/**
@@ -73,7 +73,7 @@ public class Dialogue implements Runnable {
 			System.out.println("Que voulez-vous faire ?");
 			System.out.println("1 : Ajouter des musiques");
 			System.out.println("2 : Ecouter des musiques");
-			System.out.println("3 : Se dï¿½connecter");
+			System.out.println("3 : Se déconnecter");
 			
 			choix = scan.nextInt();
 			
@@ -85,13 +85,11 @@ public class Dialogue implements Runnable {
 	        	 mList.sendFileList(this);
 	        	 logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client choosed : add music on server", "");
 
-//	        	 readList();
+	        	 readList();
 	        	 break;
 	        	 
 	         case 2: 
 	        	 System.out.println("J'affiche les musiques du serveur: ");
-	        	 
-	        	 readList();
 	        	 displayMusics(serverList);
 	        	 logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client choosed : display available music", "");
 	        	 break;
@@ -143,7 +141,7 @@ public class Dialogue implements Runnable {
 			send.writeObject(list);
 			send.flush();
 		} catch (IOException e) {
-			logsServer.addHandler(Dialogue.class.getName(), Level.FINE,  "sendObject crash",  e.getMessage());
+			logsServer.addHandler(Dialogue.class.getName(), Level.SEVERE,  "sendObject crash",  e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -187,7 +185,7 @@ public class Dialogue implements Runnable {
 	private void newServerConnection(String Ipaddress, String port, String musiquePath) {
 		try {
 			Socket exchangeSocket = new Socket(Ipaddress, Integer.parseInt(port));
-			System.out.println("Je suis connectï¿½ au client pour ï¿½couter");
+			System.out.println("Je suis connecté au client pour écouter");
 			
 			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client connected","");
 			
@@ -199,7 +197,7 @@ public class Dialogue implements Runnable {
 			
 			SimpleAudioPlayer player = new SimpleAudioPlayer(is, logsServer);
 			player.play();
-			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "DÃ©but du streaming", musiquePath);
+			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Début du streaming", musiquePath);
 			Thread.sleep(player.clip.getMicrosecondLength());
 		} catch (Exception e) {
 			logsServer.addHandler(Dialogue.class.getName(), Level.SEVERE, "New Server Connexion crash", e.getMessage());

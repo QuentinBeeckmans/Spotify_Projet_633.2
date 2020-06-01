@@ -64,7 +64,7 @@ public class Server{
     				try {
 						clientSocket = serverSocket.accept();
 						System.out.println("connection request received");
-				   	 	logsServer.addHandler(Server.class.getName(), Level.WARNING, "Client listen socket turned on","");
+				   	 
 					} catch (Exception e) {
 				   	 	logsServer.addHandler(Server.class.getName(), Level.SEVERE, "Listen socket crashed after connection", e.toString());
 						e.printStackTrace();

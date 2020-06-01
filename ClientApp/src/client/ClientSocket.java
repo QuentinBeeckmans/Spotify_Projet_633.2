@@ -21,15 +21,11 @@ public class ClientSocket {
     private LoggerWithFileHandler logsServer;
 
     private InetAddress serverAddress;
-    private String serverName = "10.0.3.15";
+    private String serverName = "192.168.56.1";
     private MyList mList = new MyList();
     
-	private int listenerPort; //c'est le port d'ï¿½coute de mon client
+	private int listenerPort;
 
-/*	private Calendar currentDate = Calendar.getInstance();
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-H-mm-ss");
-	private String dateNow = formatter.format(currentDate.getTime());
-*/
 	/**
 	 * Client socket creating
 	 * @param port listener 
@@ -52,16 +48,16 @@ public class ClientSocket {
 			serverAddress = InetAddress.getByName(serverName);
 			clientSocket = new Socket(serverAddress, 5000);
 
-			logsServer.addHandler(ClientSocket.class.getName(), Level.WARNING, "Socket de connexion du client vers le serveur connectÃ©", "");
+			logsServer.addHandler(ClientSocket.class.getName(), Level.WARNING, "Socket de connexion du client vers le serveur connecté", "");
 		} catch (Exception e) {
-			logsServer.addHandler(ClientSocket.class.getName(), Level.SEVERE, "Echec socket de connexion du client vers le serveur dÃ©connectÃ©", e.toString());
+			logsServer.addHandler(ClientSocket.class.getName(), Level.SEVERE, "Echec socket de connexion du client vers le serveur déconnecté", e.toString());
 			e.printStackTrace();
 		}
 		
 		Thread t = new Thread(new Dialogue (clientSocket, listenerPort, mList, logsServer));
 		t.start();
 		if (clientSocket.isClosed()) {
-			logsServer.addHandler(ClientSocket.class.getName(), Level.WARNING, "Socket de connexion du client vers le serveur dÃ©connectÃ©", "");
+			logsServer.addHandler(ClientSocket.class.getName(), Level.WARNING, "Socket de connexion du client vers le serveur déconnecté", "");
 		}
 	}
     		

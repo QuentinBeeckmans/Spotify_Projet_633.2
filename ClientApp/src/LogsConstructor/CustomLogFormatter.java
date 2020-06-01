@@ -49,7 +49,7 @@ public class CustomLogFormatter extends Formatter {
         sb.append(" ; ");
 
         sb.append(record.getMessage());
-        sb.append(" ; ");
+       // sb.append(" ; ");
 
         sb.append("\r\n");
 

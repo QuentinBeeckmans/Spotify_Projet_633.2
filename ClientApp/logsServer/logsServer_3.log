@@ -1,0 +1,3 @@
+Mon Jun 01 22:40:08 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Mon Jun 01 22:40:08 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Mon Jun 01 22:40:10 CEST 2020 ; class client.ClientSocket ; SEVERE ; Echec socket de connexion du client vers le serveur déconnecté;java.net.ConnectException: Connection refused: connect

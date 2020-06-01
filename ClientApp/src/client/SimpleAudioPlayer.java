@@ -59,7 +59,6 @@ public class SimpleAudioPlayer {
 
     public void play()
     {
-        //start the clip
         clip.start();
 
         status = "play";
@@ -75,8 +74,7 @@ public class SimpleAudioPlayer {
             System.out.println("audio is already paused");
             return;
         }
-        this.currentFrame =
-                this.clip.getMicrosecondPosition();
+        this.currentFrame = this.clip.getMicrosecondPosition();
         clip.stop();
         status = "paused";
     }
@@ -85,8 +83,7 @@ public class SimpleAudioPlayer {
     public void resetAudioStream() throws UnsupportedAudioFileException, IOException,
             LineUnavailableException
     {
-        audioInputStream = AudioSystem.getAudioInputStream(
-                new File(filePath).getAbsoluteFile());
+        audioInputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
         clip.open(audioInputStream);
         clip.loop(Clip.LOOP_CONTINUOUSLY);
         

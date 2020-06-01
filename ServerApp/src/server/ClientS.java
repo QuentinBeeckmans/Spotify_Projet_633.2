@@ -60,7 +60,7 @@ public class ClientS implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("Client nï¿½ " + clientId + " IP" + clientSocket.getInetAddress());
+			System.out.println("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
 
 			send = new ObjectOutputStream(clientSocket.getOutputStream());
 
@@ -110,7 +110,7 @@ public class ClientS implements Runnable {
 		System.out.println("AVANT PUT " + Server.serverList.keySet());
 		Server.serverList.put(index, list);
 		System.out.println("APRES PUT " + Server.serverList.keySet());
-		System.out.println("Mon index client passï¿½ " + index);
+		System.out.println("Mon index client passé " + index);
 
 		logsServer.addHandler(ClientS.class.getName(), Level.INFO, "Music list added on server music list","");
 		   
@@ -133,7 +133,7 @@ public class ClientS implements Runnable {
 		for(Integer key: clients){
 		System.out.println(key + " - " + index);
 			if(key!=index) {
-				System.out.println("J'ai trouvÃ© un client");
+				System.out.println("J'ai trouvé un client");
 				lisToSend = Server.serverList.get(key);
 				sendObject(lisToSend);
 				System.out.println("Ca se passe ici");

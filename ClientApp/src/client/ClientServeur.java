@@ -33,7 +33,7 @@ public class ClientServeur implements Runnable {
 	private BufferedReader reader;
 	
 	
-	//je rï¿½cupï¿½re les infos de mon client 2 pour lui envoyer la musique
+	//je récupère les infos de mon client 2 pour lui envoyer la musique
 	public ClientServeur(Socket clientSocket, LoggerWithFileHandler logsServer) {
 		this.clientSocket=clientSocket;
 		this.logsServer = logsServer;
