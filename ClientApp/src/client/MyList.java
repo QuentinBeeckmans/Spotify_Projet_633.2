@@ -1,4 +1,4 @@
-
+package client;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -33,6 +33,7 @@ public class MyList {
 			d.sendObject(temp);
 		}
 	}
+	
 	/**
 	 * This method allows 
 	 * @return ArrayList
@@ -70,17 +71,21 @@ public class MyList {
 	private String choosePathDirectory () {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	    int retour = chooser.showOpenDialog(new JFrame());
+		JFrame jframeChooser = new JFrame();
+		jframeChooser.setAlwaysOnTop(true);
+	    int retour = chooser.showOpenDialog(jframeChooser);
 	    
 	    String directoryPath ;
 
-	    if(retour == JFileChooser.APPROVE_OPTION) {
-	    	directoryPath = chooser.getSelectedFile().getAbsolutePath();
-	    } 
-	    else {
-	    	System.out.println("Le dossier n'a pas été choisi!"); 
-	    	directoryPath = "none" ;
-	    }  
+
+    	while (retour != JFileChooser.APPROVE_OPTION) {
+    		System.out.println("Veuillez choisir un dossier de fichier de musique Ã  partager, svp !"); 
+    	
+    		retour = chooser.showOpenDialog(jframeChooser);
+    	}
+    	
+    	directoryPath = chooser.getSelectedFile().getAbsolutePath();
+  
 	   
 	    return directoryPath;
 	}

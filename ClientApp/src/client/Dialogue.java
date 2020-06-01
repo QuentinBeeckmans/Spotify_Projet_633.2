@@ -49,7 +49,7 @@ public class Dialogue implements Runnable {
 		this.mList=mList;
 		this.logsServer = logsClient;
 
-   	 	logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Nouveau client: IP: "  + clientSocketOnServer.getInetAddress().toString(), "port d'écoute " + String.valueOf(port));
+   	 	logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Nouveau client: IP: "  + clientSocketOnServer.getInetAddress(), "port d'écoute " + String.valueOf(port));
 	}
 
 	public String getPort() {
@@ -77,7 +77,6 @@ public class Dialogue implements Runnable {
 			
 			choix = scan.nextInt();
 			
-			ClientSocket.ClientLogger.info("Choix fait " + choix);
 	         
 			switch(choix) {
 	         
@@ -86,12 +85,13 @@ public class Dialogue implements Runnable {
 	        	 mList.sendFileList(this);
 	        	 logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client choosed : add music on server", "");
 
-	        	 readList();
+//	        	 readList();
 	        	 break;
 	        	 
 	         case 2: 
 	        	 System.out.println("J'affiche les musiques du serveur: ");
 	        	 
+	        	 readList();
 	        	 displayMusics(serverList);
 	        	 logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client choosed : display available music", "");
 	        	 break;
@@ -99,7 +99,7 @@ public class Dialogue implements Runnable {
 	         case 3: 
 		         System.out.println("Je sors");
 		         try {
-					Thread.sleep(5000);
+					Thread.sleep(1000);
 					send.close();
 			         reader.close();
 			         clientSocketOnServer.close();
@@ -154,32 +154,33 @@ public class Dialogue implements Runnable {
 	 */
 	public void displayMusics(ArrayList<String> serverList2){
 		   int cpt = 0;
-		   
+		   String [] temp;
+
 		   try {
+	
+			   System.out.println("Choisissez une musique: ");
 			   
-		   System.out.println("Choisissez une musique: ");
-		   for(String lineList: serverList2) {
-			   System.out.println(cpt + " : "  + lineList);
-			   cpt++;
-		   }
-		   int m=scan.nextInt();
-		   
-			logsServer.addHandler(Dialogue.class.getName(), Level.INFO,"Music choice: " + String.valueOf(m), "");
-
-		   String choice = serverList2.get(m);
-		   String [] address = choice.split(";");
-		   String str = address[1];
-		   String strNew = str.replace("/", "");
-		   
-
-		   newServerConnection(strNew, address[0], address[2]); 
-			}
-			catch (IllegalThreadStateException | ArrayIndexOutOfBoundsException e) {
-			
+			   for(String lineList: serverList2) {
+				   System.out.println(cpt + " : "  + lineList.substring(lineList.lastIndexOf("\\") + 1));
+				   cpt++;
+			   }
+			   int m=scan.nextInt();
+			   
+				logsServer.addHandler(Dialogue.class.getName(), Level.INFO,"Music choice: " + String.valueOf(m), "");
+			   
+			   String choice = serverList2.get(m);
+			   String [] address = choice.split(";");
+			   String str = address[1];
+			   String strNew = str.replace("/", "");
+			   
+	
+			   newServerConnection(strNew, address[0], address[2]); 
+			} catch (IllegalThreadStateException | ArrayIndexOutOfBoundsException | NullPointerException e) {
 				logsServer.addHandler(Dialogue.class.getName(), Level.SEVERE, "Display list crashed", e.toString());
 			}
 	}
 
+	
 	/**
 	 * This method allows to do a newer connection Socket with the client who have the music choice and get stream audio after
 	 */
@@ -188,7 +189,6 @@ public class Dialogue implements Runnable {
 			Socket exchangeSocket = new Socket(Ipaddress, Integer.parseInt(port));
 			System.out.println("Je suis connect� au client pour �couter");
 			
-			ClientSocket.ClientLogger.info("Client client connect� au client serveur ");
 			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client connected","");
 			
 			PrintWriter writerPath = new PrintWriter(exchangeSocket.getOutputStream());

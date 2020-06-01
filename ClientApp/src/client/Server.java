@@ -33,7 +33,6 @@ public class Server{
 	   	 	logsServer.addHandler(Server.class.getName(), Level.WARNING, "Server socket turned on","");
 	} catch (Exception e) {
    	 	logsServer.addHandler(Server.class.getName(), Level.SEVERE, "Server socket crashed",e.toString());
-			e.printStackTrace();
 		}
 	   
 	   port = serverSocket.getLocalPort();
