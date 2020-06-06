@@ -1,13 +1,8 @@
 package server;
 
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,12 +28,9 @@ public class Server {
 	 private final static Logger ServerLogger = Logger.getLogger("ServerLog");
 	
 	 /**
-	  * Class constuructor 
+	  * Class Server constructor 
 	  * @param int listening port
 	  * @param LoggerWithFileHandler
-	  * @author Quentin Beeckmans - Mathieu Roux
-	  * @version 1.0
-	  * @since 2020-05-30
 	  */
 	public Server(int port, LoggerWithFileHandler logsServer) {
 		this.port=port;
@@ -53,9 +45,6 @@ public class Server {
 	/**
 	  * Public void listenSocket method
 	  * Enable a listening socket for client
-	  * @author Quentin Beeckmans - Mathieu Roux
-	  * @version 1.0
-	  * @since 2020-05-30
 	  */
 	public void listenSocket() {
 		try {
@@ -77,13 +66,11 @@ public class Server {
 		   	 	logsServer.addHandler(Server.class.getName(), Level.SEVERE, "Listen socket crashed after connection", e.toString());
 				e.printStackTrace();
 			}
-			System.out.println("Connection re�ue");
+			System.out.println("Connection reçue");
 			Thread t = new Thread(new ClientS(clientId, clientSocket, logsServer));
 			clientId++;
 			t.start();
-	   	 	logsServer.addHandler(Server.class.getName(), Level.WARNING, "Client " + clientId + " connected", "");
+	   	 	//logsServer.addHandler(Server.class.getName(), Level.WARNING, "Client " + clientId + " connected", "");
 		}	
 	}
-	
-
 }

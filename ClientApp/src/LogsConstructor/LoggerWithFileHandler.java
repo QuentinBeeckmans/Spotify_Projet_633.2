@@ -23,11 +23,13 @@ public class LoggerWithFileHandler {
 	private Level logLevel;
 
 	/**
-	 * This class constructor
+	 * Class constructor
 	 * 
 	 * @param fileName
 	 */
 	public LoggerWithFileHandler(String fileName) {
+
+//		fileCpt++;
 
 		try {
 

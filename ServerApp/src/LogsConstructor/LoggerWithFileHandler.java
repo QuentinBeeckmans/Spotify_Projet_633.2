@@ -58,7 +58,7 @@ public class LoggerWithFileHandler {
 				}
 			}
 			 
-			// crÃ©ation de fichier incrÃ©mentÃ©s
+			// création de fichier incrémentés
 			fh = new FileHandler(logDirectory.getAbsolutePath() +  "\\" + fileOFHandlerName + ".log");
 
 		} catch (SecurityException | IOException e) {
