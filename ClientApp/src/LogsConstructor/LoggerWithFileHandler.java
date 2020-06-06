@@ -1,16 +1,13 @@
 package LogsConstructor;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.function.Supplier;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class LoggerWithFileHandler
- * logger implementation
+ * Class LoggerWithFileHandler logger implementation
  */
 public class LoggerWithFileHandler {
 
@@ -26,40 +23,39 @@ public class LoggerWithFileHandler {
 	private Level logLevel;
 
 	/**
-	 * Class constructor
+	 * This class constructor
+	 * 
 	 * @param fileName
 	 */
 	public LoggerWithFileHandler(String fileName) {
 
-//		fileCpt++;
-		
 		try {
-			
+
 			logDirectory = new File(fileName);
-			
+
 			if (!logDirectory.exists()) {
-			 logDirectory.mkdirs();
-			
-			}
-			else {
+				logDirectory.mkdirs();
+
+			} else {
 				File[] files = logDirectory.listFiles();
-				File lastFile = files[files.length-1];
+				File lastFile = files[files.length - 1];
 				if (files.length > 0) {
-					while (fileCpt < files.length/2) {
+					while (fileCpt < files.length / 2) {
 						fileCpt++;
 					}
-					
+
 					fileOFHandlerName = fileName + "_" + fileCpt;
-					
-					if(lastFile.getName().substring(0, lastFile.getName().lastIndexOf(".log")).equals(fileOFHandlerName)) {
+
+					if (lastFile.getName().substring(0, lastFile.getName().lastIndexOf(".log"))
+							.equals(fileOFHandlerName)) {
 						fileCpt++;
 						fileOFHandlerName = fileName + "_" + fileCpt;
-					}					
+					}
 				}
 			}
-			 
-			// crÃ©ation de fichier incrÃ©mentÃ©s
-			fh = new FileHandler(logDirectory.getAbsolutePath() +  "\\" + fileOFHandlerName + ".log");
+
+			// création de fichier incrémentés
+			fh = new FileHandler(logDirectory.getAbsolutePath() + "\\" + fileOFHandlerName + ".log");
 
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
@@ -67,19 +63,20 @@ public class LoggerWithFileHandler {
 	}
 
 	/**
-	 * Private format method
-	 * Format log messages
+	 * Private format method Format log messages
+	 * 
 	 * @return
 	 */
-	private String formatMsg() { 
-		
+	private String formatMsg() {
+
 		String msgFormated = msg + ";" + msgSystem;
-			
+
 		return msgFormated;
 	}
 
 	/**
 	 * Private void level of log setter method
+	 * 
 	 * @param logLevel
 	 */
 	private void setLevel(Level logLevel) {
@@ -87,8 +84,8 @@ public class LoggerWithFileHandler {
 	}
 
 	/**
-	 * Public void addHandel method
-	 * instentiate logger
+	 * Public void addHandel method instentiate logger
+	 * 
 	 * @param className
 	 * @param logLevel
 	 * @param msg
@@ -100,7 +97,7 @@ public class LoggerWithFileHandler {
 		this.msg = msg;
 		this.className = className;
 		this.msgSystem = msgSystem;
-		
+
 		myFormatter = new CustomLogFormatter(this.className);
 		fh.setFormatter(myFormatter);
 
@@ -109,17 +106,16 @@ public class LoggerWithFileHandler {
 	}
 
 	/**
-	 * Private void writter logger method
-	 * writte log in file
+	 * Private void writter logger method writte log in file
 	 */
 	private void writeLog() {
-						
+
 		logger = Logger.getLogger(this.className);
-		
+
 		logger.addHandler(fh);
 
 		logger.log(logLevel, formatMsg());
-		
+
 	}
 
 }

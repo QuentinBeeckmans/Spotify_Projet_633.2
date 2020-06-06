@@ -1,0 +1,26 @@
+Thu Jun 04 17:52:26 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 04 17:52:26 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 04 17:52:26 CEST 2020 ; class client.ClientSocket ; WARNING ; Socket de connexion du client vers le serveur connecté;
+Thu Jun 04 17:52:26 CEST 2020 ; class client.Dialogue ; INFO ; Nouveau client: IP: /192.168.56.1;port d'écoute 50267
+Thu Jun 04 17:52:26 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 04 17:52:26 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 04 17:52:32 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : add music on server;
+Thu Jun 04 17:52:32 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : add music on server;
+Thu Jun 04 17:52:42 CEST 2020 ; class client.Dialogue ; INFO ; Music choice: 11;
+Thu Jun 04 17:52:42 CEST 2020 ; class client.Dialogue ; INFO ; Music choice: 11;
+Thu Jun 04 17:52:42 CEST 2020 ; class client.Dialogue ; INFO ; Music choice: 11;
+Thu Jun 04 17:52:42 CEST 2020 ; class client.Dialogue ; INFO ; Client connected;
+Thu Jun 04 17:52:42 CEST 2020 ; class client.Dialogue ; INFO ; Client connected;
+Thu Jun 04 17:52:42 CEST 2020 ; class client.Dialogue ; INFO ; Client connected;
+Thu Jun 04 17:52:42 CEST 2020 ; class client.Dialogue ; INFO ; Client connected;
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; SEVERE ; New Server Connexion crash;Connection reset
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; SEVERE ; New Server Connexion crash;Connection reset
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; SEVERE ; New Server Connexion crash;Connection reset
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; SEVERE ; New Server Connexion crash;Connection reset
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; SEVERE ; New Server Connexion crash;Connection reset
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : display available music;
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : display available music;
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : display available music;
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : display available music;
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : display available music;
+Thu Jun 04 17:53:02 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : display available music;

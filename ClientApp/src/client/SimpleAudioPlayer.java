@@ -1,6 +1,7 @@
 package client;
 
 import javax.sound.sampled.*;
+import javax.swing.JOptionPane;
 
 import LogsConstructor.LoggerWithFileHandler;
 
@@ -37,32 +38,20 @@ public class SimpleAudioPlayer {
      * @throws IOException
      * @throws LineUnavailableException
      */
-    public SimpleAudioPlayer(InputStream is, LoggerWithFileHandler logsServer)
-            throws UnsupportedAudioFileException,
-            IOException, LineUnavailableException
+    public SimpleAudioPlayer(InputStream is, LoggerWithFileHandler logsServer) throws UnsupportedAudioFileException, IOException, LineUnavailableException
     {
     	
 		this.logsServer = logsServer;
-
-        // create AudioInputStream object
         audioInputStream = AudioSystem.getAudioInputStream(is);
-        //AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
-
-        // create clip reference
         clip = AudioSystem.getClip();
-
-        // open audioInputStream to the clip
         clip.open(audioInputStream);
-
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
     public void play()
     {
         clip.start();
-
         status = "play";
-
     	logsServer.addHandler(SimpleAudioPlayer.class.getName(), Level.INFO, "Streaming go on", "");
     }
 
@@ -80,9 +69,7 @@ public class SimpleAudioPlayer {
     }
 
     // Method to reset audio stream
-    public void resetAudioStream() throws UnsupportedAudioFileException, IOException,
-            LineUnavailableException
-    {
+    public void resetAudioStream() throws UnsupportedAudioFileException, IOException, LineUnavailableException{
         audioInputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
         clip.open(audioInputStream);
         clip.loop(Clip.LOOP_CONTINUOUSLY);

@@ -1,3 +1,8 @@
-Mon Jun 01 22:40:08 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
-Mon Jun 01 22:40:08 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
-Mon Jun 01 22:40:10 CEST 2020 ; class client.ClientSocket ; SEVERE ; Echec socket de connexion du client vers le serveur déconnecté;java.net.ConnectException: Connection refused: connect
+Thu Jun 04 16:46:11 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 04 16:46:11 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 04 16:46:11 CEST 2020 ; class client.ClientSocket ; WARNING ; Socket de connexion du client vers le serveur connecté;
+Thu Jun 04 16:46:11 CEST 2020 ; class client.Dialogue ; INFO ; Nouveau client: IP: /192.168.56.1;port d'écoute 49678
+Thu Jun 04 16:46:11 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 04 16:46:11 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 04 16:46:17 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : add music on server;
+Thu Jun 04 16:46:17 CEST 2020 ; class client.Dialogue ; INFO ; Client choosed : add music on server;
