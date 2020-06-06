@@ -1,9 +1,7 @@
 package client;
 
-import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 import LogsConstructor.LoggerWithFileHandler;
@@ -12,7 +10,7 @@ import LogsConstructor.LoggerWithFileHandler;
  * This class allows Client to become a server and wait a connection from others
  * clients
  * 
- * @author Quentin Beeckmans - Mathieu Roux
+ * @author Quentin Beeckmans - Matthieu Roux
  * @version 1.0
  * @since 2020-05-30
  */
@@ -33,6 +31,7 @@ public class Server {
 			logsServer.addHandler(Server.class.getName(), Level.WARNING, "Server socket turned on", "");
 		} catch (Exception e) {
 			logsServer.addHandler(Server.class.getName(), Level.SEVERE, "Server socket crashed", e.toString());
+			e.printStackTrace();
 		}
 
 		port = serverSocket.getLocalPort();

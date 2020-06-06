@@ -16,7 +16,7 @@ import LogsConstructor.LoggerWithFileHandler;
 /**
  * This runnable class is used to ask what client wants to do
  * 
- * @author Quentin Beeckmans - Mathieu Roux
+ * @author Quentin Beeckmans - Matthieu Roux
  * @version 1.0
  * @since 2020-05-30
  */

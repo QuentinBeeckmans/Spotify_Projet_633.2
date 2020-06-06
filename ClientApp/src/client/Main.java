@@ -1,8 +1,6 @@
 package client;
 
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -13,7 +11,7 @@ import LogsConstructor.LoggerWithFileHandler;
  * server Client and one simply Client with Client port listener from Client
  * server.
  * 
- * @author Quentin Beeckmans - Mathieu Roux
+ * @author Quentin Beeckmans - Matthieu Roux
  * @version 1.0
  * @since 2020-05-30
  */
@@ -25,16 +23,14 @@ public class Main {
 		try {
 			localhost = InetAddress.getLocalHost();
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} 
  
-        
 		Scanner scan = new Scanner(System.in);
-		System.out.println("Entrez un ip (" +  localhost.getHostAddress()+").");
+		System.out.println("Entry your ip( Your local address is: " +  localhost.getHostAddress()+").");
 		String serverName = scan.next();
 		
-		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("logsServer");
+		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("ClientLogs");
 		
 		try {
 			Server server = new Server(logsServer);

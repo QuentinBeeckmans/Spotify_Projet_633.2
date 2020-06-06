@@ -1,10 +1,7 @@
 package client;
 
 import javax.sound.sampled.*;
-import javax.swing.JOptionPane;
-
 import LogsConstructor.LoggerWithFileHandler;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +9,7 @@ import java.util.logging.Level;
 
 /**
  * This class initialize AudioPlayer
- * @author Quentin Beeckmans - Mathieu Roux
+ * @author Quentin Beeckmans - Matthieu Roux
  * @version 1.0
  * @since 2020-05-30
  */

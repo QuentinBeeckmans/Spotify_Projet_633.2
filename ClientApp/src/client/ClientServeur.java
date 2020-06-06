@@ -15,7 +15,7 @@ import LogsConstructor.LoggerWithFileHandler;
 /**
  * This runnable class is used to transfer music
  * 
- * @author Quentin Beeckmans - Mathieu Roux
+ * @author Quentin Beeckmans - Matthieu Roux
  * @version 1.0
  * @since 2020-05-30
  */
@@ -103,6 +103,7 @@ public class ClientServeur implements Runnable {
 			File myFile = new File(path);
 			byte[] mybytearrea = new byte[(int) myFile.length()];
 
+			@SuppressWarnings("resource")
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile)); // explications on doit
 																							// aller chercher ce qu'il y
 																							// a dans le fichier et le

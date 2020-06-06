@@ -9,7 +9,7 @@ import javax.swing.JFrame;
  * This class implements method to manage functions to create list from each
  * client
  * 
- * @author Quentin Beeckmans - Mathieu Roux
+ * @author Quentin Beeckmans - Matthieu Roux
  * @version 1.0
  * @since 2020-05-30
  */
