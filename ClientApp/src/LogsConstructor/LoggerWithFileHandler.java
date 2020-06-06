@@ -30,7 +30,6 @@ public class LoggerWithFileHandler {
 	 * @param fileName
 	 */
 	public LoggerWithFileHandler(String fileName) {
-<<<<<<< HEAD
 		
 		Date dNow = new Date( );
 	      SimpleDateFormat ft = 
@@ -38,11 +37,6 @@ public class LoggerWithFileHandler {
 	    date = ft.format(dNow);
 	    
 	    
-=======
-
-//		fileCpt++;
-
->>>>>>> c53079ec6c9486cef34f5763e6c539204c624d2c
 		try {
 
 			logDirectory = new File(fileName);

@@ -10,3 +10,21 @@ Sat Jun 06 19:25:39 CEST 2020 ; class client.ClientSocket ; WARNING ; Socket de 
 Sat Jun 06 19:25:39 CEST 2020 ; class client.Dialogue ; INFO ; Nouveau client: IP: /10.0.4.15;port d'�coute 51952
 Sat Jun 06 19:25:39 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
 Sat Jun 06 19:25:39 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Sat Jun 06 19:32:22 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Sat Jun 06 19:32:22 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Sat Jun 06 19:32:22 CEST 2020 ; class client.ClientSocket ; WARNING ; Socket de connexion du client vers le serveur connect�;
+Sat Jun 06 19:32:22 CEST 2020 ; class client.Dialogue ; INFO ; Nouveau client: IP: /10.0.4.15;port d'�coute 51979
+Sat Jun 06 19:32:22 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Sat Jun 06 19:32:22 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Sat Jun 06 19:32:56 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Sat Jun 06 19:32:56 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Sat Jun 06 19:32:56 CEST 2020 ; class client.ClientSocket ; WARNING ; Socket de connexion du client vers le serveur connect�;
+Sat Jun 06 19:32:56 CEST 2020 ; class client.Dialogue ; INFO ; Nouveau client: IP: /10.0.2.15;port d'�coute 51981
+Sat Jun 06 19:32:56 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Sat Jun 06 19:32:56 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Sat Jun 06 19:35:08 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Sat Jun 06 19:35:08 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Sat Jun 06 19:35:08 CEST 2020 ; class client.ClientSocket ; WARNING ; Socket de connexion du client vers le serveur connect�;
+Sat Jun 06 19:35:08 CEST 2020 ; class client.Dialogue ; INFO ; Nouveau client: IP: /10.0.2.15;port d'�coute 51988
+Sat Jun 06 19:35:08 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Sat Jun 06 19:35:08 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
