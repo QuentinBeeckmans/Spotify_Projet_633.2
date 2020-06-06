@@ -2,6 +2,8 @@ package LogsConstructor;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,7 +13,6 @@ import java.util.logging.Logger;
  */
 public class LoggerWithFileHandler {
 
-	private static int fileCpt = 0;
 	private File logDirectory;
 	private FileHandler fh;
 	private CustomLogFormatter myFormatter;
@@ -21,41 +22,50 @@ public class LoggerWithFileHandler {
 	private String msg;
 	private String msgSystem;
 	private Level logLevel;
-
+	private String date;
+	
 	/**
 	 * This class constructor
 	 * 
 	 * @param fileName
 	 */
 	public LoggerWithFileHandler(String fileName) {
-
+		
+		Date dNow = new Date( );
+	      SimpleDateFormat ft = 
+	      new SimpleDateFormat ("yyyy_MM");
+	    date = ft.format(dNow);
+	    
+	    
 		try {
 
 			logDirectory = new File(fileName);
 
 			if (!logDirectory.exists()) {
 				logDirectory.mkdirs();
-
-			} else {
+				
+			} 
+			
+			
 				File[] files = logDirectory.listFiles();
+			
+			if (files.length > 0) {
 				File lastFile = files[files.length - 1];
-				if (files.length > 0) {
-					while (fileCpt < files.length / 2) {
-						fileCpt++;
-					}
-
-					fileOFHandlerName = fileName + "_" + fileCpt;
-
-					if (lastFile.getName().substring(0, lastFile.getName().lastIndexOf(".log"))
-							.equals(fileOFHandlerName)) {
-						fileCpt++;
-						fileOFHandlerName = fileName + "_" + fileCpt;
-					}
+				boolean testLastFile = lastFile.getName().substring(0, lastFile.getName().indexOf(".txt"))
+						.equals(date);
+	
+				if (lastFile.exists() && testLastFile) {
+					fileOFHandlerName = lastFile.getName();
+				
+				} else {
+					fileOFHandlerName = date + ".txt";
 				}
+			} else {
+				fileOFHandlerName = date + ".txt";
 			}
 
-			// création de fichier incrémentés
-			fh = new FileHandler(logDirectory.getAbsolutePath() + "\\" + fileOFHandlerName + ".log");
+			// crï¿½ation de fichier incrï¿½mentï¿½s
+			fh = new FileHandler(logDirectory.getAbsolutePath() + "\\" + fileOFHandlerName, true);
 
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
@@ -115,7 +125,10 @@ public class LoggerWithFileHandler {
 		logger.addHandler(fh);
 
 		logger.log(logLevel, formatMsg());
-
+	
 	}
 
+	public void closeHandler () {
+		fh.close();
+	}
 }

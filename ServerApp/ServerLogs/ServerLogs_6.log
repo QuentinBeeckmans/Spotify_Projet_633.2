@@ -1,0 +1,12 @@
+Sat Jun 06 18:41:46 CEST 2020 ; class server.Server ; WARNING ; Listen socket created; ; 
+Sat Jun 06 18:41:55 CEST 2020 ; class server.Server ; WARNING ; Client listen socket turned on; ; 
+Sat Jun 06 18:41:55 CEST 2020 ; class server.Server ; WARNING ; Client listen socket turned on; ; 
+Sat Jun 06 18:41:55 CEST 2020 ; class server.Server ; WARNING ; Client 1 connected; ; 
+Sat Jun 06 18:41:55 CEST 2020 ; class server.Server ; WARNING ; Client 1 connected; ; 
+Sat Jun 06 18:41:55 CEST 2020 ; class server.Server ; WARNING ; Client 1 connected; ; 
+Sat Jun 06 18:42:10 CEST 2020 ; class server.ClientS ; INFO ; Music list added on server music list; ; 
+Sat Jun 06 18:42:10 CEST 2020 ; class server.ClientS ; INFO ; Music list shared with client; ; 
+Sat Jun 06 18:42:10 CEST 2020 ; class server.ClientS ; INFO ; Music list shared with client; ; 
+Sat Jun 06 18:42:10 CEST 2020 ; class server.ClientS ; INFO ; Communication with client : OK;Lists exchanged ; 
+Sat Jun 06 18:42:10 CEST 2020 ; class server.ClientS ; INFO ; Communication with client : OK;Lists exchanged ; 
+Sat Jun 06 18:42:10 CEST 2020 ; class server.ClientS ; INFO ; Communication with client : OK;Lists exchanged ; 

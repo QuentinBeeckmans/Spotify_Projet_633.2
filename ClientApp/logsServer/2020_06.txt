@@ -1,0 +1,12 @@
+Sat Jun 06 19:15:26 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Sat Jun 06 19:15:27 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Sat Jun 06 19:15:27 CEST 2020 ; class client.ClientSocket ; WARNING ; Socket de connexion du client vers le serveur connect�;
+Sat Jun 06 19:15:27 CEST 2020 ; class client.Dialogue ; INFO ; Nouveau client: IP: /10.0.2.15;port d'�coute 51519
+Sat Jun 06 19:15:27 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Sat Jun 06 19:15:27 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Sat Jun 06 19:25:39 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Sat Jun 06 19:25:39 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Sat Jun 06 19:25:39 CEST 2020 ; class client.ClientSocket ; WARNING ; Socket de connexion du client vers le serveur connect�;
+Sat Jun 06 19:25:39 CEST 2020 ; class client.Dialogue ; INFO ; Nouveau client: IP: /10.0.4.15;port d'�coute 51952
+Sat Jun 06 19:25:39 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Sat Jun 06 19:25:39 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;

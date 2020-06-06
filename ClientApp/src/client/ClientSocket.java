@@ -46,10 +46,10 @@ public class ClientSocket {
 			clientSocket = new Socket(serverAddress, 5000);
 
 			logsServer.addHandler(ClientSocket.class.getName(), Level.WARNING,
-					"Socket de connexion du client vers le serveur connecté", "");
+					"Socket de connexion du client vers le serveur connectï¿½", "");
 		} catch (Exception e) {
 			logsServer.addHandler(ClientSocket.class.getName(), Level.SEVERE,
-					"Echec socket de connexion du client vers le serveur déconnecté", e.toString());
+					"Echec socket de connexion du client vers le serveur dï¿½connectï¿½", e.toString());
 			e.printStackTrace();
 		}
 
@@ -57,7 +57,8 @@ public class ClientSocket {
 		t.start();
 		if (clientSocket.isClosed()) {
 			logsServer.addHandler(ClientSocket.class.getName(), Level.WARNING,
-					"Socket de connexion du client vers le serveur déconnecté", "");
+					"Socket de connexion du client vers le serveur dï¿½connectï¿½", "");
+			logsServer.closeHandler();
 		}
 	}
 }

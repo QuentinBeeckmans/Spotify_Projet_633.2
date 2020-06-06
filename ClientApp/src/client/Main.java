@@ -35,18 +35,23 @@ public class Main {
 		String serverName = scan.next();
 		
 		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("logsServer");
-
+		
 		try {
 			Server server = new Server(logsServer);
 			logsServer.addHandler(Main.class.getName(), Level.WARNING, "Initialization of listening socket", "");
 
 			ClientSocket myClient = new ClientSocket(server.getPort(), logsServer, serverName);
 			logsServer.addHandler(Main.class.getName(), Level.WARNING, "Client connexion enable", "");
+			
+			
 		} catch (IllegalArgumentException e) {
 
 			logsServer.addHandler(Main.class.getName(), Level.SEVERE,
 					"Initialisation of client services (client and/or server) crashed", e.toString());
 		}
+		
+		logsServer.closeHandler();
+				
 	}
 
 }
