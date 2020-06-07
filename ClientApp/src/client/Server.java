@@ -57,7 +57,7 @@ public class Server {
 
 					try {
 						clientSocket = serverSocket.accept();
-						System.out.println("Demande de stream d'un autre client ...");
+						System.out.println("Another client's srteam request ...");
 
 					} catch (Exception e) {
 						logsServer.addHandler(Server.class.getName(), Level.SEVERE,
@@ -68,8 +68,7 @@ public class Server {
 					// ceci est mon client 2 qui se connecte au client 1
 					Thread t = new Thread(new ClientServeur(clientSocket, logsServer));
 					t.start();
-					// logsServer.addHandler(Server.class.getName(), Level.WARNING, "Client thread
-					// of listen socket going on","");
+
 				}
 			}
 		}).start();

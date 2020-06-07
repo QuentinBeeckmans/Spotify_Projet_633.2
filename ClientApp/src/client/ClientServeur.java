@@ -115,9 +115,6 @@ public class ClientServeur implements Runnable {
 			os.write(mybytearrea, 0, mybytearrea.length);
 			os.flush();
 
-			// logsServer.addHandler(ClientServeur.class.getName(), Level.WARNING,
-			// "Streaming is going on",""); //PROVOQUE ERREUR
-
 		} catch (IOException e) {
 			logsServer.addHandler(ClientServeur.class.getName(), Level.SEVERE, "Streaming crashed", e.toString());
 			e.printStackTrace();

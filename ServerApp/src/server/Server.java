@@ -68,7 +68,7 @@ public class Server {
 				Main.ServerLogger.severe("Listen socket crashed after connection: " + e.toString());
 				e.printStackTrace();
 			}
-			System.out.println("Connection reçue.");
+			System.out.println("Received connection.");
 			Thread t = new Thread(new ClientS(clientId, clientSocket));
 			clientId++;
 			t.start();

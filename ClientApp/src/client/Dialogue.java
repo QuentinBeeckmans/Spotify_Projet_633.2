@@ -53,7 +53,7 @@ public class Dialogue implements Runnable {
 
 		logsServer.addHandler(Dialogue.class.getName(), Level.INFO,
 				"Nouveau client: IP: " + clientSocketOnServer.getInetAddress(),
-				"port d'écoute " + String.valueOf(port));
+				"port d'ï¿½coute " + String.valueOf(port));
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class Dialogue implements Runnable {
 	@Override
 	public void run() {
 		String choix;
-		System.out.println("Bienvenue sur spotify:");
+		System.out.println("Welcom at Spotify:");
 
 		// FIRST QUESTION
 		do {
@@ -99,13 +99,13 @@ public class Dialogue implements Runnable {
 		if (!emptylist) {
 
 			do {
-				System.out.println("Afficher les musiques du serveur: (y)");
+				System.out.println("Display available musics on the server : (y)");
 				choix = scan.next();
 			} while (!choix.equals("y"));
 			displayMusics(serverList);
 			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client choosed : display available music", "");
 		} else {
-			System.out.println("Le serveur n'a pas d'autres client.");
+			System.out.println("Your alone on this server.");
 
 			try {
 				clientSocketOnServer.close();
@@ -169,11 +169,11 @@ public class Dialogue implements Runnable {
 		int cpt = 0;
 
 		try {
-			System.out.println("Choisissez une musique: ");
+			System.out.println("Choose a music :");
 
 			for (String lineList : serverList2) {
 				if (lineList == null) {
-					System.out.println("Le serveur n'a pas de liste à partager.");
+					System.out.println("No list of music to share");
 
 				} else {
 					System.out.println(cpt + " : " + lineList.substring(lineList.lastIndexOf("\\") + 1));
@@ -205,7 +205,7 @@ public class Dialogue implements Runnable {
 	private void newServerConnection(String Ipaddress, String port, String musiquePath) {
 		try {
 			Socket exchangeSocket = new Socket(Ipaddress, Integer.parseInt(port));
-			System.out.println("Je suis connecté au client pour écouter");
+			System.out.println("I'm connected to the client to listen music.");
 
 			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client connected", "");
 
@@ -218,8 +218,8 @@ public class Dialogue implements Runnable {
 			SimpleAudioPlayer player = new SimpleAudioPlayer(is, logsServer);
 			player.play();
 
-			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Début du streaming", musiquePath);
-			System.out.println("Voullez-vous arrêter la musique ?(y/n)");
+			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "DÃ©but du streaming", musiquePath);
+			System.out.println("Would you stop the music ?(y/n)");
 			String reponse = scan.next();
 			while (player.clip.isRunning()) {
 				if (reponse.equals("y")) {

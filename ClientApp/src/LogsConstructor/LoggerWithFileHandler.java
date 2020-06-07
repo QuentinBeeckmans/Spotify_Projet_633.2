@@ -42,12 +42,10 @@ public class LoggerWithFileHandler {
 			logDirectory = new File(fileName);
 
 			if (!logDirectory.exists()) {
-				logDirectory.mkdirs();
-				
+				logDirectory.mkdirs();				
 			} 
-			
-			
-				File[] files = logDirectory.listFiles();
+						
+			File[] files = logDirectory.listFiles();
 			
 			if (files.length > 0) {
 				File lastFile = files[files.length - 1];
@@ -64,7 +62,6 @@ public class LoggerWithFileHandler {
 				fileOFHandlerName = date + ".txt";
 			}
 
-			// cr�ation de fichier incr�ment�s
 			fh = new FileHandler(logDirectory.getAbsolutePath() + "\\" + fileOFHandlerName, true);
 
 		} catch (SecurityException | IOException e) {

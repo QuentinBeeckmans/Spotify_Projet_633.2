@@ -82,7 +82,7 @@ public class MyList {
 		String directoryPath;
 
 		while (retour != JFileChooser.APPROVE_OPTION) {
-			System.out.println("Veuillez choisir un dossier de fichier de musique à partager");
+			System.out.println("Choose a folder to share music !");
 
 			retour = chooser.showOpenDialog(jframeChooser);
 		}

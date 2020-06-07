@@ -44,10 +44,10 @@ public class ClientS implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
+			System.out.println("Client nï¿½ " + clientId + " IP" + clientSocket.getInetAddress());
 			
 			Main.ServerLogger.setLevel(Level.INFO);
-			Main.ServerLogger.info("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
+			Main.ServerLogger.info("Client nÂ° " + clientId + " IP" + clientSocket.getInetAddress());
 			
 			send = new ObjectOutputStream(clientSocket.getOutputStream());
 
