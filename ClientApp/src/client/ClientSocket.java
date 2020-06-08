@@ -55,6 +55,7 @@ public class ClientSocket {
 
 		Thread t = new Thread(new Dialogue(clientSocket, listenerPort, mList, logsServer));
 		t.start();
+
 		if (clientSocket.isClosed()) {
 			logsServer.addHandler(ClientSocket.class.getName(), Level.WARNING,
 					"Connexion socket client to server is disconnected", "");

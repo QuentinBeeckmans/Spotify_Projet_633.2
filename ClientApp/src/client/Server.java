@@ -57,7 +57,7 @@ public class Server {
 
 					try {
 						clientSocket = serverSocket.accept();
-						System.out.println("Another client's srteam request ...");
+						System.out.println("Another client's stream request ...");
 
 					} catch (Exception e) {
 						logsServer.addHandler(Server.class.getName(), Level.SEVERE,
@@ -66,7 +66,7 @@ public class Server {
 					}
 
 					// ceci est mon client 2 qui se connecte au client 1
-					Thread t = new Thread(new ClientServeur(clientSocket, logsServer));
+					Thread t = new Thread(new ClientServer(clientSocket, logsServer));
 					t.start();
 
 				}

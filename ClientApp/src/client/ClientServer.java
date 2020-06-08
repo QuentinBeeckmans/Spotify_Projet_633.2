@@ -19,7 +19,7 @@ import LogsConstructor.LoggerWithFileHandler;
  * @version 1.0
  * @since 2020-05-30
  */
-public class ClientServeur implements Runnable {
+public class ClientServer implements Runnable {
 
 	private Socket clientSocket;
 	private LoggerWithFileHandler logsServer;
@@ -31,7 +31,7 @@ public class ClientServeur implements Runnable {
 	 * @param clientSocket
 	 * @param logsServer
 	 */
-	public ClientServeur(Socket clientSocket, LoggerWithFileHandler logsServer) {
+	public ClientServer(Socket clientSocket, LoggerWithFileHandler logsServer) {
 		this.clientSocket = clientSocket;
 		this.logsServer = logsServer;
 	}
@@ -44,11 +44,10 @@ public class ClientServeur implements Runnable {
 		try {
 			reading();
 		} catch (Exception e) {
-			logsServer.addHandler(ClientServeur.class.getName(), Level.SEVERE, "Client listen socket turned on",
+			logsServer.addHandler(ClientServer.class.getName(), Level.SEVERE, "Client listen socket turned on",
 					e.toString());
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -61,15 +60,11 @@ public class ClientServeur implements Runnable {
 			String line = null;
 			line = readLine();
 			streamMusic(line);
-			// logsServer.addHandler(ClientServeur.class.getName(), Level.WARNING, "Client
-			// received list from server","");
-
 		} catch (ClassNotFoundException | IOException e) {
-			logsServer.addHandler(ClientServeur.class.getName(), Level.SEVERE, "Client didn't receive list",
+			logsServer.addHandler(ClientServer.class.getName(), Level.SEVERE, "Client didn't receive list",
 					e.toString());
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -82,6 +77,7 @@ public class ClientServeur implements Runnable {
 	private String readLine() throws IOException, ClassNotFoundException {
 		reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		String line = null;
+
 		while (true) {
 			line = reader.readLine();
 
@@ -104,10 +100,8 @@ public class ClientServeur implements Runnable {
 			byte[] mybytearrea = new byte[(int) myFile.length()];
 
 			@SuppressWarnings("resource")
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile)); // explications on doit
-																							// aller chercher ce qu'il y
-																							// a dans le fichier et le
-																							// mettre dans le buffer
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+
 			bis.read(mybytearrea, 0, mybytearrea.length);
 
 			OutputStream os = clientSocket.getOutputStream();
@@ -116,7 +110,7 @@ public class ClientServeur implements Runnable {
 			os.flush();
 
 		} catch (IOException e) {
-			logsServer.addHandler(ClientServeur.class.getName(), Level.SEVERE, "Streaming crashed", e.toString());
+			logsServer.addHandler(ClientServer.class.getName(), Level.SEVERE, "Streaming crashed", e.toString());
 			e.printStackTrace();
 		}
 

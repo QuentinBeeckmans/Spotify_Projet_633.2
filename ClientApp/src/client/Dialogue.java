@@ -52,8 +52,8 @@ public class Dialogue implements Runnable {
 		this.logsServer = logsClient;
 
 		logsServer.addHandler(Dialogue.class.getName(), Level.INFO,
-				"Nouveau client: IP: " + clientSocketOnServer.getInetAddress(),
-				"port d'�coute " + String.valueOf(port));
+				"New client IP: " + clientSocketOnServer.getInetAddress(),
+				"port listening " + String.valueOf(port));
 	}
 
 	/**
@@ -86,9 +86,9 @@ public class Dialogue implements Runnable {
 
 		// FIRST QUESTION
 		do {
-			System.out.println("Ajouter des musiques: (y)");
+			System.out.println("Add music: (y)");
 			choix = scan.next();
-		} while (!choix.equals("y"));
+		} while (!choix.toLowerCase().equals("y"));
 
 		mList.sendFileList(this);
 		logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client choosed : add music on server", "");
@@ -101,20 +101,25 @@ public class Dialogue implements Runnable {
 			do {
 				System.out.println("Display available musics on the server : (y)");
 				choix = scan.next();
-			} while (!choix.equals("y"));
-			displayMusics(serverList);
+			} while (!choix.toLowerCase().equals("y"));
 			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client choosed : display available music", "");
+			displayMusics(serverList);
+			
+			
 		} else {
-			System.out.println("Your alone on this server.");
-
-			try {
-				clientSocketOnServer.close();
-				reader.close();
-				send.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			System.out.println("You are alone on this server. There are no list to stream.");
 		}
+		
+		try {
+			clientSocketOnServer.close();
+			reader.close();
+			send.close();
+		} catch (IOException e) {
+			logsServer.addHandler(ClientSocket.class.getName(), Level.SEVERE, "Problem with closing socket.",
+					e.toString());
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
@@ -167,7 +172,6 @@ public class Dialogue implements Runnable {
 	 */
 	public void displayMusics(ArrayList<String> serverList2) {
 		int cpt = 0;
-
 		try {
 			System.out.println("Choose a music :");
 
@@ -182,6 +186,12 @@ public class Dialogue implements Runnable {
 			}
 			int m = scan.nextInt();
 
+			int check=cpt-1;
+			while(m <0 || m >check) {
+				System.out.println("Please choose from the range of proposals :");
+				m = scan.nextInt();
+			}
+			
 			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Music choice: " + String.valueOf(m), "");
 
 			String choice = serverList2.get(m);
@@ -219,15 +229,16 @@ public class Dialogue implements Runnable {
 			player.play();
 
 			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Début du streaming", musiquePath);
-			System.out.println("Would you stop the music ?(y/n)");
+			
+			System.out.println("To stop music press S");
 			String reponse = scan.next();
+			
 			while (player.clip.isRunning()) {
-				if (reponse.equals("y")) {
+				if (reponse.toLowerCase().equals("s")) {
 					player.pause();
+					player.close();
 				}
 			}
-			Thread.sleep(player.clip.getMicrosecondLength());
-
 			is.close();
 			exchangeSocket.close();
 		} catch (Exception e) {

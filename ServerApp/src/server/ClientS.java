@@ -44,7 +44,7 @@ public class ClientS implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("Client n� " + clientId + " IP" + clientSocket.getInetAddress());
+			System.out.println("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
 			
 			Main.ServerLogger.setLevel(Level.INFO);
 			Main.ServerLogger.info("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
@@ -85,7 +85,7 @@ public class ClientS implements Runnable {
 			e.printStackTrace();
 		}
 		
-		System.out.println("List from Client");
+		System.out.println("List from Client:");
 		for (String item : clientList) {
 			System.out.println(item);
 		}

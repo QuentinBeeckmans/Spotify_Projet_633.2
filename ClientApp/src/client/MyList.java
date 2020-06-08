@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * This class implements method to manage functions to create list from each
@@ -54,14 +56,20 @@ public class MyList {
 	public ArrayList<String> getArrayListMusics() {
 		ArrayList<String> arrayTemp = new ArrayList<String>();
 
-		String temp = choosePathDirectory();
-		File[] files = new File(temp).listFiles();
-
-		for (File file : files) {
-			if (file.isFile()) {
-				arrayTemp.add(file.getAbsolutePath());
+		do {
+			System.out.println("The directory must contains at least one audio file in wav format: ");
+		
+			String temp = choosePathDirectory();
+			File[] files = new File(temp).listFiles();
+	
+			for (File file : files) {
+				if (file.isFile()) {
+					if (file.getAbsolutePath().endsWith("wav")) {
+						arrayTemp.add(file.getAbsolutePath());
+					}
+				}
 			}
-		}
+		}while (arrayTemp.isEmpty());
 
 		return arrayTemp;
 	}
@@ -75,20 +83,26 @@ public class MyList {
 	private String choosePathDirectory() {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		// FileFilter filter = new FileNameExtensionFilter("WAV file", new String[]
+		// {"wav"});
+
+		// chooser.setFileFilter(filter);
+
 		JFrame jframeChooser = new JFrame();
 		jframeChooser.setAlwaysOnTop(true);
 		int retour = chooser.showOpenDialog(jframeChooser);
 
 		String directoryPath;
 
-		while (retour != JFileChooser.APPROVE_OPTION) {
+		while ((retour != JFileChooser.APPROVE_OPTION)) {
 			System.out.println("Choose a folder to share music !");
 
 			retour = chooser.showOpenDialog(jframeChooser);
 		}
 
-		directoryPath = chooser.getSelectedFile().getAbsolutePath();
-		return directoryPath;
+		return directoryPath = chooser.getSelectedFile().getAbsolutePath();
+
 	}
 
 }

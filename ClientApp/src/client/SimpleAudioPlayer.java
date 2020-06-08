@@ -37,9 +37,9 @@ public class SimpleAudioPlayer {
      */
     public SimpleAudioPlayer(InputStream is, LoggerWithFileHandler logsServer) throws UnsupportedAudioFileException, IOException, LineUnavailableException
     {
-    	
-		this.logsServer = logsServer;
         audioInputStream = AudioSystem.getAudioInputStream(is);
+        this.logsServer = logsServer;
+        
         clip = AudioSystem.getClip();
         clip.open(audioInputStream);
         clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -64,13 +64,7 @@ public class SimpleAudioPlayer {
         clip.stop();
         status = "paused";
     }
-
-    // Method to reset audio stream
-    public void resetAudioStream() throws UnsupportedAudioFileException, IOException, LineUnavailableException{
-        audioInputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
-        clip.open(audioInputStream);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        
-    	logsServer.addHandler(SimpleAudioPlayer.class.getName(), Level.INFO, "Stream reset", "");
+    public void close() {
+    	clip.close();
     }
 }
