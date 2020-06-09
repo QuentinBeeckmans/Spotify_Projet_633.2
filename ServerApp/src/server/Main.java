@@ -1,5 +1,6 @@
 package server;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +20,8 @@ import java.util.logging.Logger;
 public class Main {
 	public final static Logger ServerLogger = Logger.getLogger("ServerLog");
 
+	private static File logDirectory;
+
 	public static void main(String[] args) {
 
 		Date dNow = new Date();
@@ -26,7 +29,13 @@ public class Main {
 		String date = ft.format(dNow);
 
 		try {
-			FileHandler fh = new FileHandler("./Server" + date + ".log", true);
+			logDirectory = new File("ServerLog");
+
+			if (!logDirectory.exists()) {
+				logDirectory.mkdirs();
+			}
+
+			FileHandler fh = new FileHandler(logDirectory.getAbsolutePath() + "\\Server" + date + ".log", true);
 			CustomFormatter SktFormatter = new CustomFormatter();
 			fh.setFormatter(SktFormatter);
 			ServerLogger.addHandler(fh);
@@ -41,8 +50,5 @@ public class Main {
 			ServerLogger.severe("Initialisation of Server services crashed: " + e.toString());
 			e.printStackTrace();
 		}
-
-		ServerLogger.setLevel(Level.INFO);
-		ServerLogger.info("*********** program close ***********");
 	}
 }

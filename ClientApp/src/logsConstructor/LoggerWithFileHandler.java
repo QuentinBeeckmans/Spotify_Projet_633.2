@@ -118,6 +118,7 @@ public class LoggerWithFileHandler {
 	private void writeLog() {
 
 		logger = Logger.getLogger(this.className);
+		logger.setUseParentHandlers(false);
 
 		logger.addHandler(fh);
 

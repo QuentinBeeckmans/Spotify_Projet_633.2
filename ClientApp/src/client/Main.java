@@ -28,11 +28,11 @@ public class Main {
 
 		Scanner scan = new Scanner(System.in);
 		System.out.println(
-				"Enter the server address. \nN.B. Your local address is: " + localhost.getHostAddress() + ").");
+				"Enter the server address. \nN.B. Your local address is: " + localhost.getHostAddress() + ".");
 		String serverName = scan.next();
 
 		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("ClientLogs");
-
+		
 		try {
 			Server server = new Server(logsServer);
 			logsServer.addHandler(Main.class.getName(), Level.WARNING, "Initialization of listening socket", "");
