@@ -3,7 +3,7 @@ package client;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Level;
-import LogsConstructor.LoggerWithFileHandler;
+import logsConstructor.LoggerWithFileHandler;
 
 /**
  * This class implements Client Socket.
@@ -26,7 +26,9 @@ public class ClientSocket {
 	/**
 	 * Client socket creating
 	 * 
-	 * @param port listener
+	 * @param port       listener
+	 * @param logsServer logger
+	 * @param serverName ip server which is pass by Clients
 	 */
 	public ClientSocket(int port, LoggerWithFileHandler logsServer, String serverName) {
 		this.listenerPort = port;

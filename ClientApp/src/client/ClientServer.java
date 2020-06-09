@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 
-import LogsConstructor.LoggerWithFileHandler;
+import logsConstructor.LoggerWithFileHandler;
 
 /**
  * This runnable class is used to transfer music
@@ -28,8 +28,8 @@ public class ClientServer implements Runnable {
 	/**
 	 * That construct a server Client that's allows to wait a connection
 	 * 
-	 * @param clientSocket
-	 * @param logsServer
+	 * @param clientSocket socket from client
+	 * @param logsServer   Logger
 	 */
 	public ClientServer(Socket clientSocket, LoggerWithFileHandler logsServer) {
 		this.clientSocket = clientSocket;

@@ -10,8 +10,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
-
-import LogsConstructor.LoggerWithFileHandler;
+import logsConstructor.LoggerWithFileHandler;
 
 /**
  * This runnable class is used to ask what client wants to do
@@ -41,9 +40,10 @@ public class Dialogue implements Runnable {
 	/**
 	 * This constructor implements an interface to ask some questions at the client
 	 * 
-	 * @param clientSocket
+	 * @param clientSocket the socket number from client
 	 * @param port         which is listening
-	 * @param mList
+	 * @param mList        the list created
+	 * @param logsClient   the logger for clients
 	 */
 	public Dialogue(Socket clientSocket, int port, MyList mList, LoggerWithFileHandler logsClient) {
 		this.clientSocketOnServer = clientSocket;
@@ -52,14 +52,13 @@ public class Dialogue implements Runnable {
 		this.logsServer = logsClient;
 
 		logsServer.addHandler(Dialogue.class.getName(), Level.INFO,
-				"New client IP: " + clientSocketOnServer.getInetAddress(),
-				"port listening " + String.valueOf(port));
+				"New client IP: " + clientSocketOnServer.getInetAddress(), "port listening " + String.valueOf(port));
 	}
 
 	/**
 	 * That returns port listener from client server in integer
 	 * 
-	 * @return Integer
+	 * @return Integer port
 	 */
 	public String getPort() {
 		return Integer.toString(portListening);
@@ -68,7 +67,7 @@ public class Dialogue implements Runnable {
 	/**
 	 * That returns ip from client server
 	 * 
-	 * @return
+	 * @return IP in String
 	 */
 	public String getIp() {
 		return clientSocketOnServer.getInetAddress().toString();
@@ -76,17 +75,21 @@ public class Dialogue implements Runnable {
 
 	/**
 	 * This method allows to choice to send and listen a music from an other client
-	 * 
-	 * @throws IOException if closing socket have error
 	 */
 	@Override
 	public void run() {
 		String choix;
-		System.out.println("Welcom at Spotify:");
+		System.out.println("\nWelcome at:\n"+ 
+				"  _____ _____   ____ _______ _____ ________     __\r\n" + 
+				" / ____|  __ \\ / __ \\__   __|_   _|  ____\\ \\   / /\r\n" + 
+				"| (___ | |__) | |  | | | |    | | | |__   \\ \\_/ / \r\n" + 
+				" \\___ \\|  ___/| |  | | | |    | | |  __|   \\   /  \r\n" + 
+				" ____) | |    | |__| | | |   _| |_| |       | |   \r\n" + 
+				"|_____/|_|     \\____/  |_|  |_____|_|       |_|\r\n");
 
 		// FIRST QUESTION
 		do {
-			System.out.println("Add music: (y)");
+			System.out.println("\nFor adding music press Y:");
 			choix = scan.next();
 		} while (!choix.toLowerCase().equals("y"));
 
@@ -99,17 +102,16 @@ public class Dialogue implements Runnable {
 		if (!emptylist) {
 
 			do {
-				System.out.println("Display available musics on the server : (y)");
+				System.out.println("\nFor display available musics from server press Y:");
 				choix = scan.next();
 			} while (!choix.toLowerCase().equals("y"));
 			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Client choosed : display available music", "");
 			displayMusics(serverList);
-			
-			
+
 		} else {
 			System.out.println("You are alone on this server. There are no list to stream.");
 		}
-		
+
 		try {
 			clientSocketOnServer.close();
 			reader.close();
@@ -119,14 +121,11 @@ public class Dialogue implements Runnable {
 					e.toString());
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/**
 	 * This method allows to get an arrayList from socket InputStream
-	 * 
-	 * @throws ClassNotFoundException
-	 * @throws IOException
 	 */
 	synchronized public void readList() {
 
@@ -150,7 +149,7 @@ public class Dialogue implements Runnable {
 	/**
 	 * This method allows send whatever an arrayList from socket OutputStream
 	 * 
-	 * @throws IOException
+	 * @param list the arrayList which must be send
 	 */
 	public void sendObject(ArrayList<String> list) {
 		try {
@@ -166,9 +165,11 @@ public class Dialogue implements Runnable {
 	/**
 	 * This method allows to display an arrayList and choose a music to play
 	 * 
-	 * @throws IllegalThreadStateException
-	 * @throws ArrayIndexOutOfBoundsException
-	 * @throws NullPointerException
+	 * @param serverList2 the arrayList received
+	 * @throws IllegalThreadStateException    if a thread is not in an appropriate
+	 *                                        state for the requested operation
+	 * @throws ArrayIndexOutOfBoundsException if index of array is out of bound
+	 * @throws NullPointerException           if a null is pointed
 	 */
 	public void displayMusics(ArrayList<String> serverList2) {
 		int cpt = 0;
@@ -186,12 +187,12 @@ public class Dialogue implements Runnable {
 			}
 			int m = scan.nextInt();
 
-			int check=cpt-1;
-			while(m <0 || m >check) {
-				System.out.println("Please choose from the range of proposals :");
+			int check = cpt - 1;
+			while (m < 0 || m > check) {
+				System.out.println("Please choose from the range of proposals [0-" + check + "]." );
 				m = scan.nextInt();
 			}
-			
+
 			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Music choice: " + String.valueOf(m), "");
 
 			String choice = serverList2.get(m);
@@ -228,11 +229,11 @@ public class Dialogue implements Runnable {
 			SimpleAudioPlayer player = new SimpleAudioPlayer(is, logsServer);
 			player.play();
 
-			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Début du streaming", musiquePath);
-			
+			logsServer.addHandler(Dialogue.class.getName(), Level.INFO, "Start streaming", musiquePath);
+
 			System.out.println("To stop music press S");
 			String reponse = scan.next();
-			
+
 			while (player.clip.isRunning()) {
 				if (reponse.toLowerCase().equals("s")) {
 					player.pause();

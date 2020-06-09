@@ -3,8 +3,7 @@ package client;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
-
-import LogsConstructor.LoggerWithFileHandler;
+import logsConstructor.LoggerWithFileHandler;
 
 /**
  * This class allows Client to become a server and wait a connection from others
@@ -21,9 +20,9 @@ public class Server {
 	private int port;
 
 	/**
-	 * Class contructor
+	 * Class constructor specifying logger
 	 * 
-	 * @param logsServer
+	 * @param logsServer logger
 	 */
 	public Server(LoggerWithFileHandler logsServer) {
 		try {
@@ -39,7 +38,8 @@ public class Server {
 	}
 
 	/**
-	 * This method returns port listening
+	 * This method returns a integer port from socket
+	 * @return port listening
 	 */
 	public int getPort() {
 		return port;
@@ -65,7 +65,7 @@ public class Server {
 						e.printStackTrace();
 					}
 
-					// ceci est mon client 2 qui se connecte au client 1
+					// Client connecting to one other
 					Thread t = new Thread(new ClientServer(clientSocket, logsServer));
 					t.start();
 

@@ -22,16 +22,14 @@ public class Server {
 	public static HashMap<Integer, ArrayList<String>> serverList = new HashMap<Integer, ArrayList<String>>();
 
 	/**
-	 * Class Server constructor
+	 * Class Server constructor specifying number of port
 	 * 
-	 * @param int listening port
+	 * @param port the listening port
 	 */
 	public Server(int port) {
 		this.port = port;
 
-		System.out.println("Server enable. Waiting connexion...");
-		Main.ServerLogger.setLevel(Level.INFO);
-		Main.ServerLogger.info("Listen socket created");
+		System.out.println("Server enable. \nWaiting connexion...");
 
 		listenSocket();
 	}

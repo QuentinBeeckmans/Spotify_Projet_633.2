@@ -1,14 +1,15 @@
-package LogsConstructor;
+package logsConstructor;
 
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- * Class customFormatter Herited of Formatter Format data for logger
+ * This class extends Formatter to custom output logger
  * 
- * @author Administrator
- *
+ * @author Quentin Beeckmans - Matthieu Roux
+ * @version 1.0
+ * @since 2020-05-30
  */
 public class CustomLogFormatter extends Formatter {
 
@@ -17,7 +18,7 @@ public class CustomLogFormatter extends Formatter {
 	/**
 	 * Class constructor
 	 * 
-	 * @param className
+	 * @param className the String of className
 	 */
 	public CustomLogFormatter(String className) {
 

@@ -20,18 +20,17 @@ public class ClientS implements Runnable {
 
 	private Socket clientSocket;
 	private int clientId;
-	
+
 	private ArrayList<String> clientList = new ArrayList<String>();
 
 	private ObjectOutputStream send;
 	private ObjectInputStream reader;
 
 	/**
-	 * Class contructor
+	 * That create an object Client server side
 	 * 
 	 * @param clientId     to increment the id of Client connected
-	 * @param clientSocket
-	 * @param logsServer
+	 * @param clientSocket the socket from client
 	 */
 	public ClientS(int clientId, Socket clientSocket) {
 		this.clientSocket = clientSocket;
@@ -45,14 +44,14 @@ public class ClientS implements Runnable {
 	public void run() {
 		try {
 			System.out.println("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
-			
+
 			Main.ServerLogger.setLevel(Level.INFO);
 			Main.ServerLogger.info("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
-			
+
 			send = new ObjectOutputStream(clientSocket.getOutputStream());
 
 			readList();
-			
+
 			Main.ServerLogger.setLevel(Level.INFO);
 			Main.ServerLogger.info("Communication with client : OK. Lists exchanged");
 
@@ -66,42 +65,39 @@ public class ClientS implements Runnable {
 
 	/**
 	 * This method allows to get an arrayList from socket InputStream and add it
-	 * 
-	 * @throws ClassNotFoundException
-	 * @throws IOException
 	 */
 	synchronized public void readList() {
 
 		try {
-			
+
 			reader = new ObjectInputStream(clientSocket.getInputStream());
 			@SuppressWarnings("unchecked")
 			ArrayList<String> arrayList = (ArrayList<String>) reader.readObject();
 			clientList = arrayList;
-			
+
 		} catch (ClassNotFoundException | IOException e) {
 			Main.ServerLogger.setLevel(Level.SEVERE);
 			Main.ServerLogger.severe("Impossible to read list" + e.toString());
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("List from Client:");
 		for (String item : clientList) {
 			System.out.println(item);
 		}
-		
+
 		addToServer(clientId, clientList);
 	}
 
 	/**
 	 * Synchronized method add client list into server list
 	 * 
-	 * @param index             is key of hashmap
-	 * @param ArrayList<String> list
+	 * @param index is key of hashmap
+	 * @param list  the arrayList added to global list server
 	 */
 	synchronized public void addToServer(int index, ArrayList<String> list) {
 		Server.serverList.put(index, list);
-		
+
 		Main.ServerLogger.setLevel(Level.INFO);
 		Main.ServerLogger.info("Music list added on server music list.");
 
@@ -146,7 +142,7 @@ public class ClientS implements Runnable {
 			send.flush();
 		} catch (IOException e) {
 			Main.ServerLogger.setLevel(Level.SEVERE);
-			Main.ServerLogger.severe("Music list sharing crashed: " +  e.toString());
+			Main.ServerLogger.severe("Music list sharing crashed: " + e.toString());
 			e.printStackTrace();
 		}
 	}

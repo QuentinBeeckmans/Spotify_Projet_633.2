@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * This class implements method to manage functions to create list from each
@@ -23,7 +21,7 @@ public class MyList {
 	 * Allows to create an custom arrayList with adding port listener, l'ip from
 	 * client server and absolute path from each audio
 	 * 
-	 * @param Dialogue object
+	 * @param d object
 	 */
 	synchronized public void sendFileList(Dialogue d) {
 		ArrayList<String> temp = new ArrayList<String>();
@@ -58,10 +56,10 @@ public class MyList {
 
 		do {
 			System.out.println("The directory must contains at least one audio file in wav format: ");
-		
+
 			String temp = choosePathDirectory();
 			File[] files = new File(temp).listFiles();
-	
+
 			for (File file : files) {
 				if (file.isFile()) {
 					if (file.getAbsolutePath().endsWith("wav")) {
@@ -69,7 +67,7 @@ public class MyList {
 					}
 				}
 			}
-		}while (arrayTemp.isEmpty());
+		} while (arrayTemp.isEmpty());
 
 		return arrayTemp;
 	}
@@ -78,22 +76,15 @@ public class MyList {
 	 * This method allows to open a JFileChooser and get back path from directories
 	 * only
 	 * 
-	 * @return
+	 * @return a path
 	 */
 	private String choosePathDirectory() {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-		// FileFilter filter = new FileNameExtensionFilter("WAV file", new String[]
-		// {"wav"});
-
-		// chooser.setFileFilter(filter);
-
 		JFrame jframeChooser = new JFrame();
 		jframeChooser.setAlwaysOnTop(true);
 		int retour = chooser.showOpenDialog(jframeChooser);
-
-		String directoryPath;
 
 		while ((retour != JFileChooser.APPROVE_OPTION)) {
 			System.out.println("Choose a folder to share music !");
@@ -101,7 +92,7 @@ public class MyList {
 			retour = chooser.showOpenDialog(jframeChooser);
 		}
 
-		return directoryPath = chooser.getSelectedFile().getAbsolutePath();
+		return chooser.getSelectedFile().getAbsolutePath();
 
 	}
 

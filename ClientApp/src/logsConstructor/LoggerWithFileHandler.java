@@ -1,4 +1,4 @@
-package LogsConstructor;
+package logsConstructor;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class LoggerWithFileHandler {
 	/**
 	 * Class constructor
 	 * 
-	 * @param fileName
+	 * @param fileName	the name
 	 */
 	public LoggerWithFileHandler(String fileName) {
 		
@@ -93,10 +93,10 @@ public class LoggerWithFileHandler {
 	/**
 	 * Public void addHandel method instentiate logger
 	 * 
-	 * @param className
-	 * @param logLevel
-	 * @param msg
-	 * @param msgSystem
+	 * @param className	the className
+	 * @param logLevel	logger
+	 * @param msg	the message custom
+	 * @param msgSystem	the message from system
 	 */
 	public void addHandler(String className, Level logLevel, String msg, String msgSystem) {
 
