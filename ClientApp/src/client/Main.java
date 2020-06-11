@@ -27,13 +27,8 @@ public class Main {
 		}
 
 		Scanner scan = new Scanner(System.in);
-<<<<<<< HEAD
-		
-=======
-		System.out.println(
-				"Enter the server address:\nN.B. Your local address is: " + localhost.getHostAddress());
-		String serverName = scan.next();
->>>>>>> c816b49c43ebdb984fcb5da055846d6890dafd00
+
+		String serverName ;
 
 		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("ClientLog");
 		
@@ -45,7 +40,7 @@ public class Main {
 			System.out.println();
 			System.out.println(
 					"Enter the server address. \nN.B. Your local address is: " + localhost.getHostAddress() + ".");
-			String serverName = scan.next();
+			serverName = scan.next();
 			
 		try {
 			server = new Server(logsServer);
@@ -63,14 +58,10 @@ public class Main {
 						
 			logsServer.addHandler(Main.class.getName(), Level.SEVERE,
 					"Initialisation of client services (client and/or server) crashed", e.toString());			
-			}
-						
+			}						
 		}
-		
-		
 
 		logsServer.closeHandler();
 
 	}
-
 }
