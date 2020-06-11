@@ -1,0 +1,48 @@
+Thu Jun 11 14:28:58 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 11 14:28:58 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 11 14:28:58 CEST 2020 ; class client.ClientSocket ; WARNING ; Connexion socket client to server is connected;
+Thu Jun 11 14:28:58 CEST 2020 ; class client.Dialogue ; INFO ; New client IP: /192.168.56.1;port listening 58423
+Thu Jun 11 14:28:58 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:28:58 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:31:33 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 11 14:31:33 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 11 14:31:34 CEST 2020 ; class client.ClientSocket ; WARNING ; Connexion socket client to server is connected;
+Thu Jun 11 14:31:34 CEST 2020 ; class client.Dialogue ; INFO ; New client IP: /192.168.56.1;port listening 58438
+Thu Jun 11 14:31:34 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:31:34 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:32:30 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 11 14:32:30 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 11 14:32:30 CEST 2020 ; class client.ClientSocket ; WARNING ; Connexion socket client to server is connected;
+Thu Jun 11 14:32:30 CEST 2020 ; class client.Dialogue ; INFO ; New client IP: /192.168.56.1;port listening 58442
+Thu Jun 11 14:32:30 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:32:30 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:33:18 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 11 14:33:18 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 11 14:33:18 CEST 2020 ; class client.ClientSocket ; WARNING ; Connexion socket client to server is connected;
+Thu Jun 11 14:33:18 CEST 2020 ; class client.Dialogue ; INFO ; New client IP: /192.168.56.1;port listening 58446
+Thu Jun 11 14:33:18 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:33:18 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:33:58 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 11 14:33:58 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 11 14:33:58 CEST 2020 ; class client.ClientSocket ; WARNING ; Connexion socket client to server is connected;
+Thu Jun 11 14:33:58 CEST 2020 ; class client.Dialogue ; INFO ; New client IP: /192.168.56.1;port listening 58449
+Thu Jun 11 14:33:58 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:33:58 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:34:17 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 11 14:34:17 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 11 14:34:17 CEST 2020 ; class client.ClientSocket ; WARNING ; Connexion socket client to server is connected;
+Thu Jun 11 14:34:17 CEST 2020 ; class client.Dialogue ; INFO ; New client IP: /192.168.56.1;port listening 58453
+Thu Jun 11 14:34:17 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:34:17 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:36:34 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 11 14:36:34 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 11 14:36:34 CEST 2020 ; class client.ClientSocket ; WARNING ; Connexion socket client to server is connected;
+Thu Jun 11 14:36:34 CEST 2020 ; class client.Dialogue ; INFO ; New client IP: /192.168.56.1;port listening 58459
+Thu Jun 11 14:36:34 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:36:34 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:36:47 CEST 2020 ; class client.Server ; WARNING ; Server socket turned on;
+Thu Jun 11 14:36:47 CEST 2020 ; class client.Main ; WARNING ; Initialization of listening socket;
+Thu Jun 11 14:36:47 CEST 2020 ; class client.ClientSocket ; WARNING ; Connexion socket client to server is connected;
+Thu Jun 11 14:36:47 CEST 2020 ; class client.Dialogue ; INFO ; New client IP: /192.168.56.1;port listening 58461
+Thu Jun 11 14:36:47 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
+Thu Jun 11 14:36:47 CEST 2020 ; class client.Main ; WARNING ; Client connexion enable;
