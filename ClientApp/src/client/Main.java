@@ -27,9 +27,15 @@ public class Main {
 		}
 
 		Scanner scan = new Scanner(System.in);
+<<<<<<< HEAD
 		
+=======
+		System.out.println(
+				"Enter the server address:\nN.B. Your local address is: " + localhost.getHostAddress());
+		String serverName = scan.next();
+>>>>>>> c816b49c43ebdb984fcb5da055846d6890dafd00
 
-		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("ClientLogs");
+		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("ClientLog");
 		
 		Server server = null;
 		ClientSocket myClient = null;

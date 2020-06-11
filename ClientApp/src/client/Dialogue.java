@@ -79,13 +79,12 @@ public class Dialogue implements Runnable {
 	@Override
 	public void run() {
 		String choix;
-		System.out.println("\nWelcome at:\n"+ 
-				"  _____ _____   ____ _______ _____ ________     __\r\n" + 
-				" / ____|  __ \\ / __ \\__   __|_   _|  ____\\ \\   / /\r\n" + 
-				"| (___ | |__) | |  | | | |    | | | |__   \\ \\_/ / \r\n" + 
-				" \\___ \\|  ___/| |  | | | |    | | |  __|   \\   /  \r\n" + 
-				" ____) | |    | |__| | | |   _| |_| |       | |   \r\n" + 
-				"|_____/|_|     \\____/  |_|  |_____|_|       |_|\r\n");
+		System.out.println("\nWelcome at:\n" + "  _____ _____   ____ _______ _____ ________     __\r\n"
+				+ " / ____|  __ \\ / __ \\__   __|_   _|  ____\\ \\   / /\r\n"
+				+ "| (___ | |__) | |  | | | |    | | | |__   \\ \\_/ / \r\n"
+				+ " \\___ \\|  ___/| |  | | | |    | | |  __|   \\   /  \r\n"
+				+ " ____) | |    | |__| | | |   _| |_| |       | |   \r\n"
+				+ "|_____/|_|     \\____/  |_|  |_____|_|       |_|\r\n");
 
 		// FIRST QUESTION
 		do {
@@ -189,7 +188,7 @@ public class Dialogue implements Runnable {
 
 			int check = cpt - 1;
 			while (m < 0 || m > check) {
-				System.out.println("Please choose from the range of proposals [0-" + check + "]." );
+				System.out.println("Please choose from the range of proposals [0-" + check + "].");
 				m = scan.nextInt();
 			}
 
@@ -211,7 +210,9 @@ public class Dialogue implements Runnable {
 	 * This method allows you to connect with the client that has the chosen music
 	 * and get the audio stream after
 	 * 
-	 * @throws Exception
+	 * @param Ipaddress   the ip address of client to get his stream
+	 * @param port        the port listen on server client
+	 * @param musiquePath the absolute path music
 	 */
 	private void newServerConnection(String Ipaddress, String port, String musiquePath) {
 		try {
@@ -243,7 +244,8 @@ public class Dialogue implements Runnable {
 			is.close();
 			exchangeSocket.close();
 		} catch (Exception e) {
-			logsServer.addHandler(Dialogue.class.getName(), Level.SEVERE, "New Server Connexion crash", e.getMessage());
+			logsServer.addHandler(Dialogue.class.getName(), Level.SEVERE, "New Server connection crash",
+					e.getMessage());
 			e.printStackTrace();
 		}
 	}
