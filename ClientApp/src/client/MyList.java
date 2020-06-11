@@ -55,7 +55,7 @@ public class MyList {
 		ArrayList<String> arrayTemp = new ArrayList<String>();
 
 		do {
-			System.out.println("The directory must contains at least one audio file in wav format: ");
+			System.out.println("The directory must contains at least one audio file in wav format.");
 
 			String temp = choosePathDirectory();
 			File[] files = new File(temp).listFiles();

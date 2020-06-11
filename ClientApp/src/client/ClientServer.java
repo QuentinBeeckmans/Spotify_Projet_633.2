@@ -71,8 +71,8 @@ public class ClientServer implements Runnable {
 	 * This method simply returns the first String that this method read from buffer
 	 * 
 	 * @return String to reading method
-	 * @throws IOException
-	 * @throws ClassNotFoundException
+	 * @throws IOException	if method can't read
+	 * @throws ClassNotFoundException if method can't found buffer
 	 */
 	private String readLine() throws IOException, ClassNotFoundException {
 		reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));

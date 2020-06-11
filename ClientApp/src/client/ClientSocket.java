@@ -42,7 +42,6 @@ public class ClientSocket {
 	 * Public void exchangeSocket method Activate client socket
 	 */
 	public void exchangeSocket() {
-		System.out.println(serverName);
 		try {
 			serverAddress = InetAddress.getByName(serverName);
 			clientSocket = new Socket(serverAddress, 5000);

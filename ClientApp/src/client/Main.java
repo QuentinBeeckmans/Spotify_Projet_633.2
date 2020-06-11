@@ -28,10 +28,10 @@ public class Main {
 
 		Scanner scan = new Scanner(System.in);
 		System.out.println(
-				"Enter the server address. \nN.B. Your local address is: " + localhost.getHostAddress() + ".");
+				"Enter the server address:\nN.B. Your local address is: " + localhost.getHostAddress());
 		String serverName = scan.next();
 
-		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("ClientLogs");
+		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("ClientLog");
 		
 		try {
 			Server server = new Server(logsServer);

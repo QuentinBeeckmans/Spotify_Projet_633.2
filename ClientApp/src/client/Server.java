@@ -57,7 +57,7 @@ public class Server {
 
 					try {
 						clientSocket = serverSocket.accept();
-						System.out.println("Another client's stream request ...");
+						System.out.println("Streaming request from another customer ... ...");
 
 					} catch (Exception e) {
 						logsServer.addHandler(Server.class.getName(), Level.SEVERE,

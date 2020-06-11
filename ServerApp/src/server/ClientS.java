@@ -43,10 +43,10 @@ public class ClientS implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
+			System.out.println("Client n\u00B0 " + clientId + " IP" + clientSocket.getInetAddress().toString());
 
 			Main.ServerLogger.setLevel(Level.INFO);
-			Main.ServerLogger.info("Client n° " + clientId + " IP" + clientSocket.getInetAddress());
+			Main.ServerLogger.info("Client n° " + clientId + " IP" + clientSocket.getInetAddress().toString());
 
 			send = new ObjectOutputStream(clientSocket.getOutputStream());
 
@@ -134,7 +134,7 @@ public class ClientS implements Runnable {
 	 * Private void method shareGlobalList Share client list on server list with
 	 * client applicant
 	 * 
-	 * @param ArrayList<String> list
+	 * @param list the ArrayList to send
 	 */
 	private void sendObject(ArrayList<String> list) {
 		try {

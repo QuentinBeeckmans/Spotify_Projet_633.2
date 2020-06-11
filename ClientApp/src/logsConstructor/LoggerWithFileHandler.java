@@ -72,7 +72,7 @@ public class LoggerWithFileHandler {
 	/**
 	 * Private format method Format log messages
 	 * 
-	 * @return
+	 * @return msgFormated 
 	 */
 	private String formatMsg() {
 
@@ -84,7 +84,7 @@ public class LoggerWithFileHandler {
 	/**
 	 * Private void level of log setter method
 	 * 
-	 * @param logLevel
+	 * @param logLevel logger level
 	 */
 	private void setLevel(Level logLevel) {
 		this.logLevel = logLevel;
