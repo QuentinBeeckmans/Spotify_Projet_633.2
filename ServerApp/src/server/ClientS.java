@@ -46,7 +46,7 @@ public class ClientS implements Runnable {
 			System.out.println("Client n\u00B0 " + clientId + " IP" + clientSocket.getInetAddress().toString());
 
 			Main.ServerLogger.setLevel(Level.INFO);
-			Main.ServerLogger.info("Client n° " + clientId + " IP" + clientSocket.getInetAddress().toString());
+			Main.ServerLogger.info("Client n\u00B0 " + clientId + " IP" + clientSocket.getInetAddress().toString());
 
 			send = new ObjectOutputStream(clientSocket.getOutputStream());
 
