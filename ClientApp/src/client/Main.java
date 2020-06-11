@@ -27,24 +27,41 @@ public class Main {
 		}
 
 		Scanner scan = new Scanner(System.in);
-		System.out.println(
-				"Enter the server address. \nN.B. Your local address is: " + localhost.getHostAddress() + ".");
-		String serverName = scan.next();
+		
 
 		LoggerWithFileHandler logsServer = new LoggerWithFileHandler("ClientLogs");
 		
+		Server server = null;
+		ClientSocket myClient = null;
+		boolean errorConnection = true;
+		
+		while(errorConnection) {
+			System.out.println();
+			System.out.println(
+					"Enter the server address. \nN.B. Your local address is: " + localhost.getHostAddress() + ".");
+			String serverName = scan.next();
+			
 		try {
-			Server server = new Server(logsServer);
+			server = new Server(logsServer);
 			logsServer.addHandler(Main.class.getName(), Level.WARNING, "Initialization of listening socket", "");
 
-			ClientSocket myClient = new ClientSocket(server.getPort(), logsServer, serverName);
+			myClient = new ClientSocket(server.getPort(), logsServer, serverName);
 			logsServer.addHandler(Main.class.getName(), Level.WARNING, "Client connexion enable", "");
+			
+			errorConnection = false;
 
-		} catch (IllegalArgumentException e) {
-
+		} catch (Exception e) {
+			System.out.println();
+			System.out.println("Error in your server's address. \n"
+					+ "Please, try again !");
+						
 			logsServer.addHandler(Main.class.getName(), Level.SEVERE,
-					"Initialisation of client services (client and/or server) crashed", e.toString());
+					"Initialisation of client services (client and/or server) crashed", e.toString());			
+			}
+						
 		}
+		
+		
 
 		logsServer.closeHandler();
 

@@ -52,7 +52,6 @@ public class ClientSocket {
 		} catch (Exception e) {
 			logsServer.addHandler(ClientSocket.class.getName(), Level.SEVERE,
 					"Failure ! Connexion socket client to server is disconnected", e.toString());
-			e.printStackTrace();
 		}
 
 		Thread t = new Thread(new Dialogue(clientSocket, listenerPort, mList, logsServer));
